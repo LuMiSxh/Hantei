@@ -70,7 +70,7 @@ fn main() {
         }
     };
 
-    let (logical_repr, compiled_paths) = match compiler.compile() {
+    let (logical_repr, compiled_paths) = match compiler.compile(true) {
         Ok(result) => result,
         Err(e) => {
             eprintln!("Compilation failed: {}", e);

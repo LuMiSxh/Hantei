@@ -211,6 +211,8 @@ pub fn setup_test_dir() -> PathBuf {
         std::fs::create_dir_all(&test_dir).unwrap();
     }
 
+    // Create a second tmp directory in the root
+
     // Create organized subdirectories for different test types
     let subdirs = [
         "unit/compiler",

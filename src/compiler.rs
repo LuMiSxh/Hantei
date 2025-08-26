@@ -43,7 +43,10 @@ impl Compiler {
     }
 
     /// Compile the recipe into ASTs for each quality
-    pub fn compile(mut self) -> Result<(String, Vec<(i32, String, Expression)>), CompileError> {
+    pub fn compile(
+        mut self,
+        write_debug_files: bool,
+    ) -> Result<(String, Vec<(i32, String, Expression)>), CompileError> {
         let logical_repr = format!("{:#?}", self.connections);
 
         // Find quality trigger nodes by looking for setQualityNode types
@@ -81,17 +84,23 @@ impl Compiler {
 
             // Write debug files
             let sanitized_name = Self::sanitize_filename(&name);
-            Self::write_debug_file(
-                &format!("tmp/quality_{}_naive_ast.txt", sanitized_name),
-                &naive_ast.to_string(),
-            )?;
+            if write_debug_files {
+                let sanitized_name = Self::sanitize_filename(&name);
+                Self::write_debug_file(
+                    &format!("tmp/quality_{}_naive_ast.txt", sanitized_name),
+                    &naive_ast.to_string(),
+                )?;
+            }
 
             // Optimize AST
             let optimized_ast = self.optimize_ast(naive_ast);
-            Self::write_debug_file(
-                &format!("tmp/quality_{}_optimized_ast.txt", sanitized_name),
-                &optimized_ast.to_string(),
-            )?;
+            if write_debug_files {
+                let sanitized_name = Self::sanitize_filename(&name);
+                Self::write_debug_file(
+                    &format!("tmp/quality_{}_optimized_ast.txt", sanitized_name),
+                    &optimized_ast.to_string(),
+                )?;
+            }
 
             quality_asts.push((priority, name.clone(), optimized_ast));
         }

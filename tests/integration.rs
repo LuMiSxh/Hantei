@@ -16,7 +16,8 @@ mod integration_tests {
         let compiler = Compiler::new(SIMPLE_RECIPE_JSON, SIMPLE_QUALITIES_JSON)
             .expect("Failed to create compiler");
 
-        let (logical_repr, compiled_paths) = compiler.compile().expect("Failed to compile recipe");
+        let (logical_repr, compiled_paths) =
+            compiler.compile(false).expect("Failed to compile recipe");
 
         assert!(!logical_repr.is_empty());
         assert!(!compiled_paths.is_empty());
@@ -43,7 +44,7 @@ mod integration_tests {
             .expect("Failed to create complex compiler");
 
         let (logical_repr, compiled_paths) = compiler
-            .compile()
+            .compile(false)
             .expect("Failed to compile complex recipe");
 
         assert!(!logical_repr.is_empty());
@@ -73,7 +74,8 @@ mod integration_tests {
         let compiler = Compiler::new(SIMPLE_RECIPE_JSON, SIMPLE_QUALITIES_JSON)
             .expect("Failed to create compiler");
 
-        let (_logical_repr, compiled_paths) = compiler.compile().expect("Failed to compile recipe");
+        let (_logical_repr, compiled_paths) =
+            compiler.compile(false).expect("Failed to compile recipe");
 
         if compiled_paths.is_empty() {
             println!("No compiled paths available for evaluation test");
@@ -99,7 +101,7 @@ mod integration_tests {
         let compiler = Compiler::new(COMPLEX_RECIPE_JSON, COMPLEX_QUALITIES_JSON)
             .expect("Failed to create complex compiler");
 
-        let result = compiler.compile();
+        let result = compiler.compile(false);
         match result {
             Ok((_logical_repr, compiled_paths)) => {
                 if compiled_paths.is_empty() {
@@ -138,7 +140,8 @@ mod integration_tests {
         let compiler = Compiler::new(COMPLEX_RECIPE_JSON, COMPLEX_QUALITIES_JSON)
             .expect("Failed to create compiler");
 
-        let (_logical_repr, compiled_paths) = compiler.compile().expect("Failed to compile recipe");
+        let (_logical_repr, compiled_paths) =
+            compiler.compile(false).expect("Failed to compile recipe");
 
         if compiled_paths.is_empty() {
             println!("No compiled paths for sample data test");
@@ -168,7 +171,8 @@ mod integration_tests {
         let compiler = Compiler::new(SIMPLE_RECIPE_JSON, SIMPLE_QUALITIES_JSON)
             .expect("Failed to create compiler");
 
-        let (logical_repr, _compiled_paths) = compiler.compile().expect("Failed to compile recipe");
+        let (logical_repr, _compiled_paths) =
+            compiler.compile(false).expect("Failed to compile recipe");
 
         // Write logical representation to test output
         let logical_path = test_dir.join("logical_connections.txt");
@@ -215,7 +219,8 @@ mod integration_tests {
         let compiler = Compiler::new(SIMPLE_RECIPE_JSON, SIMPLE_QUALITIES_JSON)
             .expect("Failed to create compiler");
 
-        let (_logical_repr, compiled_paths) = compiler.compile().expect("Failed to compile recipe");
+        let (_logical_repr, compiled_paths) =
+            compiler.compile(false).expect("Failed to compile recipe");
 
         if compiled_paths.is_empty() {
             println!("No compiled paths for error handling test");
@@ -244,7 +249,7 @@ mod integration_tests {
         let compiler = Compiler::new(COMPLEX_RECIPE_JSON, COMPLEX_QUALITIES_JSON)
             .expect("Failed to create complex compiler");
 
-        let result = compiler.compile();
+        let result = compiler.compile(false);
         match result {
             Ok((_logical_repr, compiled_paths)) => {
                 if compiled_paths.is_empty() {
@@ -292,7 +297,8 @@ mod integration_tests {
         let compiler = Compiler::new(SIMPLE_RECIPE_JSON, SIMPLE_QUALITIES_JSON)
             .expect("Failed to create compiler");
 
-        let (_logical_repr, compiled_paths) = compiler.compile().expect("Failed to compile recipe");
+        let (_logical_repr, compiled_paths) =
+            compiler.compile(false).expect("Failed to compile recipe");
 
         if compiled_paths.is_empty() {
             println!("No compiled paths for optimization test");
@@ -329,7 +335,7 @@ mod integration_tests {
 
         let compiler = Compiler::new(SIMPLE_RECIPE_JSON, multi_quality_json);
         if let Ok(compiler) = compiler {
-            if let Ok((_logical_repr, compiled_paths)) = compiler.compile() {
+            if let Ok((_logical_repr, compiled_paths)) = compiler.compile(false) {
                 if !compiled_paths.is_empty() {
                     // Verify quality paths are sorted by priority
                     let mut prev_priority = 0;

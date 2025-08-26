@@ -431,7 +431,7 @@ mod unit_tests {
         let compiler = Compiler::new(minimal_recipe, minimal_qualities);
         assert!(compiler.is_ok());
 
-        let result = compiler.unwrap().compile();
+        let result = compiler.unwrap().compile(false);
         // Don't assert success here as the recipe might be incomplete for quality connection
         match result {
             Ok((_, paths)) => {
