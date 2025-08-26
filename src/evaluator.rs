@@ -1,53 +1,63 @@
 use crate::ast::*;
 use crate::error::EvaluationError;
+use crate::trace::TraceFormatter;
 use std::collections::{HashMap, HashSet};
 
-/// Holds the compiled, optimized ASTs and is ready for fast evaluation.
+/// Evaluates compiled ASTs against runtime data
 pub struct Evaluator {
-    // For this POC, we'll just hold all paths. A real system
-    // would split them into static and dynamic.
+    /// Quality paths sorted by priority
     pub quality_paths: Vec<(i32, String, Expression)>,
 }
 
-/// The final result of an evaluation.
+/// Result of evaluating all quality paths
 #[derive(Debug)]
 pub struct EvaluationResult {
     pub quality_name: Option<String>,
     pub quality_priority: Option<i32>,
-    // In the future, this could be the EvaluationTrace
     pub reason: String,
 }
 
 impl Evaluator {
+    /// Create new evaluator with compiled quality paths
     pub fn new(quality_paths: Vec<(i32, String, Expression)>) -> Self {
         Self { quality_paths }
     }
 
+    /// Evaluate all quality paths against provided data
     pub fn eval(
         &self,
         static_data: &HashMap<String, f64>,
         dynamic_data: &HashMap<String, Vec<HashMap<String, f64>>>,
     ) -> Result<EvaluationResult, EvaluationError> {
-        for (priority, name, ast) in &self.quality_paths {
+        // Sort by priority (lowest number = highest priority)
+        let mut sorted_paths = self.quality_paths.clone();
+        sorted_paths.sort_by_key(|(priority, _, _)| *priority);
+
+        for (priority, name, ast) in &sorted_paths {
             let mut required_events = HashSet::new();
             ast.get_required_events(&mut required_events);
 
             if required_events.is_empty() {
-                // STATIC PATH: Evaluate once with no dynamic context.
+                // Static path - evaluate once
                 let trace = self.evaluate_ast(ast, static_data, &HashMap::new())?;
                 if let Value::Bool(true) = trace.get_outcome() {
                     return Ok(EvaluationResult {
                         quality_name: Some(name.clone()),
                         quality_priority: Some(*priority),
-                        reason: self.format_trace(&trace),
+                        reason: TraceFormatter::format_trace(&trace),
                     });
                 }
             } else {
-                // DYNAMIC PATH: This is where we handle the cross-product of events.
+                // Dynamic path - evaluate cross-product of events
                 let event_list: Vec<String> = required_events.into_iter().collect();
 
-                // This will hold the specific defects for the current evaluation context,
-                // e.g., {"hole": &hole1, "tear": &tear2}
+                // Check if all required events exist in dynamic_data
+                for event_type in &event_list {
+                    if !dynamic_data.contains_key(event_type) {
+                        return Err(EvaluationError::InputNotFound(event_type.clone()));
+                    }
+                }
+
                 let mut context: HashMap<String, &HashMap<String, f64>> = HashMap::new();
 
                 if let Some(trace) = self.eval_cross_product(
@@ -57,12 +67,10 @@ impl Evaluator {
                     static_data,
                     dynamic_data,
                 )? {
-                    // The recursive evaluation found a combination of defects that triggered the rule.
-                    // Since we iterate by priority, this is our final answer.
                     return Ok(EvaluationResult {
                         quality_name: Some(name.clone()),
                         quality_priority: Some(*priority),
-                        reason: self.format_trace(&trace),
+                        reason: TraceFormatter::format_trace(&trace),
                     });
                 }
             }
@@ -75,8 +83,7 @@ impl Evaluator {
         })
     }
 
-    /// Recursively evaluates an AST by building a Cartesian product.
-    /// Returns Some(trace) on the first combination that triggers the rule.
+    /// Recursively evaluate cross-product of dynamic events
     fn eval_cross_product<'a>(
         &self,
         ast: &Expression,
@@ -85,8 +92,7 @@ impl Evaluator {
         static_data: &HashMap<String, f64>,
         dynamic_data: &'a HashMap<String, Vec<HashMap<String, f64>>>,
     ) -> Result<Option<EvaluationTrace>, EvaluationError> {
-        // BASE CASE: If we have no more event types to select, our context is complete.
-        // We can now evaluate the AST with this specific combination of defects.
+        // Base case: all events assigned, evaluate AST
         if event_types.is_empty() {
             let trace = self.evaluate_ast(ast, static_data, context)?;
             if let Value::Bool(true) = trace.get_outcome() {
@@ -95,17 +101,14 @@ impl Evaluator {
             return Ok(None);
         }
 
-        // RECURSIVE STEP:
+        // Recursive case: try each defect for current event type
         let current_event_type = &event_types[0];
         let remaining_event_types = &event_types[1..];
 
-        // Get all defects for the current event type we need to process.
         if let Some(defects) = dynamic_data.get(current_event_type) {
             for defect in defects {
-                // Add the current defect to the context.
                 context.insert(current_event_type.clone(), defect);
 
-                // Recurse to select defects for the *remaining* event types.
                 if let Some(trace) = self.eval_cross_product(
                     ast,
                     remaining_event_types,
@@ -118,123 +121,113 @@ impl Evaluator {
             }
         }
 
-        // If we looped through all defects of this type and found no trigger, this path is None.
         Ok(None)
     }
 
-    /// Formats the final trace into a human-readable string.
-    fn format_trace(&self, trace: &EvaluationTrace) -> String {
-        match trace {
-            EvaluationTrace::BinaryOp {
-                op_symbol,
-                left,
-                right,
-                ..
-            } => {
-                // Recursively format the left and right sides and join with the operator
-                format!(
-                    "{} {} {}",
-                    self.format_trace(left),
-                    op_symbol,
-                    self.format_trace(right)
-                )
-            }
-            EvaluationTrace::UnaryOp {
-                op_symbol, child, ..
-            } => {
-                // Format unary ops like "NOT (some_expression)"
-                format!("{} ({})", op_symbol, self.format_trace(child))
-            }
-            EvaluationTrace::Leaf { source, value } => {
-                if source.starts_with('$') {
-                    format!("{} (was {})", source, value)
-                } else {
-                    source.clone()
-                }
-            }
-            EvaluationTrace::NotEvaluated => "[Not Evaluated]".to_string(),
-        }
-    }
-
-    /// Recursively evaluates an AST node against a complete context.
+    /// Evaluate an AST against a complete data context
     fn evaluate_ast<'a>(
         &self,
         expr: &Expression,
         static_data: &HashMap<String, f64>,
         context: &HashMap<String, &'a HashMap<String, f64>>,
     ) -> Result<EvaluationTrace, EvaluationError> {
-        macro_rules! eval_binary_op {
-            ($l:expr, $r:expr, $op_symbol:expr, $logic:expr) => {{
-                let left_trace = self.evaluate_ast($l, static_data, context)?;
-                let right_trace = self.evaluate_ast($r, static_data, context)?;
-                let outcome = $logic(left_trace.get_outcome(), right_trace.get_outcome())?;
+        match expr {
+            // Arithmetic operations
+            Expression::Sum(l, r) => {
+                let left_trace = self.evaluate_ast(l, static_data, context)?;
+                let right_trace = self.evaluate_ast(r, static_data, context)?;
+                let outcome = match (left_trace.get_outcome(), right_trace.get_outcome()) {
+                    (Value::Number(lv), Value::Number(rv)) => Value::Number(lv + rv),
+                    _ => {
+                        return Err(EvaluationError::TypeMismatch {
+                            expected: "Number".into(),
+                            found: "Other".into(),
+                        });
+                    }
+                };
                 Ok(EvaluationTrace::BinaryOp {
-                    op_symbol: $op_symbol,
+                    op_symbol: "+",
                     left: Box::new(left_trace),
                     right: Box::new(right_trace),
                     outcome,
                 })
-            }};
-        }
-
-        macro_rules! eval_unary_op {
-            ($v:expr, $op_symbol:expr, $logic:expr) => {{
-                let child_trace = self.evaluate_ast($v, static_data, context)?;
-                let outcome = $logic(child_trace.get_outcome())?;
+            }
+            Expression::Subtract(l, r) => {
+                let left_trace = self.evaluate_ast(l, static_data, context)?;
+                let right_trace = self.evaluate_ast(r, static_data, context)?;
+                let outcome = match (left_trace.get_outcome(), right_trace.get_outcome()) {
+                    (Value::Number(lv), Value::Number(rv)) => Value::Number(lv - rv),
+                    _ => {
+                        return Err(EvaluationError::TypeMismatch {
+                            expected: "Number".into(),
+                            found: "Other".into(),
+                        });
+                    }
+                };
+                Ok(EvaluationTrace::BinaryOp {
+                    op_symbol: "-",
+                    left: Box::new(left_trace),
+                    right: Box::new(right_trace),
+                    outcome,
+                })
+            }
+            Expression::Multiply(l, r) => {
+                let left_trace = self.evaluate_ast(l, static_data, context)?;
+                let right_trace = self.evaluate_ast(r, static_data, context)?;
+                let outcome = match (left_trace.get_outcome(), right_trace.get_outcome()) {
+                    (Value::Number(lv), Value::Number(rv)) => Value::Number(lv * rv),
+                    _ => {
+                        return Err(EvaluationError::TypeMismatch {
+                            expected: "Number".into(),
+                            found: "Other".into(),
+                        });
+                    }
+                };
+                Ok(EvaluationTrace::BinaryOp {
+                    op_symbol: "*",
+                    left: Box::new(left_trace),
+                    right: Box::new(right_trace),
+                    outcome,
+                })
+            }
+            Expression::Divide(l, r) => {
+                let left_trace = self.evaluate_ast(l, static_data, context)?;
+                let right_trace = self.evaluate_ast(r, static_data, context)?;
+                let outcome = match (left_trace.get_outcome(), right_trace.get_outcome()) {
+                    (Value::Number(lv), Value::Number(rv)) => Value::Number(lv / rv),
+                    _ => {
+                        return Err(EvaluationError::TypeMismatch {
+                            expected: "Number".into(),
+                            found: "Other".into(),
+                        });
+                    }
+                };
+                Ok(EvaluationTrace::BinaryOp {
+                    op_symbol: "/",
+                    left: Box::new(left_trace),
+                    right: Box::new(right_trace),
+                    outcome,
+                })
+            }
+            Expression::Abs(v) => {
+                let child_trace = self.evaluate_ast(v, static_data, context)?;
+                let outcome = match child_trace.get_outcome() {
+                    Value::Number(val) => Value::Number(val.abs()),
+                    _ => {
+                        return Err(EvaluationError::TypeMismatch {
+                            expected: "Number".into(),
+                            found: "Other".into(),
+                        });
+                    }
+                };
                 Ok(EvaluationTrace::UnaryOp {
-                    op_symbol: $op_symbol,
+                    op_symbol: "ABS",
                     child: Box::new(child_trace),
                     outcome,
                 })
-            }};
-        }
+            }
 
-        match expr {
-            // Arithmetic
-            Expression::Sum(l, r) => eval_binary_op!(l, r, "+", |l, r| match (l, r) {
-                (Value::Number(lv), Value::Number(rv)) => Ok(Value::Number(lv + rv)),
-                _ => Err(EvaluationError::TypeMismatch {
-                    expected: "Number".into(),
-                    found: "Other".into()
-                }),
-            }),
-            Expression::Subtract(l, r) => eval_binary_op!(l, r, "-", |l, r| match (l, r) {
-                (Value::Number(lv), Value::Number(rv)) => Ok(Value::Number(lv - rv)),
-                _ => Err(EvaluationError::TypeMismatch {
-                    expected: "Number".into(),
-                    found: "Other".into()
-                }),
-            }),
-            Expression::Multiply(l, r) => eval_binary_op!(l, r, "*", |l, r| match (l, r) {
-                (Value::Number(lv), Value::Number(rv)) => Ok(Value::Number(lv * rv)),
-                _ => Err(EvaluationError::TypeMismatch {
-                    expected: "Number".into(),
-                    found: "Other".into()
-                }),
-            }),
-            Expression::Divide(l, r) => eval_binary_op!(l, r, "/", |l, r| match (l, r) {
-                (Value::Number(lv), Value::Number(rv)) => Ok(Value::Number(lv / rv)),
-                _ => Err(EvaluationError::TypeMismatch {
-                    expected: "Number".into(),
-                    found: "Other".into()
-                }),
-            }),
-            Expression::Abs(v) => eval_unary_op!(v, "ABS", |v| match v {
-                Value::Number(val) => Ok(Value::Number(val.abs())),
-                _ => Err(EvaluationError::TypeMismatch {
-                    expected: "Number".into(),
-                    found: "Other".into()
-                }),
-            }),
-
-            // Logic
-            Expression::Not(v) => eval_unary_op!(v, "NOT", |v| match v {
-                Value::Bool(val) => Ok(Value::Bool(!val)),
-                _ => Err(EvaluationError::TypeMismatch {
-                    expected: "Bool".into(),
-                    found: "Other".into()
-                }),
-            }),
+            // Logical operations with short-circuiting
             Expression::And(l, r) => {
                 let left_trace = self.evaluate_ast(l, static_data, context)?;
                 if let Value::Bool(false) = left_trace.get_outcome() {
@@ -289,53 +282,144 @@ impl Evaluator {
                     outcome,
                 })
             }
-            Expression::Xor(l, r) => eval_binary_op!(l, r, "XOR", |l, r| match (l, r) {
-                (Value::Bool(lv), Value::Bool(rv)) => Ok(Value::Bool(lv ^ rv)),
-                _ => Err(EvaluationError::TypeMismatch {
-                    expected: "Bool".into(),
-                    found: "Other".into()
-                }),
-            }),
+            Expression::Not(v) => {
+                let child_trace = self.evaluate_ast(v, static_data, context)?;
+                let outcome = match child_trace.get_outcome() {
+                    Value::Bool(val) => Value::Bool(!val),
+                    _ => {
+                        return Err(EvaluationError::TypeMismatch {
+                            expected: "Bool".into(),
+                            found: "Other".into(),
+                        });
+                    }
+                };
+                Ok(EvaluationTrace::UnaryOp {
+                    op_symbol: "NOT",
+                    child: Box::new(child_trace),
+                    outcome,
+                })
+            }
+            Expression::Xor(l, r) => {
+                let left_trace = self.evaluate_ast(l, static_data, context)?;
+                let right_trace = self.evaluate_ast(r, static_data, context)?;
+                let outcome = match (left_trace.get_outcome(), right_trace.get_outcome()) {
+                    (Value::Bool(lv), Value::Bool(rv)) => Value::Bool(lv ^ rv),
+                    _ => {
+                        return Err(EvaluationError::TypeMismatch {
+                            expected: "Bool".into(),
+                            found: "Other".into(),
+                        });
+                    }
+                };
+                Ok(EvaluationTrace::BinaryOp {
+                    op_symbol: "XOR",
+                    left: Box::new(left_trace),
+                    right: Box::new(right_trace),
+                    outcome,
+                })
+            }
 
-            // Comparison
-            Expression::Equal(l, r) => eval_binary_op!(l, r, "==", |l, r| Ok(Value::Bool(l == r))),
+            // Comparison operations
+            Expression::Equal(l, r) => {
+                let left_trace = self.evaluate_ast(l, static_data, context)?;
+                let right_trace = self.evaluate_ast(r, static_data, context)?;
+                let outcome = Value::Bool(left_trace.get_outcome() == right_trace.get_outcome());
+                Ok(EvaluationTrace::BinaryOp {
+                    op_symbol: "==",
+                    left: Box::new(left_trace),
+                    right: Box::new(right_trace),
+                    outcome,
+                })
+            }
             Expression::NotEqual(l, r) => {
-                eval_binary_op!(l, r, "!=", |l, r| Ok(Value::Bool(l != r)))
-            }
-            Expression::GreaterThan(l, r) => eval_binary_op!(l, r, ">", |l, r| match (l, r) {
-                (Value::Number(lv), Value::Number(rv)) => Ok(Value::Bool(lv > rv)),
-                _ => Err(EvaluationError::TypeMismatch {
-                    expected: "Number".into(),
-                    found: "Other".into()
-                }),
-            }),
-            Expression::GreaterThanOrEqual(l, r) => {
-                eval_binary_op!(l, r, ">=", |l, r| match (l, r) {
-                    (Value::Number(lv), Value::Number(rv)) => Ok(Value::Bool(lv >= rv)),
-                    _ => Err(EvaluationError::TypeMismatch {
-                        expected: "Number".into(),
-                        found: "Other".into()
-                    }),
+                let left_trace = self.evaluate_ast(l, static_data, context)?;
+                let right_trace = self.evaluate_ast(r, static_data, context)?;
+                let outcome = Value::Bool(left_trace.get_outcome() != right_trace.get_outcome());
+                Ok(EvaluationTrace::BinaryOp {
+                    op_symbol: "!=",
+                    left: Box::new(left_trace),
+                    right: Box::new(right_trace),
+                    outcome,
                 })
             }
-            Expression::SmallerThan(l, r) => eval_binary_op!(l, r, "<", |l, r| match (l, r) {
-                (Value::Number(lv), Value::Number(rv)) => Ok(Value::Bool(lv < rv)),
-                _ => Err(EvaluationError::TypeMismatch {
-                    expected: "Number".into(),
-                    found: "Other".into()
-                }),
-            }),
+            Expression::GreaterThan(l, r) => {
+                let left_trace = self.evaluate_ast(l, static_data, context)?;
+                let right_trace = self.evaluate_ast(r, static_data, context)?;
+                let outcome = match (left_trace.get_outcome(), right_trace.get_outcome()) {
+                    (Value::Number(lv), Value::Number(rv)) => Value::Bool(lv > rv),
+                    _ => {
+                        return Err(EvaluationError::TypeMismatch {
+                            expected: "Number".into(),
+                            found: "Other".into(),
+                        });
+                    }
+                };
+                Ok(EvaluationTrace::BinaryOp {
+                    op_symbol: ">",
+                    left: Box::new(left_trace),
+                    right: Box::new(right_trace),
+                    outcome,
+                })
+            }
+            Expression::GreaterThanOrEqual(l, r) => {
+                let left_trace = self.evaluate_ast(l, static_data, context)?;
+                let right_trace = self.evaluate_ast(r, static_data, context)?;
+                let outcome = match (left_trace.get_outcome(), right_trace.get_outcome()) {
+                    (Value::Number(lv), Value::Number(rv)) => Value::Bool(lv >= rv),
+                    _ => {
+                        return Err(EvaluationError::TypeMismatch {
+                            expected: "Number".into(),
+                            found: "Other".into(),
+                        });
+                    }
+                };
+                Ok(EvaluationTrace::BinaryOp {
+                    op_symbol: ">=",
+                    left: Box::new(left_trace),
+                    right: Box::new(right_trace),
+                    outcome,
+                })
+            }
+            Expression::SmallerThan(l, r) => {
+                let left_trace = self.evaluate_ast(l, static_data, context)?;
+                let right_trace = self.evaluate_ast(r, static_data, context)?;
+                let outcome = match (left_trace.get_outcome(), right_trace.get_outcome()) {
+                    (Value::Number(lv), Value::Number(rv)) => Value::Bool(lv < rv),
+                    _ => {
+                        return Err(EvaluationError::TypeMismatch {
+                            expected: "Number".into(),
+                            found: "Other".into(),
+                        });
+                    }
+                };
+                Ok(EvaluationTrace::BinaryOp {
+                    op_symbol: "<",
+                    left: Box::new(left_trace),
+                    right: Box::new(right_trace),
+                    outcome,
+                })
+            }
             Expression::SmallerThanOrEqual(l, r) => {
-                eval_binary_op!(l, r, "<=", |l, r| match (l, r) {
-                    (Value::Number(lv), Value::Number(rv)) => Ok(Value::Bool(lv <= rv)),
-                    _ => Err(EvaluationError::TypeMismatch {
-                        expected: "Number".into(),
-                        found: "Other".into()
-                    }),
+                let left_trace = self.evaluate_ast(l, static_data, context)?;
+                let right_trace = self.evaluate_ast(r, static_data, context)?;
+                let outcome = match (left_trace.get_outcome(), right_trace.get_outcome()) {
+                    (Value::Number(lv), Value::Number(rv)) => Value::Bool(lv <= rv),
+                    _ => {
+                        return Err(EvaluationError::TypeMismatch {
+                            expected: "Number".into(),
+                            found: "Other".into(),
+                        });
+                    }
+                };
+                Ok(EvaluationTrace::BinaryOp {
+                    op_symbol: "<=",
+                    left: Box::new(left_trace),
+                    right: Box::new(right_trace),
+                    outcome,
                 })
             }
 
-            // Leaf Nodes
+            // Leaf nodes
             Expression::Literal(val) => Ok(EvaluationTrace::Leaf {
                 source: val.to_string(),
                 value: val.clone(),

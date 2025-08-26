@@ -1,11 +1,33 @@
 [package]
 name = "hantei"
 version = "0.1.0"
+authors = ["LuMiSxh"]
 edition = "2024"
+license = "MIT"
+description = "A high-performance recipe compilation and evaluation engine for node-based decision trees"
+repository = "https://github.com/lumisxh/hantei"
+homepage = "https://github.com/lumisxh/hantei"
+documentation = "https://lumisxh.github.io/Hantei/"
+readme = "README.md"
+keywords = ["compiler", "ast", "evaluation", "decision-tree", "recipe"]
+
+categories = ["algorithms", "compilers", "data-structures"]
+
+[lib]
+name = "hantei"
+path = "src/lib.rs"
+
+[[bin]]
+name = "hantei"
+path = "src/main.rs"
 
 [dependencies]
-env_logger = "0.11.8"
-log = "0.4.27"
-serde = { version = "1.0.219", features = ["derive"] }
-serde_json = "1.0.143"
-thiserror = "2.0.16"
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+thiserror = "2"
+
+[dev-dependencies]
+tokio-test = "0.4"
+
+[features]
+default = []

@@ -1,90 +1,136 @@
-use hantei::compiler::Compiler;
-use hantei::evaluator::Evaluator;
-use serde::Deserialize;
-use std::collections::HashMap;
+use hantei::{Compiler, Evaluator, SampleData};
 use std::env;
 use std::fs;
 
-#[derive(Deserialize, Debug)]
-struct SampleData {
-    static_data: HashMap<String, f64>,
-    dynamic_data: HashMap<String, Vec<HashMap<String, f64>>>,
-}
-
 fn main() {
-    env_logger::Builder::from_env(env_logger::Env::default().default_filter_or("info")).init();
-
+    // Create output directory
     const TMP_DIR: &str = "tmp";
-    fs::create_dir_all(TMP_DIR).expect("Failed to create tmp directory");
-    log::info!("Created output directory at '{}'", TMP_DIR);
+    if let Err(e) = fs::create_dir_all(TMP_DIR) {
+        eprintln!("Failed to create tmp directory: {}", e);
+        std::process::exit(1);
+    }
+    println!("Created output directory at '{}'", TMP_DIR);
 
+    // Parse command line arguments
     let args: Vec<String> = env::args().collect();
     if args.len() < 3 || args.len() > 4 {
-        log::error!(
+        eprintln!(
             "Usage: cargo run -- <path/to/recipe.json> <path/to/qualities.json> [path/to/sample_data.json]"
         );
-        panic!("Invalid number of arguments provided.");
+        std::process::exit(1);
     }
+
     let recipe_path = &args[1];
     let qualities_path = &args[2];
+    let sample_data_path = args.get(3);
 
-    log::info!("Loading recipe from: {}", recipe_path);
-    log::info!("Loading qualities from: {}", qualities_path);
+    println!("Loading recipe from: {}", recipe_path);
+    println!("Loading qualities from: {}", qualities_path);
 
-    let recipe_json =
-        fs::read_to_string(recipe_path).expect("Failed to read the recipe JSON file.");
-    let qualities_json =
-        fs::read_to_string(qualities_path).expect("Failed to read the qualities JSON file.");
+    // Load input files
+    let recipe_json = match fs::read_to_string(recipe_path) {
+        Ok(content) => content,
+        Err(e) => {
+            eprintln!("Failed to read recipe file '{}': {}", recipe_path, e);
+            std::process::exit(1);
+        }
+    };
 
-    let (static_data, dynamic_data);
+    let qualities_json = match fs::read_to_string(qualities_path) {
+        Ok(content) => content,
+        Err(e) => {
+            eprintln!("Failed to read qualities file '{}': {}", qualities_path, e);
+            std::process::exit(1);
+        }
+    };
 
-    if let Some(data_path) = args.get(3) {
-        log::info!("Loading sample data from: {}", data_path);
-        let data_json =
-            fs::read_to_string(data_path).expect("Failed to read the sample data JSON file.");
-        let sample_data: SampleData =
-            serde_json::from_str(&data_json).expect("Failed to parse sample data JSON.");
-        static_data = sample_data.static_data;
-        dynamic_data = sample_data.dynamic_data;
+    // Load sample data
+    let sample_data = if let Some(data_path) = sample_data_path {
+        println!("Loading sample data from: {}", data_path);
+        match SampleData::from_file(data_path) {
+            Ok(data) => data,
+            Err(e) => {
+                eprintln!("Failed to load sample data from '{}': {}", data_path, e);
+                std::process::exit(1);
+            }
+        }
     } else {
-        log::info!("No sample data file provided. Using default mock data.");
-        // Fallback to default mock data if no file is given
-        let mut s_data = HashMap::new();
-        s_data.insert("Leading width".to_string(), 1970.0);
-        s_data.insert("Trailing width".to_string(), 1965.0);
-        static_data = s_data;
+        println!("No sample data file provided. Using default mock data.");
+        SampleData::default()
+    };
 
-        let mut d_data = HashMap::new();
-        let mut hole_event = HashMap::new();
-        hole_event.insert("Diameter".to_string(), 30.0);
-        d_data.insert("hole".to_string(), vec![hole_event]);
-        dynamic_data = d_data;
-    }
+    // Compilation phase
+    println!("\nStarting Hantei Recipe Compilation...");
 
-    log::info!("Starting Hantei Recipe Compilation...");
+    let compiler = match Compiler::new(&recipe_json, &qualities_json) {
+        Ok(compiler) => compiler,
+        Err(e) => {
+            eprintln!("Failed to create compiler: {}", e);
+            std::process::exit(1);
+        }
+    };
 
-    let compiler = Compiler::new(&recipe_json, &qualities_json).expect("Failed to create compiler");
-    let (logical_repr, compiled_paths) = compiler.compile().expect("Failed to compile recipe");
+    let (logical_repr, compiled_paths) = match compiler.compile() {
+        Ok(result) => result,
+        Err(e) => {
+            eprintln!("Compilation failed: {}", e);
+            std::process::exit(1);
+        }
+    };
+
+    // Write logical representation to file
     let logical_path = format!("{}/logical_connections.txt", TMP_DIR);
-    fs::write(&logical_path, logical_repr).expect("Unable to write logical representation to file");
-    log::info!("  -> Wrote logical representation to '{}'", logical_path);
+    if let Err(e) = fs::write(&logical_path, logical_repr) {
+        eprintln!("Failed to write logical representation: {}", e);
+        std::process::exit(1);
+    }
+    println!("  -> Wrote logical representation to '{}'", logical_path);
 
-    log::info!(
-        "Compilation Successful! {} quality paths generated.\n",
+    println!(
+        "Compilation Successful! {} quality paths generated.",
         compiled_paths.len()
     );
 
+    // Print compiled quality information
+    for (priority, name, _) in &compiled_paths {
+        println!("  -> Quality '{}' (Priority {}) compiled", name, priority);
+    }
+
+    // Evaluation phase
+    println!("\nRunning Evaluation with Sample Data");
+    println!(
+        "Static data keys: {:?}",
+        sample_data.static_data().keys().collect::<Vec<_>>()
+    );
+    println!(
+        "Dynamic data keys: {:?}",
+        sample_data.dynamic_data().keys().collect::<Vec<_>>()
+    );
+
     let evaluator = Evaluator::new(compiled_paths);
-    log::info!("Evaluator created and ready.");
+    let result = match evaluator.eval(sample_data.static_data(), sample_data.dynamic_data()) {
+        Ok(result) => result,
+        Err(e) => {
+            eprintln!("Evaluation failed: {}", e);
+            std::process::exit(1);
+        }
+    };
 
-    log::info!("Running Evaluation with Sample Data");
-    log::debug!("Static Data: {:?}", static_data);
-    log::debug!("Dynamic Data: {:?}", dynamic_data);
-
-    let result = evaluator
-        .eval(&static_data, &dynamic_data)
-        .expect("Evaluation failed");
-
-    log::info!("Evaluation Finished!");
-    log::info!("  -> Result: {:?}", result);
+    // Display results
+    println!("\nEvaluation Finished!");
+    match result.quality_name {
+        Some(name) => {
+            println!(
+                "  -> Triggered Quality: {} (Priority {})",
+                name,
+                result.quality_priority.unwrap()
+            );
+            println!("  -> Reason: {}", result.reason);
+        }
+        None => {
+            println!("  -> No quality triggered");
+            println!("  -> Reason: {}", result.reason);
+        }
+    }
+    println!();
 }
