@@ -23,7 +23,7 @@
 //! let qualities_json = std::fs::read_to_string("qualities.json")?;
 //!
 //! let compiler = Compiler::new(&recipe_json, &qualities_json)?;
-//! let (_logical_repr, compiled_paths) = compiler.compile()?;
+//! let (_logical_repr, compiled_paths) = compiler.compile(false)?;
 //!
 //! // Load sample data and evaluate
 //! let sample_data = SampleData::from_file("sample_data.json")?;
