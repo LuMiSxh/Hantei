@@ -1,0 +1,14 @@
+[
+    { "id": 0, "name": "1", "priority": 1, "negated": false },
+    { "id": 1, "name": "2", "priority": 2, "negated": false },
+    { "id": 2, "name": "3", "priority": 3, "negated": false },
+    { "id": 3, "name": "3A", "priority": 4, "negated": false },
+    { "id": 4, "name": "3B", "priority": 5, "negated": false },
+    { "id": 5, "name": "3C", "priority": 6, "negated": false },
+    { "id": 6, "name": "4", "priority": 7, "negated": false },
+    { "id": 7, "name": "5", "priority": 8, "negated": false },
+    { "id": 8, "name": "6", "priority": 9, "negated": false },
+    { "id": 9, "name": "7", "priority": 10, "negated": false },
+    { "id": 10, "name": "8", "priority": 11, "negated": false },
+    { "id": 11, "name": "0", "priority": 12, "negated": false }
+]

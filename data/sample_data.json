@@ -1,0 +1,40 @@
+{
+    "static_data": {
+        "Leading width": 1970.0,
+        "Trailing width": 1965.0,
+        "Upper length": 2100.0,
+        "Lower length": 2105.0,
+        "Area": 4147000.0,
+        "Angle": 90.1,
+        "Humidity": 7.5,
+        "Humidity peak": 8.0
+    },
+    "dynamic_data": {
+        "hole": [
+            {
+                "Length": 15.0,
+                "Width": 10.0,
+                "Diameter": 22.0,
+                "Aspect ratio": 1.5,
+                "Area": 140.0
+            },
+            {
+                "Length": 50.0,
+                "Width": 40.0,
+                "Diameter": 150.0,
+                "Aspect ratio": 1.25,
+                "Area": 1950.0
+            }
+        ],
+        "tear": [
+            {
+                "Length": 100.0,
+                "Width": 3.0,
+                "Aspect ratio": 33.3,
+                "Area": 300.0
+            }
+        ],
+        "branch": [],
+        "inner_tear": []
+    }
+}

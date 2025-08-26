@@ -1,0 +1,5584 @@
+{
+    "edges": [
+        {
+            "id": "xy-edge__0007bool-bool-0007-2-0009bool-bool-0009-0",
+            "type": "customEdge",
+            "style": "bool-bool",
+            "source": "0007",
+            "target": "0009",
+            "selected": false,
+            "sourceHandle": "bool-bool-0007-2",
+            "targetHandle": "bool-bool-0009-0"
+        },
+        {
+            "id": "xy-edge__0008bool-bool-0008-2-0009bool-bool-0009-1",
+            "type": "customEdge",
+            "style": "bool-bool",
+            "source": "0008",
+            "target": "0009",
+            "selected": false,
+            "sourceHandle": "bool-bool-0008-2",
+            "targetHandle": "bool-bool-0009-1"
+        },
+        {
+            "id": "xy-edge__0009bool-bool-0009-2-0002sq-bool-0002-3",
+            "type": "customEdge",
+            "style": "bool-bool",
+            "source": "0009",
+            "target": "0002",
+            "selected": false,
+            "sourceHandle": "bool-bool-0009-2",
+            "targetHandle": "sq-bool-0002-3"
+        },
+        {
+            "id": "xy-edge__0006bool-bool-0006-2-0008bool-bool-0008-1",
+            "type": "customEdge",
+            "style": "bool-bool",
+            "source": "0006",
+            "target": "0008",
+            "selected": false,
+            "sourceHandle": "bool-bool-0006-2",
+            "targetHandle": "bool-bool-0008-1"
+        },
+        {
+            "id": "xy-edge__0005bool-bool-0005-2-0008bool-bool-0008-0",
+            "type": "customEdge",
+            "style": "bool-bool",
+            "source": "0005",
+            "target": "0008",
+            "selected": false,
+            "sourceHandle": "bool-bool-0005-2",
+            "targetHandle": "bool-bool-0008-0"
+        },
+        {
+            "id": "xy-edge__0004bool-bool-0004-2-0007bool-bool-0007-1",
+            "type": "customEdge",
+            "style": "bool-bool",
+            "source": "0004",
+            "target": "0007",
+            "selected": false,
+            "sourceHandle": "bool-bool-0004-2",
+            "targetHandle": "bool-bool-0007-1"
+        },
+        {
+            "id": "xy-edge__0003bool-bool-0003-2-0007bool-bool-0007-0",
+            "type": "customEdge",
+            "style": "bool-bool",
+            "source": "0003",
+            "target": "0007",
+            "selected": false,
+            "sourceHandle": "bool-bool-0003-2",
+            "targetHandle": "bool-bool-0007-0"
+        },
+        {
+            "id": "xy-edge__bool-bool-0014-2bool-bool-0016-0",
+            "type": "customEdge",
+            "style": "bool-bool",
+            "source": "0014",
+            "target": "0016",
+            "selected": false,
+            "sourceHandle": "bool-bool-0014-2",
+            "targetHandle": "bool-bool-0016-0"
+        },
+        {
+            "id": "xy-edge__bool-bool-0015-2bool-bool-0016-1",
+            "type": "customEdge",
+            "style": "bool-bool",
+            "source": "0015",
+            "target": "0016",
+            "selected": false,
+            "sourceHandle": "bool-bool-0015-2",
+            "targetHandle": "bool-bool-0016-1"
+        },
+        {
+            "id": "xy-edge__bool-bool-0013-2bool-bool-0015-1",
+            "type": "customEdge",
+            "style": "bool-bool",
+            "source": "0013",
+            "target": "0015",
+            "selected": false,
+            "sourceHandle": "bool-bool-0013-2",
+            "targetHandle": "bool-bool-0015-1"
+        },
+        {
+            "id": "xy-edge__bool-bool-0012-2bool-bool-0015-0",
+            "type": "customEdge",
+            "style": "bool-bool",
+            "source": "0012",
+            "target": "0015",
+            "selected": false,
+            "sourceHandle": "bool-bool-0012-2",
+            "targetHandle": "bool-bool-0015-0"
+        },
+        {
+            "id": "xy-edge__bool-bool-0011-2bool-bool-0014-1",
+            "type": "customEdge",
+            "style": "bool-bool",
+            "source": "0011",
+            "target": "0014",
+            "selected": false,
+            "sourceHandle": "bool-bool-0011-2",
+            "targetHandle": "bool-bool-0014-1"
+        },
+        {
+            "id": "xy-edge__bool-bool-0010-2bool-bool-0014-0",
+            "type": "customEdge",
+            "style": "bool-bool",
+            "source": "0010",
+            "target": "0014",
+            "selected": false,
+            "sourceHandle": "bool-bool-0010-2",
+            "targetHandle": "bool-bool-0014-0"
+        },
+        {
+            "id": "xy-edge__0016bool-bool-0016-2-0002sq-bool-0002-3",
+            "type": "customEdge",
+            "style": "bool-bool",
+            "source": "0016",
+            "target": "0002",
+            "selected": false,
+            "sourceHandle": "bool-bool-0016-2",
+            "targetHandle": "sq-bool-0002-3"
+        },
+        {
+            "id": "xy-edge__0017number-number-0017-2-0006number-number-0006-0",
+            "type": "customEdge",
+            "style": "number-number",
+            "source": "0017",
+            "target": "0006",
+            "selected": false,
+            "sourceHandle": "number-number-0017-2",
+            "targetHandle": "number-number-0006-0"
+        },
+        {
+            "id": "xy-edge__0017number-number-0017-2-0004number-number-0004-0",
+            "type": "customEdge",
+            "style": "number-number",
+            "source": "0017",
+            "target": "0004",
+            "selected": false,
+            "sourceHandle": "number-number-0017-2",
+            "targetHandle": "number-number-0004-0"
+        },
+        {
+            "id": "xy-edge__0017number-number-0017-3-0005number-number-0005-0",
+            "type": "customEdge",
+            "style": "number-number",
+            "source": "0017",
+            "target": "0005",
+            "selected": false,
+            "sourceHandle": "number-number-0017-3",
+            "targetHandle": "number-number-0005-0"
+        },
+        {
+            "id": "xy-edge__0017number-number-0017-3-0003number-number-0003-0",
+            "type": "customEdge",
+            "style": "number-number",
+            "source": "0017",
+            "target": "0003",
+            "selected": false,
+            "sourceHandle": "number-number-0017-3",
+            "targetHandle": "number-number-0003-0"
+        },
+        {
+            "id": "xy-edge__0017number-number-0017-0-0013number-number-0013-0",
+            "type": "customEdge",
+            "style": "number-number",
+            "source": "0017",
+            "target": "0013",
+            "selected": false,
+            "sourceHandle": "number-number-0017-0",
+            "targetHandle": "number-number-0013-0"
+        },
+        {
+            "id": "xy-edge__0017number-number-0017-0-0011number-number-0011-0",
+            "type": "customEdge",
+            "style": "number-number",
+            "source": "0017",
+            "target": "0011",
+            "selected": false,
+            "sourceHandle": "number-number-0017-0",
+            "targetHandle": "number-number-0011-0"
+        },
+        {
+            "id": "xy-edge__0017number-number-0017-1-0012number-number-0012-0",
+            "type": "customEdge",
+            "style": "number-number",
+            "source": "0017",
+            "target": "0012",
+            "selected": false,
+            "sourceHandle": "number-number-0017-1",
+            "targetHandle": "number-number-0012-0"
+        },
+        {
+            "id": "xy-edge__0017number-number-0017-1-0010number-number-0010-0",
+            "type": "customEdge",
+            "style": "number-number",
+            "source": "0017",
+            "target": "0010",
+            "selected": false,
+            "sourceHandle": "number-number-0017-1",
+            "targetHandle": "number-number-0010-0"
+        },
+        {
+            "id": "xy-edge__0017number-number-0017-7-0018number-number-0018-0",
+            "type": "customEdge",
+            "style": "number-number",
+            "source": "0017",
+            "target": "0018",
+            "selected": false,
+            "sourceHandle": "number-number-0017-7",
+            "targetHandle": "number-number-0018-0"
+        },
+        {
+            "id": "xy-edge__0018bool-bool-0018-2-0002sq-bool-0002-3",
+            "type": "customEdge",
+            "style": "bool-bool",
+            "source": "0018",
+            "target": "0002",
+            "selected": false,
+            "sourceHandle": "bool-bool-0018-2",
+            "targetHandle": "sq-bool-0002-3"
+        },
+        {
+            "id": "xy-edge__0019bool-bool-0019-2-0002sq-bool-0002-3",
+            "type": "customEdge",
+            "style": "bool-bool",
+            "source": "0019",
+            "target": "0002",
+            "selected": false,
+            "sourceHandle": "bool-bool-0019-2",
+            "targetHandle": "sq-bool-0002-3"
+        },
+        {
+            "id": "xy-edge__0017number-number-0017-6-0019number-number-0019-0",
+            "type": "customEdge",
+            "style": "number-number",
+            "source": "0017",
+            "target": "0019",
+            "selected": false,
+            "sourceHandle": "number-number-0017-6",
+            "targetHandle": "number-number-0019-0"
+        },
+        {
+            "id": "xy-edge__0017hole-object-0017-12-0020hole-object-0020-0",
+            "type": "customEdge",
+            "style": "object-object",
+            "source": "0017",
+            "target": "0020",
+            "selected": false,
+            "sourceHandle": "hole-object-0017-12",
+            "targetHandle": "hole-object-0020-0"
+        },
+        {
+            "id": "xy-edge__0020number-number-0020-2-0021number-number-0021-0",
+            "type": "customEdge",
+            "style": "number-number",
+            "source": "0020",
+            "target": "0021",
+            "selected": false,
+            "sourceHandle": "number-number-0020-2",
+            "targetHandle": "number-number-0021-0"
+        },
+        {
+            "id": "xy-edge__0021bool-bool-0021-2-0002sq-bool-0002-0",
+            "type": "customEdge",
+            "style": "bool-bool",
+            "source": "0021",
+            "target": "0002",
+            "selected": false,
+            "sourceHandle": "bool-bool-0021-2",
+            "targetHandle": "sq-bool-0002-0"
+        },
+        {
+            "id": "xy-edge__0020number-number-0020-2-0022number-number-0022-0",
+            "type": "customEdge",
+            "style": "number-number",
+            "source": "0020",
+            "target": "0022",
+            "selected": false,
+            "sourceHandle": "number-number-0020-2",
+            "targetHandle": "number-number-0022-0"
+        },
+        {
+            "id": "xy-edge__0022bool-bool-0022-2-0002sq-bool-0002-1",
+            "type": "customEdge",
+            "style": "bool-bool",
+            "source": "0022",
+            "target": "0002",
+            "selected": false,
+            "sourceHandle": "bool-bool-0022-2",
+            "targetHandle": "sq-bool-0002-1"
+        },
+        {
+            "id": "xy-edge__0023number-number-0023-0-0025number-number-0025-0",
+            "type": "customEdge",
+            "style": "number-number",
+            "source": "0023",
+            "target": "0025",
+            "selected": false,
+            "sourceHandle": "number-number-0023-0",
+            "targetHandle": "number-number-0025-0"
+        },
+        {
+            "id": "xy-edge__0023number-number-0023-1-0026number-number-0026-0",
+            "type": "customEdge",
+            "style": "number-number",
+            "source": "0023",
+            "target": "0026",
+            "selected": false,
+            "sourceHandle": "number-number-0023-1",
+            "targetHandle": "number-number-0026-0"
+        },
+        {
+            "id": "xy-edge__0026bool-bool-0026-2-0024bool-bool-0024-1",
+            "type": "customEdge",
+            "style": "bool-bool",
+            "source": "0026",
+            "target": "0024",
+            "selected": false,
+            "sourceHandle": "bool-bool-0026-2",
+            "targetHandle": "bool-bool-0024-1"
+        },
+        {
+            "id": "xy-edge__0025bool-bool-0025-2-0024bool-bool-0024-0",
+            "type": "customEdge",
+            "style": "bool-bool",
+            "source": "0025",
+            "target": "0024",
+            "selected": false,
+            "sourceHandle": "bool-bool-0025-2",
+            "targetHandle": "bool-bool-0024-0"
+        },
+        {
+            "id": "xy-edge__0024bool-bool-0024-2-0002sq-bool-0002-0",
+            "type": "customEdge",
+            "style": "bool-bool",
+            "source": "0024",
+            "target": "0002",
+            "selected": false,
+            "sourceHandle": "bool-bool-0024-2",
+            "targetHandle": "sq-bool-0002-0"
+        },
+        {
+            "id": "xy-edge__0017inner_tear-object-0017-10-0023inner_tear-object-0023-0",
+            "type": "customEdge",
+            "style": "object-object",
+            "source": "0017",
+            "target": "0023",
+            "selected": false,
+            "sourceHandle": "inner_tear-object-0017-10",
+            "targetHandle": "inner_tear-object-0023-0"
+        },
+        {
+            "id": "xy-edge__bool-bool-0029-2bool-bool-0027-1",
+            "type": "customEdge",
+            "style": "bool-bool",
+            "source": "0029",
+            "target": "0027",
+            "selected": false,
+            "sourceHandle": "bool-bool-0029-2",
+            "targetHandle": "bool-bool-0027-1"
+        },
+        {
+            "id": "xy-edge__bool-bool-0028-2bool-bool-0027-0",
+            "type": "customEdge",
+            "style": "bool-bool",
+            "source": "0028",
+            "target": "0027",
+            "selected": false,
+            "sourceHandle": "bool-bool-0028-2",
+            "targetHandle": "bool-bool-0027-0"
+        },
+        {
+            "id": "xy-edge__0023number-number-0023-0-0028number-number-0028-0",
+            "type": "customEdge",
+            "style": "number-number",
+            "source": "0023",
+            "target": "0028",
+            "selected": false,
+            "sourceHandle": "number-number-0023-0",
+            "targetHandle": "number-number-0028-0"
+        },
+        {
+            "id": "xy-edge__0023number-number-0023-1-0029number-number-0029-0",
+            "type": "customEdge",
+            "style": "number-number",
+            "source": "0023",
+            "target": "0029",
+            "selected": false,
+            "sourceHandle": "number-number-0023-1",
+            "targetHandle": "number-number-0029-0"
+        },
+        {
+            "id": "xy-edge__0027bool-bool-0027-2-0002sq-bool-0002-1",
+            "type": "customEdge",
+            "style": "bool-bool",
+            "source": "0027",
+            "target": "0002",
+            "selected": false,
+            "sourceHandle": "bool-bool-0027-2",
+            "targetHandle": "sq-bool-0002-1"
+        },
+        {
+            "id": "xy-edge__bool-bool-0032-2bool-bool-0030-1",
+            "type": "customEdge",
+            "style": "bool-bool",
+            "source": "0032",
+            "target": "0030",
+            "selected": false,
+            "sourceHandle": "bool-bool-0032-2",
+            "targetHandle": "bool-bool-0030-1"
+        },
+        {
+            "id": "xy-edge__bool-bool-0031-2bool-bool-0030-0",
+            "type": "customEdge",
+            "style": "bool-bool",
+            "source": "0031",
+            "target": "0030",
+            "selected": false,
+            "sourceHandle": "bool-bool-0031-2",
+            "targetHandle": "bool-bool-0030-0"
+        },
+        {
+            "id": "xy-edge__bool-bool-0035-2bool-bool-0033-1",
+            "type": "customEdge",
+            "style": "bool-bool",
+            "source": "0035",
+            "target": "0033",
+            "selected": false,
+            "sourceHandle": "bool-bool-0035-2",
+            "targetHandle": "bool-bool-0033-1"
+        },
+        {
+            "id": "xy-edge__bool-bool-0034-2bool-bool-0033-0",
+            "type": "customEdge",
+            "style": "bool-bool",
+            "source": "0034",
+            "target": "0033",
+            "selected": false,
+            "sourceHandle": "bool-bool-0034-2",
+            "targetHandle": "bool-bool-0033-0"
+        },
+        {
+            "id": "xy-edge__0017tear-object-0017-9-0036tear-object-0036-0",
+            "type": "customEdge",
+            "style": "object-object",
+            "source": "0017",
+            "target": "0036",
+            "selected": false,
+            "sourceHandle": "tear-object-0017-9",
+            "targetHandle": "tear-object-0036-0"
+        },
+        {
+            "id": "xy-edge__0036number-number-0036-0-0034number-number-0034-0",
+            "type": "customEdge",
+            "style": "number-number",
+            "source": "0036",
+            "target": "0034",
+            "selected": false,
+            "sourceHandle": "number-number-0036-0",
+            "targetHandle": "number-number-0034-0"
+        },
+        {
+            "id": "xy-edge__0036number-number-0036-0-0031number-number-0031-0",
+            "type": "customEdge",
+            "style": "number-number",
+            "source": "0036",
+            "target": "0031",
+            "selected": false,
+            "sourceHandle": "number-number-0036-0",
+            "targetHandle": "number-number-0031-0"
+        },
+        {
+            "id": "xy-edge__0036number-number-0036-1-0035number-number-0035-0",
+            "type": "customEdge",
+            "style": "number-number",
+            "source": "0036",
+            "target": "0035",
+            "selected": false,
+            "sourceHandle": "number-number-0036-1",
+            "targetHandle": "number-number-0035-0"
+        },
+        {
+            "id": "xy-edge__0036number-number-0036-1-0032number-number-0032-0",
+            "type": "customEdge",
+            "style": "number-number",
+            "source": "0036",
+            "target": "0032",
+            "selected": false,
+            "sourceHandle": "number-number-0036-1",
+            "targetHandle": "number-number-0032-0"
+        },
+        {
+            "id": "xy-edge__0030bool-bool-0030-2-0002sq-bool-0002-0",
+            "type": "customEdge",
+            "style": "bool-bool",
+            "source": "0030",
+            "target": "0002",
+            "selected": false,
+            "sourceHandle": "bool-bool-0030-2",
+            "targetHandle": "sq-bool-0002-0"
+        },
+        {
+            "id": "xy-edge__0033bool-bool-0033-2-0002sq-bool-0002-1",
+            "type": "customEdge",
+            "style": "bool-bool",
+            "source": "0033",
+            "target": "0002",
+            "selected": false,
+            "sourceHandle": "bool-bool-0033-2",
+            "targetHandle": "sq-bool-0002-1"
+        },
+        {
+            "id": "xy-edge__0017clipping_strip-object-0017-11-0037clipping_strip-object-0037-0",
+            "type": "customEdge",
+            "style": "object-object",
+            "source": "0017",
+            "target": "0037",
+            "selected": false,
+            "sourceHandle": "clipping_strip-object-0017-11",
+            "targetHandle": "clipping_strip-object-0037-0"
+        },
+        {
+            "id": "xy-edge__0037number-number-0037-0-0040number-number-0040-0",
+            "type": "customEdge",
+            "style": "number-number",
+            "source": "0037",
+            "target": "0040",
+            "selected": false,
+            "sourceHandle": "number-number-0037-0",
+            "targetHandle": "number-number-0040-0"
+        },
+        {
+            "id": "xy-edge__0039bool-bool-0039-2-0038bool-bool-0038-1",
+            "type": "customEdge",
+            "style": "bool-bool",
+            "source": "0039",
+            "target": "0038",
+            "selected": false,
+            "sourceHandle": "bool-bool-0039-2",
+            "targetHandle": "bool-bool-0038-1"
+        },
+        {
+            "id": "xy-edge__0040bool-bool-0040-2-0038bool-bool-0038-0",
+            "type": "customEdge",
+            "style": "bool-bool",
+            "source": "0040",
+            "target": "0038",
+            "selected": false,
+            "sourceHandle": "bool-bool-0040-2",
+            "targetHandle": "bool-bool-0038-0"
+        },
+        {
+            "id": "xy-edge__bool-bool-0042-2bool-bool-0041-1",
+            "type": "customEdge",
+            "style": "bool-bool",
+            "source": "0042",
+            "target": "0041",
+            "selected": false,
+            "sourceHandle": "bool-bool-0042-2",
+            "targetHandle": "bool-bool-0041-1"
+        },
+        {
+            "id": "xy-edge__bool-bool-0043-2bool-bool-0041-0",
+            "type": "customEdge",
+            "style": "bool-bool",
+            "source": "0043",
+            "target": "0041",
+            "selected": false,
+            "sourceHandle": "bool-bool-0043-2",
+            "targetHandle": "bool-bool-0041-0"
+        },
+        {
+            "id": "xy-edge__0037number-number-0037-0-0043number-number-0043-0",
+            "type": "customEdge",
+            "style": "number-number",
+            "source": "0037",
+            "target": "0043",
+            "selected": false,
+            "sourceHandle": "number-number-0037-0",
+            "targetHandle": "number-number-0043-0"
+        },
+        {
+            "id": "xy-edge__0037number-number-0037-1-0042number-number-0042-0",
+            "type": "customEdge",
+            "style": "number-number",
+            "source": "0037",
+            "target": "0042",
+            "selected": false,
+            "sourceHandle": "number-number-0037-1",
+            "targetHandle": "number-number-0042-0"
+        },
+        {
+            "id": "xy-edge__0038bool-bool-0038-2-0002sq-bool-0002-0",
+            "type": "customEdge",
+            "style": "bool-bool",
+            "source": "0038",
+            "target": "0002",
+            "selected": false,
+            "sourceHandle": "bool-bool-0038-2",
+            "targetHandle": "sq-bool-0002-0"
+        },
+        {
+            "id": "xy-edge__0041bool-bool-0041-2-0002sq-bool-0002-1",
+            "type": "customEdge",
+            "style": "bool-bool",
+            "source": "0041",
+            "target": "0002",
+            "selected": false,
+            "sourceHandle": "bool-bool-0041-2",
+            "targetHandle": "sq-bool-0002-1"
+        },
+        {
+            "id": "xy-edge__bool-bool-0046-2bool-bool-0045-1",
+            "type": "customEdge",
+            "style": "bool-bool",
+            "source": "0046",
+            "target": "0045",
+            "selected": false,
+            "sourceHandle": "bool-bool-0046-2",
+            "targetHandle": "bool-bool-0045-1"
+        },
+        {
+            "id": "xy-edge__bool-bool-0047-2bool-bool-0045-0",
+            "type": "customEdge",
+            "style": "bool-bool",
+            "source": "0047",
+            "target": "0045",
+            "selected": false,
+            "sourceHandle": "bool-bool-0047-2",
+            "targetHandle": "bool-bool-0045-0"
+        },
+        {
+            "id": "xy-edge__bool-bool-0049-2bool-bool-0048-1",
+            "type": "customEdge",
+            "style": "bool-bool",
+            "source": "0049",
+            "target": "0048",
+            "selected": false,
+            "sourceHandle": "bool-bool-0049-2",
+            "targetHandle": "bool-bool-0048-1"
+        },
+        {
+            "id": "xy-edge__bool-bool-0050-2bool-bool-0048-0",
+            "type": "customEdge",
+            "style": "bool-bool",
+            "source": "0050",
+            "target": "0048",
+            "selected": false,
+            "sourceHandle": "bool-bool-0050-2",
+            "targetHandle": "bool-bool-0048-0"
+        },
+        {
+            "id": "xy-edge__0044number-number-0044-0-0047number-number-0047-0",
+            "type": "customEdge",
+            "style": "number-number",
+            "source": "0044",
+            "target": "0047",
+            "selected": false,
+            "sourceHandle": "number-number-0044-0",
+            "targetHandle": "number-number-0047-0"
+        },
+        {
+            "id": "xy-edge__0044number-number-0044-1-0046number-number-0046-0",
+            "type": "customEdge",
+            "style": "number-number",
+            "source": "0044",
+            "target": "0046",
+            "selected": false,
+            "sourceHandle": "number-number-0044-1",
+            "targetHandle": "number-number-0046-0"
+        },
+        {
+            "id": "xy-edge__0044number-number-0044-0-0050number-number-0050-0",
+            "type": "customEdge",
+            "style": "number-number",
+            "source": "0044",
+            "target": "0050",
+            "selected": false,
+            "sourceHandle": "number-number-0044-0",
+            "targetHandle": "number-number-0050-0"
+        },
+        {
+            "id": "xy-edge__0044number-number-0044-1-0049number-number-0049-0",
+            "type": "customEdge",
+            "style": "number-number",
+            "source": "0044",
+            "target": "0049",
+            "selected": false,
+            "sourceHandle": "number-number-0044-1",
+            "targetHandle": "number-number-0049-0"
+        },
+        {
+            "id": "xy-edge__0045bool-bool-0045-2-0002sq-bool-0002-0",
+            "type": "customEdge",
+            "style": "bool-bool",
+            "source": "0045",
+            "target": "0002",
+            "selected": false,
+            "sourceHandle": "bool-bool-0045-2",
+            "targetHandle": "sq-bool-0002-0"
+        },
+        {
+            "id": "xy-edge__0048bool-bool-0048-2-0002sq-bool-0002-1",
+            "type": "customEdge",
+            "style": "bool-bool",
+            "source": "0048",
+            "target": "0002",
+            "selected": false,
+            "sourceHandle": "bool-bool-0048-2",
+            "targetHandle": "sq-bool-0002-1"
+        },
+        {
+            "id": "xy-edge__0017healthy_branch-object-0017-16-0051healthy_branch-object-0051-0",
+            "type": "customEdge",
+            "style": "object-object",
+            "source": "0017",
+            "target": "0051",
+            "selected": false,
+            "sourceHandle": "healthy_branch-object-0017-16",
+            "targetHandle": "healthy_branch-object-0051-0"
+        },
+        {
+            "id": "xy-edge__0051number-number-0051-2-0052number-number-0052-0",
+            "type": "customEdge",
+            "style": "number-number",
+            "source": "0051",
+            "target": "0052",
+            "selected": false,
+            "sourceHandle": "number-number-0051-2",
+            "targetHandle": "number-number-0052-0"
+        },
+        {
+            "id": "xy-edge__0052bool-bool-0052-2-0002sq-bool-0002-0",
+            "type": "customEdge",
+            "style": "bool-bool",
+            "source": "0052",
+            "target": "0002",
+            "selected": false,
+            "sourceHandle": "bool-bool-0052-2",
+            "targetHandle": "sq-bool-0002-0"
+        },
+        {
+            "id": "xy-edge__0017bark-object-0017-18-0053bark-object-0053-0",
+            "type": "customEdge",
+            "style": "object-object",
+            "source": "0017",
+            "target": "0053",
+            "selected": false,
+            "sourceHandle": "bark-object-0017-18",
+            "targetHandle": "bark-object-0053-0"
+        },
+        {
+            "id": "xy-edge__0017bark-object-0017-18-0054number-number-0054-0",
+            "type": "customEdge",
+            "style": "object-number",
+            "source": "0017",
+            "target": "0054",
+            "selected": false,
+            "sourceHandle": "bark-object-0017-18",
+            "targetHandle": "number-number-0054-0"
+        },
+        {
+            "id": "xy-edge__0054bool-bool-0054-2-0002sq-bool-0002-0",
+            "type": "customEdge",
+            "style": "bool-bool",
+            "source": "0054",
+            "target": "0002",
+            "selected": false,
+            "sourceHandle": "bool-bool-0054-2",
+            "targetHandle": "sq-bool-0002-0"
+        },
+        {
+            "id": "xy-edge__0053number-number-0053-0-0055number-number-0055-0",
+            "type": "customEdge",
+            "style": "number-number",
+            "source": "0053",
+            "target": "0055",
+            "selected": false,
+            "sourceHandle": "number-number-0053-0",
+            "targetHandle": "number-number-0055-0"
+        },
+        {
+            "id": "xy-edge__0053number-number-0053-1-0056number-number-0056-0",
+            "type": "customEdge",
+            "style": "number-number",
+            "source": "0053",
+            "target": "0056",
+            "selected": false,
+            "sourceHandle": "number-number-0053-1",
+            "targetHandle": "number-number-0056-0"
+        },
+        {
+            "id": "xy-edge__0055bool-bool-0055-2-0057bool-bool-0057-0",
+            "type": "customEdge",
+            "style": "bool-bool",
+            "source": "0055",
+            "target": "0057",
+            "selected": false,
+            "sourceHandle": "bool-bool-0055-2",
+            "targetHandle": "bool-bool-0057-0"
+        },
+        {
+            "id": "xy-edge__0056bool-bool-0056-2-0057bool-bool-0057-1",
+            "type": "customEdge",
+            "style": "bool-bool",
+            "source": "0056",
+            "target": "0057",
+            "selected": false,
+            "sourceHandle": "bool-bool-0056-2",
+            "targetHandle": "bool-bool-0057-1"
+        },
+        {
+            "id": "xy-edge__0057bool-bool-0057-2-0002sq-bool-0002-1",
+            "type": "customEdge",
+            "style": "bool-bool",
+            "source": "0057",
+            "target": "0002",
+            "selected": false,
+            "sourceHandle": "bool-bool-0057-2",
+            "targetHandle": "sq-bool-0002-1"
+        },
+        {
+            "id": "xy-edge__0017black_branch-object-0017-17-0058black_branch-object-0058-0",
+            "type": "customEdge",
+            "style": "object-object",
+            "source": "0017",
+            "target": "0058",
+            "selected": false,
+            "sourceHandle": "black_branch-object-0017-17",
+            "targetHandle": "black_branch-object-0058-0"
+        },
+        {
+            "id": "xy-edge__0058number-number-0058-0-0059number-number-0059-0",
+            "type": "customEdge",
+            "style": "number-number",
+            "source": "0058",
+            "target": "0059",
+            "selected": false,
+            "sourceHandle": "number-number-0058-0",
+            "targetHandle": "number-number-0059-0"
+        },
+        {
+            "id": "xy-edge__0058number-number-0058-0-0061number-number-0061-0",
+            "type": "customEdge",
+            "style": "number-number",
+            "source": "0058",
+            "target": "0061",
+            "selected": false,
+            "sourceHandle": "number-number-0058-0",
+            "targetHandle": "number-number-0061-0"
+        },
+        {
+            "id": "xy-edge__0058number-number-0058-1-0060number-number-0060-0",
+            "type": "customEdge",
+            "style": "number-number",
+            "source": "0058",
+            "target": "0060",
+            "selected": false,
+            "sourceHandle": "number-number-0058-1",
+            "targetHandle": "number-number-0060-0"
+        },
+        {
+            "id": "xy-edge__0059bool-bool-0059-2-0064bool-bool-0064-0",
+            "type": "customEdge",
+            "style": "bool-bool",
+            "source": "0059",
+            "target": "0064",
+            "selected": false,
+            "sourceHandle": "bool-bool-0059-2",
+            "targetHandle": "bool-bool-0064-0"
+        },
+        {
+            "id": "xy-edge__0060bool-bool-0060-2-0064bool-bool-0064-1",
+            "type": "customEdge",
+            "style": "bool-bool",
+            "source": "0060",
+            "target": "0064",
+            "selected": false,
+            "sourceHandle": "bool-bool-0060-2",
+            "targetHandle": "bool-bool-0064-1"
+        },
+        {
+            "id": "xy-edge__0061bool-bool-0061-2-0063bool-bool-0063-0",
+            "type": "customEdge",
+            "style": "bool-bool",
+            "source": "0061",
+            "target": "0063",
+            "selected": false,
+            "sourceHandle": "bool-bool-0061-2",
+            "targetHandle": "bool-bool-0063-0"
+        },
+        {
+            "id": "xy-edge__0062bool-bool-0062-2-0063bool-bool-0063-1",
+            "type": "customEdge",
+            "style": "bool-bool",
+            "source": "0062",
+            "target": "0063",
+            "selected": false,
+            "sourceHandle": "bool-bool-0062-2",
+            "targetHandle": "bool-bool-0063-1"
+        },
+        {
+            "id": "xy-edge__0064bool-bool-0064-2-0002sq-bool-0002-0",
+            "type": "customEdge",
+            "style": "bool-bool",
+            "source": "0064",
+            "target": "0002",
+            "selected": false,
+            "sourceHandle": "bool-bool-0064-2",
+            "targetHandle": "sq-bool-0002-0"
+        },
+        {
+            "id": "xy-edge__0063bool-bool-0063-2-0002sq-bool-0002-1",
+            "type": "customEdge",
+            "style": "bool-bool",
+            "source": "0063",
+            "target": "0002",
+            "selected": false,
+            "sourceHandle": "bool-bool-0063-2",
+            "targetHandle": "sq-bool-0002-1"
+        },
+        {
+            "id": "xy-edge__bool-bool-0065-2bool-bool-0070-0",
+            "type": "customEdge",
+            "style": "bool-bool",
+            "source": "0065",
+            "target": "0070",
+            "selected": false,
+            "sourceHandle": "bool-bool-0065-2",
+            "targetHandle": "bool-bool-0070-0"
+        },
+        {
+            "id": "xy-edge__bool-bool-0066-2bool-bool-0070-1",
+            "type": "customEdge",
+            "style": "bool-bool",
+            "source": "0066",
+            "target": "0070",
+            "selected": false,
+            "sourceHandle": "bool-bool-0066-2",
+            "targetHandle": "bool-bool-0070-1"
+        },
+        {
+            "id": "xy-edge__bool-bool-0067-2bool-bool-0069-0",
+            "type": "customEdge",
+            "style": "bool-bool",
+            "source": "0067",
+            "target": "0069",
+            "selected": false,
+            "sourceHandle": "bool-bool-0067-2",
+            "targetHandle": "bool-bool-0069-0"
+        },
+        {
+            "id": "xy-edge__bool-bool-0068-2bool-bool-0069-1",
+            "type": "customEdge",
+            "style": "bool-bool",
+            "source": "0068",
+            "target": "0069",
+            "selected": false,
+            "sourceHandle": "bool-bool-0068-2",
+            "targetHandle": "bool-bool-0069-1"
+        },
+        {
+            "id": "xy-edge__0071number-number-0071-0-0065number-number-0065-0",
+            "type": "customEdge",
+            "style": "number-number",
+            "source": "0071",
+            "target": "0065",
+            "selected": false,
+            "sourceHandle": "number-number-0071-0",
+            "targetHandle": "number-number-0065-0"
+        },
+        {
+            "id": "xy-edge__0071number-number-0071-0-0067number-number-0067-0",
+            "type": "customEdge",
+            "style": "number-number",
+            "source": "0071",
+            "target": "0067",
+            "selected": false,
+            "sourceHandle": "number-number-0071-0",
+            "targetHandle": "number-number-0067-0"
+        },
+        {
+            "id": "xy-edge__0071number-number-0071-1-0066number-number-0066-0",
+            "type": "customEdge",
+            "style": "number-number",
+            "source": "0071",
+            "target": "0066",
+            "selected": false,
+            "sourceHandle": "number-number-0071-1",
+            "targetHandle": "number-number-0066-0"
+        },
+        {
+            "id": "xy-edge__0071number-number-0071-1-0068number-number-0068-0",
+            "type": "customEdge",
+            "style": "number-number",
+            "source": "0071",
+            "target": "0068",
+            "selected": false,
+            "sourceHandle": "number-number-0071-1",
+            "targetHandle": "number-number-0068-0"
+        },
+        {
+            "id": "xy-edge__0070bool-bool-0070-2-0002sq-bool-0002-0",
+            "type": "customEdge",
+            "style": "bool-bool",
+            "source": "0070",
+            "target": "0002",
+            "selected": false,
+            "sourceHandle": "bool-bool-0070-2",
+            "targetHandle": "sq-bool-0002-0"
+        },
+        {
+            "id": "xy-edge__0069bool-bool-0069-2-0002sq-bool-0002-1",
+            "type": "customEdge",
+            "style": "bool-bool",
+            "source": "0069",
+            "target": "0002",
+            "selected": false,
+            "sourceHandle": "bool-bool-0069-2",
+            "targetHandle": "sq-bool-0002-1"
+        },
+        {
+            "id": "xy-edge__0017white_rot-object-0017-21-0071white_rot-object-0071-0",
+            "type": "customEdge",
+            "style": "object-object",
+            "source": "0017",
+            "target": "0071",
+            "selected": false,
+            "sourceHandle": "white_rot-object-0017-21",
+            "targetHandle": "white_rot-object-0071-0"
+        },
+        {
+            "id": "xy-edge__bool-bool-0072-2bool-bool-0077-0",
+            "type": "customEdge",
+            "style": "bool-bool",
+            "source": "0072",
+            "target": "0077",
+            "selected": false,
+            "sourceHandle": "bool-bool-0072-2",
+            "targetHandle": "bool-bool-0077-0"
+        },
+        {
+            "id": "xy-edge__bool-bool-0073-2bool-bool-0077-1",
+            "type": "customEdge",
+            "style": "bool-bool",
+            "source": "0073",
+            "target": "0077",
+            "selected": false,
+            "sourceHandle": "bool-bool-0073-2",
+            "targetHandle": "bool-bool-0077-1"
+        },
+        {
+            "id": "xy-edge__bool-bool-0074-2bool-bool-0076-0",
+            "type": "customEdge",
+            "style": "bool-bool",
+            "source": "0074",
+            "target": "0076",
+            "selected": false,
+            "sourceHandle": "bool-bool-0074-2",
+            "targetHandle": "bool-bool-0076-0"
+        },
+        {
+            "id": "xy-edge__bool-bool-0075-2bool-bool-0076-1",
+            "type": "customEdge",
+            "style": "bool-bool",
+            "source": "0075",
+            "target": "0076",
+            "selected": false,
+            "sourceHandle": "bool-bool-0075-2",
+            "targetHandle": "bool-bool-0076-1"
+        },
+        {
+            "id": "xy-edge__0078number-number-0078-0-0072number-number-0072-0",
+            "type": "customEdge",
+            "style": "number-number",
+            "source": "0078",
+            "target": "0072",
+            "selected": false,
+            "sourceHandle": "number-number-0078-0",
+            "targetHandle": "number-number-0072-0"
+        },
+        {
+            "id": "xy-edge__0078number-number-0078-0-0074number-number-0074-0",
+            "type": "customEdge",
+            "style": "number-number",
+            "source": "0078",
+            "target": "0074",
+            "selected": false,
+            "sourceHandle": "number-number-0078-0",
+            "targetHandle": "number-number-0074-0"
+        },
+        {
+            "id": "xy-edge__0078number-number-0078-1-0073number-number-0073-0",
+            "type": "customEdge",
+            "style": "number-number",
+            "source": "0078",
+            "target": "0073",
+            "selected": false,
+            "sourceHandle": "number-number-0078-1",
+            "targetHandle": "number-number-0073-0"
+        },
+        {
+            "id": "xy-edge__0078number-number-0078-1-0075number-number-0075-0",
+            "type": "customEdge",
+            "style": "number-number",
+            "source": "0078",
+            "target": "0075",
+            "selected": false,
+            "sourceHandle": "number-number-0078-1",
+            "targetHandle": "number-number-0075-0"
+        },
+        {
+            "id": "xy-edge__0017brown_rot-object-0017-22-0078brown_rot-object-0078-0",
+            "type": "customEdge",
+            "style": "object-object",
+            "source": "0017",
+            "target": "0078",
+            "selected": false,
+            "sourceHandle": "brown_rot-object-0017-22",
+            "targetHandle": "brown_rot-object-0078-0"
+        },
+        {
+            "id": "xy-edge__0077bool-bool-0077-2-0002sq-bool-0002-0",
+            "type": "customEdge",
+            "style": "bool-bool",
+            "source": "0077",
+            "target": "0002",
+            "selected": false,
+            "sourceHandle": "bool-bool-0077-2",
+            "targetHandle": "sq-bool-0002-0"
+        },
+        {
+            "id": "xy-edge__0076bool-bool-0076-2-0002sq-bool-0002-1",
+            "type": "customEdge",
+            "style": "bool-bool",
+            "source": "0076",
+            "target": "0002",
+            "selected": false,
+            "sourceHandle": "bool-bool-0076-2",
+            "targetHandle": "sq-bool-0002-1"
+        },
+        {
+            "id": "xy-edge__0058number-number-0058-1-0062number-number-0062-0",
+            "type": "customEdge",
+            "style": "number-number",
+            "source": "0058",
+            "target": "0062",
+            "selected": false,
+            "sourceHandle": "number-number-0058-1",
+            "targetHandle": "number-number-0062-0"
+        },
+        {
+            "id": "xy-edge__0017missing_edge-object-0017-20-0044missing_edge-object-0044-0",
+            "type": "customEdge",
+            "style": "object-object",
+            "source": "0017",
+            "target": "0044",
+            "selected": false,
+            "sourceHandle": "missing_edge-object-0017-20",
+            "targetHandle": "missing_edge-object-0044-0"
+        }
+    ],
+    "nodes": [
+        {
+            "id": "0002",
+            "data": {
+                "nodeData": {
+                    "name": "Set Quality",
+                    "values": [
+                        [
+                            "bool-bool-0021-2",
+                            "bool-bool-0024-2",
+                            "bool-bool-0030-2",
+                            "bool-bool-0038-2",
+                            "bool-bool-0045-2",
+                            "bool-bool-0052-2",
+                            "bool-bool-0054-2",
+                            "bool-bool-0064-2",
+                            "bool-bool-0070-2",
+                            "bool-bool-0077-2"
+                        ],
+                        [
+                            "bool-bool-0022-2",
+                            "bool-bool-0027-2",
+                            "bool-bool-0033-2",
+                            "bool-bool-0041-2",
+                            "bool-bool-0048-2",
+                            "bool-bool-0057-2",
+                            "bool-bool-0063-2",
+                            "bool-bool-0069-2",
+                            "bool-bool-0076-2"
+                        ],
+                        [],
+                        [
+                            "bool-bool-0009-2",
+                            "bool-bool-0016-2",
+                            "bool-bool-0018-2",
+                            "bool-bool-0019-2"
+                        ],
+                        [],
+                        [],
+                        [],
+                        [],
+                        [],
+                        [],
+                        [],
+                        []
+                    ],
+                    "handles": [
+                        {
+                            "y": 0,
+                            "id": "sq-bool-0002-0",
+                            "properties": {
+                                "side": "WEST"
+                            }
+                        },
+                        {
+                            "y": 1,
+                            "id": "sq-bool-0002-1",
+                            "properties": {
+                                "side": "WEST"
+                            }
+                        },
+                        {
+                            "y": 2,
+                            "id": "sq-bool-0002-2",
+                            "properties": {
+                                "side": "WEST"
+                            }
+                        },
+                        {
+                            "y": 3,
+                            "id": "sq-bool-0002-3",
+                            "properties": {
+                                "side": "WEST"
+                            }
+                        }
+                    ],
+                    "flowNodeType": "setQualityNode",
+                    "realNodeType": "setQualityNode"
+                }
+            },
+            "type": "setQualityNode",
+            "height": 11642,
+            "origin": [0, 0],
+            "dragging": false,
+            "measured": {
+                "width": 180,
+                "height": 11642
+            },
+            "position": {
+                "x": 3700,
+                "y": -50
+            },
+            "selected": false
+        },
+        {
+            "id": "0003",
+            "data": {
+                "nodeData": {
+                    "name": "Greater than",
+                    "values": [null, 1960],
+                    "handles": [
+                        {
+                            "y": 0,
+                            "id": "number-number-0003-0",
+                            "properties": {
+                                "side": "WEST"
+                            }
+                        },
+                        {
+                            "y": 1,
+                            "id": "number-number-0003-1",
+                            "properties": {
+                                "side": "WEST"
+                            }
+                        },
+                        {
+                            "y": 0,
+                            "id": "bool-bool-0003-2",
+                            "properties": {
+                                "side": "EAST"
+                            }
+                        }
+                    ],
+                    "operator": ">",
+                    "flowNodeType": "ifNode",
+                    "realNodeType": "gtNode",
+                    "unit": [null, null]
+                }
+            },
+            "type": "ifNode",
+            "origin": [0, 0],
+            "measured": {
+                "width": 180,
+                "height": 182
+            },
+            "position": {
+                "x": 500,
+                "y": 1475
+            },
+            "selected": false
+        },
+        {
+            "id": "0004",
+            "data": {
+                "nodeData": {
+                    "name": "Greater than",
+                    "values": [null, 1960],
+                    "handles": [
+                        {
+                            "y": 0,
+                            "id": "number-number-0004-0",
+                            "properties": {
+                                "side": "WEST"
+                            }
+                        },
+                        {
+                            "y": 1,
+                            "id": "number-number-0004-1",
+                            "properties": {
+                                "side": "WEST"
+                            }
+                        },
+                        {
+                            "y": 0,
+                            "id": "bool-bool-0004-2",
+                            "properties": {
+                                "side": "EAST"
+                            }
+                        }
+                    ],
+                    "operator": ">",
+                    "flowNodeType": "ifNode",
+                    "realNodeType": "gtNode",
+                    "unit": [null, null]
+                }
+            },
+            "type": "ifNode",
+            "origin": [0, 0],
+            "measured": {
+                "width": 180,
+                "height": 182
+            },
+            "position": {
+                "x": 500,
+                "y": 650
+            },
+            "selected": false
+        },
+        {
+            "id": "0005",
+            "data": {
+                "nodeData": {
+                    "name": "Smaller than",
+                    "values": [null, 1910],
+                    "handles": [
+                        {
+                            "y": 0,
+                            "id": "number-number-0005-0",
+                            "properties": {
+                                "side": "WEST"
+                            }
+                        },
+                        {
+                            "y": 1,
+                            "id": "number-number-0005-1",
+                            "properties": {
+                                "side": "WEST"
+                            }
+                        },
+                        {
+                            "y": 0,
+                            "id": "bool-bool-0005-2",
+                            "properties": {
+                                "side": "EAST"
+                            }
+                        }
+                    ],
+                    "operator": "<",
+                    "flowNodeType": "ifNode",
+                    "realNodeType": "stNode",
+                    "unit": [null, null]
+                }
+            },
+            "type": "ifNode",
+            "origin": [0, 0],
+            "measured": {
+                "width": 180,
+                "height": 182
+            },
+            "position": {
+                "x": 500,
+                "y": 1200
+            },
+            "selected": false
+        },
+        {
+            "id": "0006",
+            "data": {
+                "nodeData": {
+                    "name": "Smaller than",
+                    "values": [null, 1910],
+                    "handles": [
+                        {
+                            "y": 0,
+                            "id": "number-number-0006-0",
+                            "properties": {
+                                "side": "WEST"
+                            }
+                        },
+                        {
+                            "y": 1,
+                            "id": "number-number-0006-1",
+                            "properties": {
+                                "side": "WEST"
+                            }
+                        },
+                        {
+                            "y": 0,
+                            "id": "bool-bool-0006-2",
+                            "properties": {
+                                "side": "EAST"
+                            }
+                        }
+                    ],
+                    "operator": "<",
+                    "flowNodeType": "ifNode",
+                    "realNodeType": "stNode",
+                    "unit": [null, null]
+                }
+            },
+            "type": "ifNode",
+            "origin": [0, 0],
+            "measured": {
+                "width": 180,
+                "height": 182
+            },
+            "position": {
+                "x": 500,
+                "y": 925
+            },
+            "selected": false
+        },
+        {
+            "id": "0007",
+            "data": {
+                "nodeData": {
+                    "name": "Or",
+                    "values": [null, null],
+                    "handles": [
+                        {
+                            "y": 0,
+                            "id": "bool-bool-0007-0",
+                            "properties": {
+                                "side": "WEST"
+                            }
+                        },
+                        {
+                            "y": 1,
+                            "id": "bool-bool-0007-1",
+                            "properties": {
+                                "side": "WEST"
+                            }
+                        },
+                        {
+                            "y": 0,
+                            "id": "bool-bool-0007-2",
+                            "properties": {
+                                "side": "EAST"
+                            }
+                        }
+                    ],
+                    "operator": "or",
+                    "flowNodeType": "logicNode",
+                    "realNodeType": "orNode"
+                }
+            },
+            "type": "logicNode",
+            "origin": [0, 0],
+            "measured": {
+                "width": 180,
+                "height": 166
+            },
+            "position": {
+                "x": 850,
+                "y": 725
+            },
+            "selected": false
+        },
+        {
+            "id": "0008",
+            "data": {
+                "nodeData": {
+                    "name": "Or",
+                    "values": [null, null],
+                    "handles": [
+                        {
+                            "y": 0,
+                            "id": "bool-bool-0008-0",
+                            "properties": {
+                                "side": "WEST"
+                            }
+                        },
+                        {
+                            "y": 1,
+                            "id": "bool-bool-0008-1",
+                            "properties": {
+                                "side": "WEST"
+                            }
+                        },
+                        {
+                            "y": 0,
+                            "id": "bool-bool-0008-2",
+                            "properties": {
+                                "side": "EAST"
+                            }
+                        }
+                    ],
+                    "operator": "or",
+                    "flowNodeType": "logicNode",
+                    "realNodeType": "orNode"
+                }
+            },
+            "type": "logicNode",
+            "origin": [0, 0],
+            "measured": {
+                "width": 180,
+                "height": 166
+            },
+            "position": {
+                "x": 850,
+                "y": 1100
+            },
+            "selected": false
+        },
+        {
+            "id": "0009",
+            "data": {
+                "nodeData": {
+                    "name": "Or",
+                    "values": [null, null],
+                    "handles": [
+                        {
+                            "y": 0,
+                            "id": "bool-bool-0009-0",
+                            "properties": {
+                                "side": "WEST"
+                            }
+                        },
+                        {
+                            "y": 1,
+                            "id": "bool-bool-0009-1",
+                            "properties": {
+                                "side": "WEST"
+                            }
+                        },
+                        {
+                            "y": 0,
+                            "id": "bool-bool-0009-2",
+                            "properties": {
+                                "side": "EAST"
+                            }
+                        }
+                    ],
+                    "operator": "or",
+                    "flowNodeType": "logicNode",
+                    "realNodeType": "orNode"
+                }
+            },
+            "type": "logicNode",
+            "origin": [0, 0],
+            "measured": {
+                "width": 180,
+                "height": 166
+            },
+            "position": {
+                "x": 1175,
+                "y": 975
+            },
+            "selected": false
+        },
+        {
+            "id": "0010",
+            "data": {
+                "nodeData": {
+                    "name": "Greater than",
+                    "values": [null, 1980],
+                    "handles": [
+                        {
+                            "y": 0,
+                            "id": "number-number-0010-0",
+                            "properties": {
+                                "side": "WEST"
+                            }
+                        },
+                        {
+                            "y": 1,
+                            "id": "number-number-0010-1",
+                            "properties": {
+                                "side": "WEST"
+                            }
+                        },
+                        {
+                            "y": 0,
+                            "id": "bool-bool-0010-2",
+                            "properties": {
+                                "side": "EAST"
+                            }
+                        }
+                    ],
+                    "operator": ">",
+                    "flowNodeType": "ifNode",
+                    "realNodeType": "gtNode",
+                    "unit": [null, null]
+                }
+            },
+            "type": "ifNode",
+            "origin": [0, 0],
+            "measured": {
+                "width": 180,
+                "height": 182
+            },
+            "position": {
+                "x": 500,
+                "y": 2300
+            },
+            "selected": false
+        },
+        {
+            "id": "0011",
+            "data": {
+                "nodeData": {
+                    "name": "Greater than",
+                    "values": [null, 1980],
+                    "handles": [
+                        {
+                            "y": 0,
+                            "id": "number-number-0011-0",
+                            "properties": {
+                                "side": "WEST"
+                            }
+                        },
+                        {
+                            "y": 1,
+                            "id": "number-number-0011-1",
+                            "properties": {
+                                "side": "WEST"
+                            }
+                        },
+                        {
+                            "y": 0,
+                            "id": "bool-bool-0011-2",
+                            "properties": {
+                                "side": "EAST"
+                            }
+                        }
+                    ],
+                    "operator": ">",
+                    "flowNodeType": "ifNode",
+                    "realNodeType": "gtNode",
+                    "unit": [null, null]
+                }
+            },
+            "type": "ifNode",
+            "origin": [0, 0],
+            "measured": {
+                "width": 180,
+                "height": 182
+            },
+            "position": {
+                "x": 500,
+                "y": 1750
+            },
+            "selected": false
+        },
+        {
+            "id": "0012",
+            "data": {
+                "nodeData": {
+                    "name": "Smaller than",
+                    "values": [null, 1850],
+                    "handles": [
+                        {
+                            "y": 0,
+                            "id": "number-number-0012-0",
+                            "properties": {
+                                "side": "WEST"
+                            }
+                        },
+                        {
+                            "y": 1,
+                            "id": "number-number-0012-1",
+                            "properties": {
+                                "side": "WEST"
+                            }
+                        },
+                        {
+                            "y": 0,
+                            "id": "bool-bool-0012-2",
+                            "properties": {
+                                "side": "EAST"
+                            }
+                        }
+                    ],
+                    "operator": "<",
+                    "flowNodeType": "ifNode",
+                    "realNodeType": "stNode",
+                    "unit": [null, null]
+                }
+            },
+            "type": "ifNode",
+            "origin": [0, 0],
+            "measured": {
+                "width": 180,
+                "height": 182
+            },
+            "position": {
+                "x": 500,
+                "y": 2575
+            },
+            "selected": false
+        },
+        {
+            "id": "0013",
+            "data": {
+                "nodeData": {
+                    "name": "Smaller than",
+                    "values": [null, 1850],
+                    "handles": [
+                        {
+                            "y": 0,
+                            "id": "number-number-0013-0",
+                            "properties": {
+                                "side": "WEST"
+                            }
+                        },
+                        {
+                            "y": 1,
+                            "id": "number-number-0013-1",
+                            "properties": {
+                                "side": "WEST"
+                            }
+                        },
+                        {
+                            "y": 0,
+                            "id": "bool-bool-0013-2",
+                            "properties": {
+                                "side": "EAST"
+                            }
+                        }
+                    ],
+                    "operator": "<",
+                    "flowNodeType": "ifNode",
+                    "realNodeType": "stNode",
+                    "unit": [null, null]
+                }
+            },
+            "type": "ifNode",
+            "origin": [0, 0],
+            "measured": {
+                "width": 180,
+                "height": 182
+            },
+            "position": {
+                "x": 500,
+                "y": 2025
+            },
+            "selected": false
+        },
+        {
+            "id": "0014",
+            "data": {
+                "nodeData": {
+                    "name": "Or",
+                    "values": [null, null],
+                    "handles": [
+                        {
+                            "y": 0,
+                            "id": "bool-bool-0014-0",
+                            "properties": {
+                                "side": "WEST"
+                            }
+                        },
+                        {
+                            "y": 1,
+                            "id": "bool-bool-0014-1",
+                            "properties": {
+                                "side": "WEST"
+                            }
+                        },
+                        {
+                            "y": 0,
+                            "id": "bool-bool-0014-2",
+                            "properties": {
+                                "side": "EAST"
+                            }
+                        }
+                    ],
+                    "operator": "or",
+                    "flowNodeType": "logicNode",
+                    "realNodeType": "orNode"
+                }
+            },
+            "type": "logicNode",
+            "origin": [0, 0],
+            "measured": {
+                "width": 180,
+                "height": 166
+            },
+            "position": {
+                "x": 850,
+                "y": 2050
+            },
+            "selected": false
+        },
+        {
+            "id": "0015",
+            "data": {
+                "nodeData": {
+                    "name": "Or",
+                    "values": [null, null],
+                    "handles": [
+                        {
+                            "y": 0,
+                            "id": "bool-bool-0015-0",
+                            "properties": {
+                                "side": "WEST"
+                            }
+                        },
+                        {
+                            "y": 1,
+                            "id": "bool-bool-0015-1",
+                            "properties": {
+                                "side": "WEST"
+                            }
+                        },
+                        {
+                            "y": 0,
+                            "id": "bool-bool-0015-2",
+                            "properties": {
+                                "side": "EAST"
+                            }
+                        }
+                    ],
+                    "operator": "or",
+                    "flowNodeType": "logicNode",
+                    "realNodeType": "orNode"
+                }
+            },
+            "type": "logicNode",
+            "origin": [0, 0],
+            "measured": {
+                "width": 180,
+                "height": 166
+            },
+            "position": {
+                "x": 850,
+                "y": 2325
+            },
+            "selected": false
+        },
+        {
+            "id": "0016",
+            "data": {
+                "nodeData": {
+                    "name": "Or",
+                    "values": [null, null],
+                    "handles": [
+                        {
+                            "y": 0,
+                            "id": "bool-bool-0016-0",
+                            "properties": {
+                                "side": "WEST"
+                            }
+                        },
+                        {
+                            "y": 1,
+                            "id": "bool-bool-0016-1",
+                            "properties": {
+                                "side": "WEST"
+                            }
+                        },
+                        {
+                            "y": 0,
+                            "id": "bool-bool-0016-2",
+                            "properties": {
+                                "side": "EAST"
+                            }
+                        }
+                    ],
+                    "operator": "or",
+                    "flowNodeType": "logicNode",
+                    "realNodeType": "orNode"
+                }
+            },
+            "type": "logicNode",
+            "origin": [0, 0],
+            "measured": {
+                "width": 180,
+                "height": 166
+            },
+            "position": {
+                "x": 1175,
+                "y": 2200
+            },
+            "selected": false
+        },
+        {
+            "id": "0017",
+            "data": {
+                "nodeData": {
+                    "name": "Start",
+                    "cases": [
+                        {
+                            "caseId": 0,
+                            "caseName": "Leading width",
+                            "caseType": "number",
+                            "realCaseType": "number",
+                            "caseUnit": "mm"
+                        },
+                        {
+                            "caseId": 1,
+                            "caseName": "Trailing width",
+                            "caseType": "number",
+                            "realCaseType": "number",
+                            "caseUnit": "mm"
+                        },
+                        {
+                            "caseId": 2,
+                            "caseName": "Upper length",
+                            "caseType": "number",
+                            "realCaseType": "number",
+                            "caseUnit": "mm"
+                        },
+                        {
+                            "caseId": 3,
+                            "caseName": "Lower length",
+                            "caseType": "number",
+                            "realCaseType": "number",
+                            "caseUnit": "mm"
+                        },
+                        {
+                            "caseId": 4,
+                            "caseName": "Area",
+                            "caseType": "number",
+                            "realCaseType": "number",
+                            "caseUnit": "mm\u00b2"
+                        },
+                        {
+                            "caseId": 5,
+                            "caseName": "Angle",
+                            "caseType": "number",
+                            "realCaseType": "number",
+                            "caseUnit": "\u00b0"
+                        },
+                        {
+                            "caseId": 6,
+                            "caseName": "Humidity",
+                            "caseType": "number",
+                            "realCaseType": "number",
+                            "caseUnit": "%"
+                        },
+                        {
+                            "caseId": 7,
+                            "caseName": "Humidity peak",
+                            "caseType": "number",
+                            "realCaseType": "number",
+                            "caseUnit": "%"
+                        },
+                        {
+                            "caseId": 8,
+                            "caseName": "",
+                            "caseType": "separator",
+                            "caseUnit": null
+                        },
+                        {
+                            "caseId": 9,
+                            "caseName": "Tear",
+                            "caseType": "object",
+                            "realCaseType": "tear",
+                            "caseUnit": null
+                        },
+                        {
+                            "caseId": 10,
+                            "caseName": "Inner tear",
+                            "caseType": "object",
+                            "realCaseType": "inner_tear",
+                            "caseUnit": null
+                        },
+                        {
+                            "caseId": 11,
+                            "caseName": "Clipping strip",
+                            "caseType": "object",
+                            "realCaseType": "clipping_strip",
+                            "caseUnit": null
+                        },
+                        {
+                            "caseId": 12,
+                            "caseName": "Hole",
+                            "caseType": "object",
+                            "realCaseType": "hole",
+                            "caseUnit": null
+                        },
+                        {
+                            "caseId": 13,
+                            "caseName": "Discoloration",
+                            "caseType": "object",
+                            "realCaseType": "discoloration",
+                            "caseUnit": null
+                        },
+                        {
+                            "caseId": 14,
+                            "caseName": "Stipple",
+                            "caseType": "object",
+                            "realCaseType": "stipple",
+                            "caseUnit": null
+                        },
+                        {
+                            "caseId": 15,
+                            "caseName": "Branch",
+                            "caseType": "object",
+                            "realCaseType": "branch",
+                            "caseUnit": null
+                        },
+                        {
+                            "caseId": 16,
+                            "caseName": "Healthy branch",
+                            "caseType": "object",
+                            "realCaseType": "healthy_branch",
+                            "caseUnit": null
+                        },
+                        {
+                            "caseId": 17,
+                            "caseName": "Black branch",
+                            "caseType": "object",
+                            "realCaseType": "black_branch",
+                            "caseUnit": null
+                        },
+                        {
+                            "caseId": 18,
+                            "caseName": "Bark",
+                            "caseType": "object",
+                            "realCaseType": "bark",
+                            "caseUnit": null
+                        },
+                        {
+                            "caseId": 19,
+                            "caseName": "Rotary growth",
+                            "caseType": "object",
+                            "realCaseType": "rotary_growth",
+                            "caseUnit": null
+                        },
+                        {
+                            "caseId": 20,
+                            "caseName": "Missing edge",
+                            "caseType": "object",
+                            "realCaseType": "missing_edge",
+                            "caseUnit": null
+                        },
+                        {
+                            "caseId": 21,
+                            "caseName": "White rot",
+                            "caseType": "object",
+                            "realCaseType": "white_rot",
+                            "caseUnit": null
+                        },
+                        {
+                            "caseId": 22,
+                            "caseName": "Brown rot",
+                            "caseType": "object",
+                            "realCaseType": "brown_rot",
+                            "caseUnit": null
+                        }
+                    ],
+                    "values": [null],
+                    "handles": [
+                        {
+                            "y": 0,
+                            "id": "number-number-0017-0",
+                            "properties": {
+                                "side": "EAST"
+                            }
+                        },
+                        {
+                            "y": 1,
+                            "id": "number-number-0017-1",
+                            "properties": {
+                                "side": "EAST"
+                            }
+                        },
+                        {
+                            "y": 2,
+                            "id": "number-number-0017-2",
+                            "properties": {
+                                "side": "EAST"
+                            }
+                        },
+                        {
+                            "y": 3,
+                            "id": "number-number-0017-3",
+                            "properties": {
+                                "side": "EAST"
+                            }
+                        },
+                        {
+                            "y": 4,
+                            "id": "number-number-0017-4",
+                            "properties": {
+                                "side": "EAST"
+                            }
+                        },
+                        {
+                            "y": 5,
+                            "id": "number-number-0017-5",
+                            "properties": {
+                                "side": "EAST"
+                            }
+                        },
+                        {
+                            "y": 6,
+                            "id": "number-number-0017-6",
+                            "properties": {
+                                "side": "EAST"
+                            }
+                        },
+                        {
+                            "y": 7,
+                            "id": "number-number-0017-7",
+                            "properties": {
+                                "side": "EAST"
+                            }
+                        },
+                        {
+                            "y": 9,
+                            "id": "tear-object-0017-9",
+                            "properties": {
+                                "side": "EAST"
+                            }
+                        },
+                        {
+                            "y": 10,
+                            "id": "inner_tear-object-0017-10",
+                            "properties": {
+                                "side": "EAST"
+                            }
+                        },
+                        {
+                            "y": 11,
+                            "id": "clipping_strip-object-0017-11",
+                            "properties": {
+                                "side": "EAST"
+                            }
+                        },
+                        {
+                            "y": 12,
+                            "id": "hole-object-0017-12",
+                            "properties": {
+                                "side": "EAST"
+                            }
+                        },
+                        {
+                            "y": 13,
+                            "id": "discoloration-object-0017-13",
+                            "properties": {
+                                "side": "EAST"
+                            }
+                        },
+                        {
+                            "y": 14,
+                            "id": "stipple-object-0017-14",
+                            "properties": {
+                                "side": "EAST"
+                            }
+                        },
+                        {
+                            "y": 15,
+                            "id": "branch-object-0017-15",
+                            "properties": {
+                                "side": "EAST"
+                            }
+                        },
+                        {
+                            "y": 16,
+                            "id": "healthy_branch-object-0017-16",
+                            "properties": {
+                                "side": "EAST"
+                            }
+                        },
+                        {
+                            "y": 17,
+                            "id": "black_branch-object-0017-17",
+                            "properties": {
+                                "side": "EAST"
+                            }
+                        },
+                        {
+                            "y": 18,
+                            "id": "bark-object-0017-18",
+                            "properties": {
+                                "side": "EAST"
+                            }
+                        },
+                        {
+                            "y": 19,
+                            "id": "rotary_growth-object-0017-19",
+                            "properties": {
+                                "side": "EAST"
+                            }
+                        },
+                        {
+                            "y": 20,
+                            "id": "missing_edge-object-0017-20",
+                            "properties": {
+                                "side": "EAST"
+                            }
+                        },
+                        {
+                            "y": 21,
+                            "id": "white_rot-object-0017-21",
+                            "properties": {
+                                "side": "EAST"
+                            }
+                        },
+                        {
+                            "y": 22,
+                            "id": "brown_rot-object-0017-22",
+                            "properties": {
+                                "side": "EAST"
+                            }
+                        }
+                    ],
+                    "inputType": null,
+                    "flowNodeType": "dynamicNode",
+                    "realNodeType": "dynamicNode",
+                    "realInputType": null
+                }
+            },
+            "type": "dynamicNode",
+            "height": 11642,
+            "origin": [0, 0],
+            "dragging": false,
+            "measured": {
+                "width": 180,
+                "height": 11642
+            },
+            "position": {
+                "x": -2100,
+                "y": 75
+            },
+            "selected": false
+        },
+        {
+            "id": "0018",
+            "data": {
+                "nodeData": {
+                    "name": "Greater than",
+                    "values": [null, 12],
+                    "handles": [
+                        {
+                            "y": 0,
+                            "id": "number-number-0018-0",
+                            "properties": {
+                                "side": "WEST"
+                            }
+                        },
+                        {
+                            "y": 1,
+                            "id": "number-number-0018-1",
+                            "properties": {
+                                "side": "WEST"
+                            }
+                        },
+                        {
+                            "y": 0,
+                            "id": "bool-bool-0018-2",
+                            "properties": {
+                                "side": "EAST"
+                            }
+                        }
+                    ],
+                    "operator": ">",
+                    "flowNodeType": "ifNode",
+                    "realNodeType": "gtNode",
+                    "unit": [null, null]
+                }
+            },
+            "type": "ifNode",
+            "origin": [0, 0],
+            "measured": {
+                "width": 180,
+                "height": 182
+            },
+            "position": {
+                "x": 500,
+                "y": 300
+            },
+            "selected": false
+        },
+        {
+            "id": "0019",
+            "data": {
+                "nodeData": {
+                    "name": "Greater than",
+                    "values": [null, 6.1],
+                    "handles": [
+                        {
+                            "y": 0,
+                            "id": "number-number-0019-0",
+                            "properties": {
+                                "side": "WEST"
+                            }
+                        },
+                        {
+                            "y": 1,
+                            "id": "number-number-0019-1",
+                            "properties": {
+                                "side": "WEST"
+                            }
+                        },
+                        {
+                            "y": 0,
+                            "id": "bool-bool-0019-2",
+                            "properties": {
+                                "side": "EAST"
+                            }
+                        }
+                    ],
+                    "operator": ">",
+                    "flowNodeType": "ifNode",
+                    "realNodeType": "gtNode",
+                    "unit": [null, null]
+                }
+            },
+            "type": "ifNode",
+            "origin": [0, 0],
+            "measured": {
+                "width": 180,
+                "height": 182
+            },
+            "position": {
+                "x": 1175,
+                "y": 0
+            },
+            "selected": false
+        },
+        {
+            "id": "0020",
+            "data": {
+                "nodeData": {
+                    "name": "Hole",
+                    "cases": [
+                        {
+                            "caseId": 0,
+                            "caseName": "Length",
+                            "caseType": "number",
+                            "realCaseType": "number",
+                            "caseUnit": "mm"
+                        },
+                        {
+                            "caseId": 1,
+                            "caseName": "Width",
+                            "caseType": "number",
+                            "realCaseType": "number",
+                            "caseUnit": "mm"
+                        },
+                        {
+                            "caseId": 2,
+                            "caseName": "Diameter",
+                            "caseType": "number",
+                            "realCaseType": "number",
+                            "caseUnit": "mm"
+                        },
+                        {
+                            "caseId": 3,
+                            "caseName": "Aspect ratio",
+                            "caseType": "number",
+                            "realCaseType": "number",
+                            "caseUnit": null
+                        },
+                        {
+                            "caseId": 4,
+                            "caseName": "Area",
+                            "caseType": "number",
+                            "realCaseType": "number",
+                            "caseUnit": "mm\u00b2"
+                        }
+                    ],
+                    "values": ["hole-object-0017-12"],
+                    "handles": [
+                        {
+                            "y": 0,
+                            "id": "number-number-0020-0",
+                            "properties": {
+                                "side": "EAST"
+                            }
+                        },
+                        {
+                            "y": 1,
+                            "id": "number-number-0020-1",
+                            "properties": {
+                                "side": "EAST"
+                            }
+                        },
+                        {
+                            "y": 2,
+                            "id": "number-number-0020-2",
+                            "properties": {
+                                "side": "EAST"
+                            }
+                        },
+                        {
+                            "y": 3,
+                            "id": "number-number-0020-3",
+                            "properties": {
+                                "side": "EAST"
+                            }
+                        },
+                        {
+                            "y": 4,
+                            "id": "number-number-0020-4",
+                            "properties": {
+                                "side": "EAST"
+                            }
+                        },
+                        {
+                            "y": 0,
+                            "id": "hole-object-0020-0",
+                            "properties": {
+                                "side": "WEST"
+                            }
+                        }
+                    ],
+                    "inputType": "object",
+                    "flowNodeType": "dynamicNode",
+                    "realNodeType": "dynamicNode",
+                    "realInputType": "hole"
+                }
+            },
+            "type": "dynamicNode",
+            "origin": [0, 0],
+            "measured": {
+                "width": 180,
+                "height": 352
+            },
+            "position": {
+                "x": 825,
+                "y": 8450
+            },
+            "selected": false
+        },
+        {
+            "id": "0021",
+            "data": {
+                "nodeData": {
+                    "name": "Smaller than",
+                    "values": [null, 25],
+                    "handles": [
+                        {
+                            "y": 0,
+                            "id": "number-number-0021-0",
+                            "properties": {
+                                "side": "WEST"
+                            }
+                        },
+                        {
+                            "y": 1,
+                            "id": "number-number-0021-1",
+                            "properties": {
+                                "side": "WEST"
+                            }
+                        },
+                        {
+                            "y": 0,
+                            "id": "bool-bool-0021-2",
+                            "properties": {
+                                "side": "EAST"
+                            }
+                        }
+                    ],
+                    "operator": "<",
+                    "flowNodeType": "ifNode",
+                    "realNodeType": "stNode",
+                    "unit": [null, null]
+                }
+            },
+            "type": "ifNode",
+            "origin": [0, 0],
+            "measured": {
+                "width": 180,
+                "height": 182
+            },
+            "position": {
+                "x": 1175,
+                "y": 8725
+            },
+            "selected": false
+        },
+        {
+            "id": "0022",
+            "data": {
+                "nodeData": {
+                    "name": "Smaller than",
+                    "values": [null, 250],
+                    "handles": [
+                        {
+                            "y": 0,
+                            "id": "number-number-0022-0",
+                            "properties": {
+                                "side": "WEST"
+                            }
+                        },
+                        {
+                            "y": 1,
+                            "id": "number-number-0022-1",
+                            "properties": {
+                                "side": "WEST"
+                            }
+                        },
+                        {
+                            "y": 0,
+                            "id": "bool-bool-0022-2",
+                            "properties": {
+                                "side": "EAST"
+                            }
+                        }
+                    ],
+                    "operator": "<",
+                    "flowNodeType": "ifNode",
+                    "realNodeType": "stNode",
+                    "unit": [null, null]
+                }
+            },
+            "type": "ifNode",
+            "origin": [0, 0],
+            "measured": {
+                "width": 180,
+                "height": 182
+            },
+            "position": {
+                "x": 1175,
+                "y": 8450
+            },
+            "selected": false
+        },
+        {
+            "id": "0023",
+            "data": {
+                "nodeData": {
+                    "name": "Inner tear",
+                    "cases": [
+                        {
+                            "caseId": 0,
+                            "caseName": "Length",
+                            "caseType": "number",
+                            "realCaseType": "number",
+                            "caseUnit": "mm"
+                        },
+                        {
+                            "caseId": 1,
+                            "caseName": "Width",
+                            "caseType": "number",
+                            "realCaseType": "number",
+                            "caseUnit": "mm"
+                        },
+                        {
+                            "caseId": 2,
+                            "caseName": "Aspect ratio",
+                            "caseType": "number",
+                            "realCaseType": "number",
+                            "caseUnit": null
+                        },
+                        {
+                            "caseId": 3,
+                            "caseName": "Area",
+                            "caseType": "number",
+                            "realCaseType": "number",
+                            "caseUnit": "mm\u00b2"
+                        }
+                    ],
+                    "values": ["inner_tear-object-0017-10"],
+                    "handles": [
+                        {
+                            "y": 0,
+                            "id": "number-number-0023-0",
+                            "properties": {
+                                "side": "EAST"
+                            }
+                        },
+                        {
+                            "y": 1,
+                            "id": "number-number-0023-1",
+                            "properties": {
+                                "side": "EAST"
+                            }
+                        },
+                        {
+                            "y": 2,
+                            "id": "number-number-0023-2",
+                            "properties": {
+                                "side": "EAST"
+                            }
+                        },
+                        {
+                            "y": 3,
+                            "id": "number-number-0023-3",
+                            "properties": {
+                                "side": "EAST"
+                            }
+                        },
+                        {
+                            "y": 0,
+                            "id": "inner_tear-object-0023-0",
+                            "properties": {
+                                "side": "WEST"
+                            }
+                        }
+                    ],
+                    "inputType": "object",
+                    "flowNodeType": "dynamicNode",
+                    "realNodeType": "dynamicNode",
+                    "realInputType": "inner_tear"
+                }
+            },
+            "type": "dynamicNode",
+            "origin": [0, 0],
+            "measured": {
+                "width": 180,
+                "height": 300
+            },
+            "position": {
+                "x": 500,
+                "y": 11075
+            },
+            "selected": false
+        },
+        {
+            "id": "0024",
+            "data": {
+                "nodeData": {
+                    "name": "Or",
+                    "values": [null, null],
+                    "handles": [
+                        {
+                            "y": 0,
+                            "id": "bool-bool-0024-0",
+                            "properties": {
+                                "side": "WEST"
+                            }
+                        },
+                        {
+                            "y": 1,
+                            "id": "bool-bool-0024-1",
+                            "properties": {
+                                "side": "WEST"
+                            }
+                        },
+                        {
+                            "y": 0,
+                            "id": "bool-bool-0024-2",
+                            "properties": {
+                                "side": "EAST"
+                            }
+                        }
+                    ],
+                    "operator": "or",
+                    "flowNodeType": "logicNode",
+                    "realNodeType": "orNode"
+                }
+            },
+            "type": "logicNode",
+            "origin": [0, 0],
+            "measured": {
+                "width": 180,
+                "height": 166
+            },
+            "position": {
+                "x": 1175,
+                "y": 10700
+            },
+            "selected": false
+        },
+        {
+            "id": "0025",
+            "data": {
+                "nodeData": {
+                    "name": "Smaller than",
+                    "values": [null, 500],
+                    "handles": [
+                        {
+                            "y": 0,
+                            "id": "number-number-0025-0",
+                            "properties": {
+                                "side": "WEST"
+                            }
+                        },
+                        {
+                            "y": 1,
+                            "id": "number-number-0025-1",
+                            "properties": {
+                                "side": "WEST"
+                            }
+                        },
+                        {
+                            "y": 0,
+                            "id": "bool-bool-0025-2",
+                            "properties": {
+                                "side": "EAST"
+                            }
+                        }
+                    ],
+                    "operator": "<",
+                    "flowNodeType": "ifNode",
+                    "realNodeType": "stNode",
+                    "unit": [null, null]
+                }
+            },
+            "type": "ifNode",
+            "origin": [0, 0],
+            "measured": {
+                "width": 180,
+                "height": 182
+            },
+            "position": {
+                "x": 850,
+                "y": 11450
+            },
+            "selected": false
+        },
+        {
+            "id": "0026",
+            "data": {
+                "nodeData": {
+                    "name": "Smaller than",
+                    "values": [null, 5],
+                    "handles": [
+                        {
+                            "y": 0,
+                            "id": "number-number-0026-0",
+                            "properties": {
+                                "side": "WEST"
+                            }
+                        },
+                        {
+                            "y": 1,
+                            "id": "number-number-0026-1",
+                            "properties": {
+                                "side": "WEST"
+                            }
+                        },
+                        {
+                            "y": 0,
+                            "id": "bool-bool-0026-2",
+                            "properties": {
+                                "side": "EAST"
+                            }
+                        }
+                    ],
+                    "operator": "<",
+                    "flowNodeType": "ifNode",
+                    "realNodeType": "stNode",
+                    "unit": [null, null]
+                }
+            },
+            "type": "ifNode",
+            "origin": [0, 0],
+            "measured": {
+                "width": 180,
+                "height": 182
+            },
+            "position": {
+                "x": 850,
+                "y": 10650
+            },
+            "selected": false
+        },
+        {
+            "id": "0027",
+            "data": {
+                "nodeData": {
+                    "name": "Or",
+                    "values": [null, null],
+                    "handles": [
+                        {
+                            "y": 0,
+                            "id": "bool-bool-0027-0",
+                            "properties": {
+                                "side": "WEST"
+                            }
+                        },
+                        {
+                            "y": 1,
+                            "id": "bool-bool-0027-1",
+                            "properties": {
+                                "side": "WEST"
+                            }
+                        },
+                        {
+                            "y": 0,
+                            "id": "bool-bool-0027-2",
+                            "properties": {
+                                "side": "EAST"
+                            }
+                        }
+                    ],
+                    "operator": "or",
+                    "flowNodeType": "logicNode",
+                    "realNodeType": "orNode"
+                }
+            },
+            "type": "logicNode",
+            "origin": [0, 0],
+            "measured": {
+                "width": 180,
+                "height": 166
+            },
+            "position": {
+                "x": 1175,
+                "y": 11075
+            },
+            "selected": false
+        },
+        {
+            "id": "0028",
+            "data": {
+                "nodeData": {
+                    "name": "Smaller than",
+                    "values": [null, 1000],
+                    "handles": [
+                        {
+                            "y": 0,
+                            "id": "number-number-0028-0",
+                            "properties": {
+                                "side": "WEST"
+                            }
+                        },
+                        {
+                            "y": 1,
+                            "id": "number-number-0028-1",
+                            "properties": {
+                                "side": "WEST"
+                            }
+                        },
+                        {
+                            "y": 0,
+                            "id": "bool-bool-0028-2",
+                            "properties": {
+                                "side": "EAST"
+                            }
+                        }
+                    ],
+                    "operator": "<",
+                    "flowNodeType": "ifNode",
+                    "realNodeType": "stNode",
+                    "unit": [null, null]
+                }
+            },
+            "type": "ifNode",
+            "origin": [0, 0],
+            "measured": {
+                "width": 180,
+                "height": 182
+            },
+            "position": {
+                "x": 850,
+                "y": 11175
+            },
+            "selected": false
+        },
+        {
+            "id": "0029",
+            "data": {
+                "nodeData": {
+                    "name": "Smaller than",
+                    "values": [null, 20],
+                    "handles": [
+                        {
+                            "y": 0,
+                            "id": "number-number-0029-0",
+                            "properties": {
+                                "side": "WEST"
+                            }
+                        },
+                        {
+                            "y": 1,
+                            "id": "number-number-0029-1",
+                            "properties": {
+                                "side": "WEST"
+                            }
+                        },
+                        {
+                            "y": 0,
+                            "id": "bool-bool-0029-2",
+                            "properties": {
+                                "side": "EAST"
+                            }
+                        }
+                    ],
+                    "operator": "<",
+                    "flowNodeType": "ifNode",
+                    "realNodeType": "stNode",
+                    "unit": [null, null]
+                }
+            },
+            "type": "ifNode",
+            "origin": [0, 0],
+            "measured": {
+                "width": 180,
+                "height": 182
+            },
+            "position": {
+                "x": 850,
+                "y": 10900
+            },
+            "selected": false
+        },
+        {
+            "id": "0030",
+            "data": {
+                "nodeData": {
+                    "name": "Or",
+                    "values": [null, null],
+                    "handles": [
+                        {
+                            "y": 0,
+                            "id": "bool-bool-0030-0",
+                            "properties": {
+                                "side": "WEST"
+                            }
+                        },
+                        {
+                            "y": 1,
+                            "id": "bool-bool-0030-1",
+                            "properties": {
+                                "side": "WEST"
+                            }
+                        },
+                        {
+                            "y": 0,
+                            "id": "bool-bool-0030-2",
+                            "properties": {
+                                "side": "EAST"
+                            }
+                        }
+                    ],
+                    "operator": "or",
+                    "flowNodeType": "logicNode",
+                    "realNodeType": "orNode"
+                }
+            },
+            "type": "logicNode",
+            "origin": [0, 0],
+            "measured": {
+                "width": 180,
+                "height": 166
+            },
+            "position": {
+                "x": 1175,
+                "y": 10000
+            },
+            "selected": false
+        },
+        {
+            "id": "0031",
+            "data": {
+                "nodeData": {
+                    "name": "Smaller than",
+                    "values": [null, 400],
+                    "handles": [
+                        {
+                            "y": 0,
+                            "id": "number-number-0031-0",
+                            "properties": {
+                                "side": "WEST"
+                            }
+                        },
+                        {
+                            "y": 1,
+                            "id": "number-number-0031-1",
+                            "properties": {
+                                "side": "WEST"
+                            }
+                        },
+                        {
+                            "y": 0,
+                            "id": "bool-bool-0031-2",
+                            "properties": {
+                                "side": "EAST"
+                            }
+                        }
+                    ],
+                    "operator": "<",
+                    "flowNodeType": "ifNode",
+                    "realNodeType": "stNode",
+                    "unit": [null, null]
+                }
+            },
+            "type": "ifNode",
+            "origin": [0, 0],
+            "measured": {
+                "width": 180,
+                "height": 182
+            },
+            "position": {
+                "x": 850,
+                "y": 10100
+            },
+            "selected": false
+        },
+        {
+            "id": "0032",
+            "data": {
+                "nodeData": {
+                    "name": "Smaller than",
+                    "values": [null, 10],
+                    "handles": [
+                        {
+                            "y": 0,
+                            "id": "number-number-0032-0",
+                            "properties": {
+                                "side": "WEST"
+                            }
+                        },
+                        {
+                            "y": 1,
+                            "id": "number-number-0032-1",
+                            "properties": {
+                                "side": "WEST"
+                            }
+                        },
+                        {
+                            "y": 0,
+                            "id": "bool-bool-0032-2",
+                            "properties": {
+                                "side": "EAST"
+                            }
+                        }
+                    ],
+                    "operator": "<",
+                    "flowNodeType": "ifNode",
+                    "realNodeType": "stNode",
+                    "unit": [null, null]
+                }
+            },
+            "type": "ifNode",
+            "origin": [0, 0],
+            "measured": {
+                "width": 180,
+                "height": 182
+            },
+            "position": {
+                "x": 850,
+                "y": 9825
+            },
+            "selected": false
+        },
+        {
+            "id": "0033",
+            "data": {
+                "nodeData": {
+                    "name": "Or",
+                    "values": [null, null],
+                    "handles": [
+                        {
+                            "y": 0,
+                            "id": "bool-bool-0033-0",
+                            "properties": {
+                                "side": "WEST"
+                            }
+                        },
+                        {
+                            "y": 1,
+                            "id": "bool-bool-0033-1",
+                            "properties": {
+                                "side": "WEST"
+                            }
+                        },
+                        {
+                            "y": 0,
+                            "id": "bool-bool-0033-2",
+                            "properties": {
+                                "side": "EAST"
+                            }
+                        }
+                    ],
+                    "operator": "or",
+                    "flowNodeType": "logicNode",
+                    "realNodeType": "orNode"
+                }
+            },
+            "type": "logicNode",
+            "origin": [0, 0],
+            "measured": {
+                "width": 180,
+                "height": 166
+            },
+            "position": {
+                "x": 1175,
+                "y": 9600
+            },
+            "selected": false
+        },
+        {
+            "id": "0034",
+            "data": {
+                "nodeData": {
+                    "name": "Smaller than",
+                    "values": [null, 1000],
+                    "handles": [
+                        {
+                            "y": 0,
+                            "id": "number-number-0034-0",
+                            "properties": {
+                                "side": "WEST"
+                            }
+                        },
+                        {
+                            "y": 1,
+                            "id": "number-number-0034-1",
+                            "properties": {
+                                "side": "WEST"
+                            }
+                        },
+                        {
+                            "y": 0,
+                            "id": "bool-bool-0034-2",
+                            "properties": {
+                                "side": "EAST"
+                            }
+                        }
+                    ],
+                    "operator": "<",
+                    "flowNodeType": "ifNode",
+                    "realNodeType": "stNode",
+                    "unit": [null, null]
+                }
+            },
+            "type": "ifNode",
+            "origin": [0, 0],
+            "measured": {
+                "width": 180,
+                "height": 182
+            },
+            "position": {
+                "x": 850,
+                "y": 10375
+            },
+            "selected": false
+        },
+        {
+            "id": "0035",
+            "data": {
+                "nodeData": {
+                    "name": "Smaller than",
+                    "values": [null, 70],
+                    "handles": [
+                        {
+                            "y": 0,
+                            "id": "number-number-0035-0",
+                            "properties": {
+                                "side": "WEST"
+                            }
+                        },
+                        {
+                            "y": 1,
+                            "id": "number-number-0035-1",
+                            "properties": {
+                                "side": "WEST"
+                            }
+                        },
+                        {
+                            "y": 0,
+                            "id": "bool-bool-0035-2",
+                            "properties": {
+                                "side": "EAST"
+                            }
+                        }
+                    ],
+                    "operator": "<",
+                    "flowNodeType": "ifNode",
+                    "realNodeType": "stNode",
+                    "unit": [null, null]
+                }
+            },
+            "type": "ifNode",
+            "origin": [0, 0],
+            "measured": {
+                "width": 180,
+                "height": 182
+            },
+            "position": {
+                "x": 850,
+                "y": 9550
+            },
+            "selected": false
+        },
+        {
+            "id": "0036",
+            "data": {
+                "nodeData": {
+                    "name": "Tear",
+                    "cases": [
+                        {
+                            "caseId": 0,
+                            "caseName": "Length",
+                            "caseType": "number",
+                            "realCaseType": "number",
+                            "caseUnit": "mm"
+                        },
+                        {
+                            "caseId": 1,
+                            "caseName": "Width",
+                            "caseType": "number",
+                            "realCaseType": "number",
+                            "caseUnit": "mm"
+                        },
+                        {
+                            "caseId": 2,
+                            "caseName": "Aspect ratio",
+                            "caseType": "number",
+                            "realCaseType": "number",
+                            "caseUnit": null
+                        },
+                        {
+                            "caseId": 3,
+                            "caseName": "Area",
+                            "caseType": "number",
+                            "realCaseType": "number",
+                            "caseUnit": "mm\u00b2"
+                        }
+                    ],
+                    "values": ["tear-object-0017-9"],
+                    "handles": [
+                        {
+                            "y": 0,
+                            "id": "number-number-0036-0",
+                            "properties": {
+                                "side": "EAST"
+                            }
+                        },
+                        {
+                            "y": 1,
+                            "id": "number-number-0036-1",
+                            "properties": {
+                                "side": "EAST"
+                            }
+                        },
+                        {
+                            "y": 2,
+                            "id": "number-number-0036-2",
+                            "properties": {
+                                "side": "EAST"
+                            }
+                        },
+                        {
+                            "y": 3,
+                            "id": "number-number-0036-3",
+                            "properties": {
+                                "side": "EAST"
+                            }
+                        },
+                        {
+                            "y": 0,
+                            "id": "tear-object-0036-0",
+                            "properties": {
+                                "side": "WEST"
+                            }
+                        }
+                    ],
+                    "inputType": "object",
+                    "flowNodeType": "dynamicNode",
+                    "realNodeType": "dynamicNode",
+                    "realInputType": "tear"
+                }
+            },
+            "type": "dynamicNode",
+            "origin": [0, 0],
+            "measured": {
+                "width": 180,
+                "height": 300
+            },
+            "position": {
+                "x": 500,
+                "y": 9975
+            },
+            "selected": false
+        },
+        {
+            "id": "0037",
+            "data": {
+                "nodeData": {
+                    "name": "Clipping strip",
+                    "cases": [
+                        {
+                            "caseId": 0,
+                            "caseName": "Length",
+                            "caseType": "number",
+                            "realCaseType": "number",
+                            "caseUnit": "mm"
+                        },
+                        {
+                            "caseId": 1,
+                            "caseName": "Width",
+                            "caseType": "number",
+                            "realCaseType": "number",
+                            "caseUnit": "mm"
+                        },
+                        {
+                            "caseId": 2,
+                            "caseName": "Aspect ratio",
+                            "caseType": "number",
+                            "realCaseType": "number",
+                            "caseUnit": null
+                        },
+                        {
+                            "caseId": 3,
+                            "caseName": "Area",
+                            "caseType": "number",
+                            "realCaseType": "number",
+                            "caseUnit": "mm\u00b2"
+                        }
+                    ],
+                    "values": ["clipping_strip-object-0017-11"],
+                    "handles": [
+                        {
+                            "y": 0,
+                            "id": "number-number-0037-0",
+                            "properties": {
+                                "side": "EAST"
+                            }
+                        },
+                        {
+                            "y": 1,
+                            "id": "number-number-0037-1",
+                            "properties": {
+                                "side": "EAST"
+                            }
+                        },
+                        {
+                            "y": 2,
+                            "id": "number-number-0037-2",
+                            "properties": {
+                                "side": "EAST"
+                            }
+                        },
+                        {
+                            "y": 3,
+                            "id": "number-number-0037-3",
+                            "properties": {
+                                "side": "EAST"
+                            }
+                        },
+                        {
+                            "y": 0,
+                            "id": "clipping_strip-object-0037-0",
+                            "properties": {
+                                "side": "WEST"
+                            }
+                        }
+                    ],
+                    "inputType": "object",
+                    "flowNodeType": "dynamicNode",
+                    "realNodeType": "dynamicNode",
+                    "realInputType": "clipping_strip"
+                }
+            },
+            "type": "dynamicNode",
+            "origin": [0, 0],
+            "dragging": false,
+            "measured": {
+                "width": 180,
+                "height": 300
+            },
+            "position": {
+                "x": 300,
+                "y": 3100
+            },
+            "selected": false
+        },
+        {
+            "id": "0038",
+            "data": {
+                "nodeData": {
+                    "name": "Or",
+                    "values": [null, null],
+                    "handles": [
+                        {
+                            "y": 0,
+                            "id": "bool-bool-0038-0",
+                            "properties": {
+                                "side": "WEST"
+                            }
+                        },
+                        {
+                            "y": 1,
+                            "id": "bool-bool-0038-1",
+                            "properties": {
+                                "side": "WEST"
+                            }
+                        },
+                        {
+                            "y": 0,
+                            "id": "bool-bool-0038-2",
+                            "properties": {
+                                "side": "EAST"
+                            }
+                        }
+                    ],
+                    "operator": "or",
+                    "flowNodeType": "logicNode",
+                    "realNodeType": "orNode"
+                }
+            },
+            "type": "logicNode",
+            "origin": [0, 0],
+            "measured": {
+                "width": 180,
+                "height": 166
+            },
+            "position": {
+                "x": 1175,
+                "y": 2975
+            },
+            "selected": false
+        },
+        {
+            "id": "0039",
+            "data": {
+                "nodeData": {
+                    "name": "Smaller than",
+                    "values": [1, 50],
+                    "handles": [
+                        {
+                            "y": 0,
+                            "id": "number-number-0039-0",
+                            "properties": {
+                                "side": "WEST"
+                            }
+                        },
+                        {
+                            "y": 1,
+                            "id": "number-number-0039-1",
+                            "properties": {
+                                "side": "WEST"
+                            }
+                        },
+                        {
+                            "y": 0,
+                            "id": "bool-bool-0039-2",
+                            "properties": {
+                                "side": "EAST"
+                            }
+                        }
+                    ],
+                    "operator": "<",
+                    "flowNodeType": "ifNode",
+                    "realNodeType": "stNode",
+                    "unit": [null, null]
+                }
+            },
+            "type": "ifNode",
+            "origin": [0, 0],
+            "measured": {
+                "width": 180,
+                "height": 197
+            },
+            "position": {
+                "x": 850,
+                "y": 2675
+            },
+            "selected": false
+        },
+        {
+            "id": "0040",
+            "data": {
+                "nodeData": {
+                    "name": "Smaller than",
+                    "values": [null, 200],
+                    "handles": [
+                        {
+                            "y": 0,
+                            "id": "number-number-0040-0",
+                            "properties": {
+                                "side": "WEST"
+                            }
+                        },
+                        {
+                            "y": 1,
+                            "id": "number-number-0040-1",
+                            "properties": {
+                                "side": "WEST"
+                            }
+                        },
+                        {
+                            "y": 0,
+                            "id": "bool-bool-0040-2",
+                            "properties": {
+                                "side": "EAST"
+                            }
+                        }
+                    ],
+                    "operator": "<",
+                    "flowNodeType": "ifNode",
+                    "realNodeType": "stNode",
+                    "unit": [null, null]
+                }
+            },
+            "type": "ifNode",
+            "origin": [0, 0],
+            "measured": {
+                "width": 180,
+                "height": 182
+            },
+            "position": {
+                "x": 850,
+                "y": 3350
+            },
+            "selected": false
+        },
+        {
+            "id": "0041",
+            "data": {
+                "nodeData": {
+                    "name": "Or",
+                    "values": [null, null],
+                    "handles": [
+                        {
+                            "y": 0,
+                            "id": "bool-bool-0041-0",
+                            "properties": {
+                                "side": "WEST"
+                            }
+                        },
+                        {
+                            "y": 1,
+                            "id": "bool-bool-0041-1",
+                            "properties": {
+                                "side": "WEST"
+                            }
+                        },
+                        {
+                            "y": 0,
+                            "id": "bool-bool-0041-2",
+                            "properties": {
+                                "side": "EAST"
+                            }
+                        }
+                    ],
+                    "operator": "or",
+                    "flowNodeType": "logicNode",
+                    "realNodeType": "orNode"
+                }
+            },
+            "type": "logicNode",
+            "origin": [0, 0],
+            "measured": {
+                "width": 180,
+                "height": 166
+            },
+            "position": {
+                "x": 1175,
+                "y": 3400
+            },
+            "selected": false
+        },
+        {
+            "id": "0042",
+            "data": {
+                "nodeData": {
+                    "name": "Smaller than",
+                    "values": [null, 200],
+                    "handles": [
+                        {
+                            "y": 0,
+                            "id": "number-number-0042-0",
+                            "properties": {
+                                "side": "WEST"
+                            }
+                        },
+                        {
+                            "y": 1,
+                            "id": "number-number-0042-1",
+                            "properties": {
+                                "side": "WEST"
+                            }
+                        },
+                        {
+                            "y": 0,
+                            "id": "bool-bool-0042-2",
+                            "properties": {
+                                "side": "EAST"
+                            }
+                        }
+                    ],
+                    "operator": "<",
+                    "flowNodeType": "ifNode",
+                    "realNodeType": "stNode",
+                    "unit": [null, null]
+                }
+            },
+            "type": "ifNode",
+            "origin": [0, 0],
+            "measured": {
+                "width": 180,
+                "height": 182
+            },
+            "position": {
+                "x": 850,
+                "y": 3075
+            },
+            "selected": false
+        },
+        {
+            "id": "0043",
+            "data": {
+                "nodeData": {
+                    "name": "Smaller than",
+                    "values": [null, 500],
+                    "handles": [
+                        {
+                            "y": 0,
+                            "id": "number-number-0043-0",
+                            "properties": {
+                                "side": "WEST"
+                            }
+                        },
+                        {
+                            "y": 1,
+                            "id": "number-number-0043-1",
+                            "properties": {
+                                "side": "WEST"
+                            }
+                        },
+                        {
+                            "y": 0,
+                            "id": "bool-bool-0043-2",
+                            "properties": {
+                                "side": "EAST"
+                            }
+                        }
+                    ],
+                    "operator": "<",
+                    "flowNodeType": "ifNode",
+                    "realNodeType": "stNode",
+                    "unit": [null, null]
+                }
+            },
+            "type": "ifNode",
+            "origin": [0, 0],
+            "measured": {
+                "width": 180,
+                "height": 182
+            },
+            "position": {
+                "x": 850,
+                "y": 3625
+            },
+            "selected": false
+        },
+        {
+            "id": "0044",
+            "data": {
+                "nodeData": {
+                    "name": "Missing edge",
+                    "cases": [
+                        {
+                            "caseId": 0,
+                            "caseName": "Length",
+                            "caseType": "number",
+                            "realCaseType": "number",
+                            "caseUnit": "mm"
+                        },
+                        {
+                            "caseId": 1,
+                            "caseName": "Width",
+                            "caseType": "number",
+                            "realCaseType": "number",
+                            "caseUnit": "mm"
+                        },
+                        {
+                            "caseId": 2,
+                            "caseName": "Aspect ratio",
+                            "caseType": "number",
+                            "realCaseType": "number",
+                            "caseUnit": null
+                        },
+                        {
+                            "caseId": 3,
+                            "caseName": "Area",
+                            "caseType": "number",
+                            "realCaseType": "number",
+                            "caseUnit": "mm\u00b2"
+                        }
+                    ],
+                    "values": ["missing_edge-object-0017-20"],
+                    "handles": [
+                        {
+                            "y": 0,
+                            "id": "number-number-0044-0",
+                            "properties": {
+                                "side": "EAST"
+                            }
+                        },
+                        {
+                            "y": 1,
+                            "id": "number-number-0044-1",
+                            "properties": {
+                                "side": "EAST"
+                            }
+                        },
+                        {
+                            "y": 2,
+                            "id": "number-number-0044-2",
+                            "properties": {
+                                "side": "EAST"
+                            }
+                        },
+                        {
+                            "y": 3,
+                            "id": "number-number-0044-3",
+                            "properties": {
+                                "side": "EAST"
+                            }
+                        },
+                        {
+                            "y": 0,
+                            "id": "missing_edge-object-0044-0",
+                            "properties": {
+                                "side": "WEST"
+                            }
+                        }
+                    ],
+                    "inputType": "object",
+                    "flowNodeType": "dynamicNode",
+                    "realNodeType": "dynamicNode",
+                    "realInputType": "missing_edge"
+                }
+            },
+            "type": "dynamicNode",
+            "origin": [0, 0],
+            "measured": {
+                "width": 180,
+                "height": 300
+            },
+            "position": {
+                "x": 500,
+                "y": 5550
+            },
+            "selected": false
+        },
+        {
+            "id": "0045",
+            "data": {
+                "nodeData": {
+                    "name": "Or",
+                    "values": [null, null],
+                    "handles": [
+                        {
+                            "y": 0,
+                            "id": "bool-bool-0045-0",
+                            "properties": {
+                                "side": "WEST"
+                            }
+                        },
+                        {
+                            "y": 1,
+                            "id": "bool-bool-0045-1",
+                            "properties": {
+                                "side": "WEST"
+                            }
+                        },
+                        {
+                            "y": 0,
+                            "id": "bool-bool-0045-2",
+                            "properties": {
+                                "side": "EAST"
+                            }
+                        }
+                    ],
+                    "operator": "or",
+                    "flowNodeType": "logicNode",
+                    "realNodeType": "orNode"
+                }
+            },
+            "type": "logicNode",
+            "origin": [0, 0],
+            "measured": {
+                "width": 180,
+                "height": 166
+            },
+            "position": {
+                "x": 1175,
+                "y": 5575
+            },
+            "selected": false
+        },
+        {
+            "id": "0046",
+            "data": {
+                "nodeData": {
+                    "name": "Smaller than",
+                    "values": [null, 50],
+                    "handles": [
+                        {
+                            "y": 0,
+                            "id": "number-number-0046-0",
+                            "properties": {
+                                "side": "WEST"
+                            }
+                        },
+                        {
+                            "y": 1,
+                            "id": "number-number-0046-1",
+                            "properties": {
+                                "side": "WEST"
+                            }
+                        },
+                        {
+                            "y": 0,
+                            "id": "bool-bool-0046-2",
+                            "properties": {
+                                "side": "EAST"
+                            }
+                        }
+                    ],
+                    "operator": "<",
+                    "flowNodeType": "ifNode",
+                    "realNodeType": "stNode",
+                    "unit": [null, null]
+                }
+            },
+            "type": "ifNode",
+            "origin": [0, 0],
+            "measured": {
+                "width": 180,
+                "height": 182
+            },
+            "position": {
+                "x": 850,
+                "y": 5400
+            },
+            "selected": false
+        },
+        {
+            "id": "0047",
+            "data": {
+                "nodeData": {
+                    "name": "Smaller than",
+                    "values": [null, 50],
+                    "handles": [
+                        {
+                            "y": 0,
+                            "id": "number-number-0047-0",
+                            "properties": {
+                                "side": "WEST"
+                            }
+                        },
+                        {
+                            "y": 1,
+                            "id": "number-number-0047-1",
+                            "properties": {
+                                "side": "WEST"
+                            }
+                        },
+                        {
+                            "y": 0,
+                            "id": "bool-bool-0047-2",
+                            "properties": {
+                                "side": "EAST"
+                            }
+                        }
+                    ],
+                    "operator": "<",
+                    "flowNodeType": "ifNode",
+                    "realNodeType": "stNode",
+                    "unit": [null, null]
+                }
+            },
+            "type": "ifNode",
+            "origin": [0, 0],
+            "measured": {
+                "width": 180,
+                "height": 182
+            },
+            "position": {
+                "x": 850,
+                "y": 5675
+            },
+            "selected": false
+        },
+        {
+            "id": "0048",
+            "data": {
+                "nodeData": {
+                    "name": "Or",
+                    "values": [null, null],
+                    "handles": [
+                        {
+                            "y": 0,
+                            "id": "bool-bool-0048-0",
+                            "properties": {
+                                "side": "WEST"
+                            }
+                        },
+                        {
+                            "y": 1,
+                            "id": "bool-bool-0048-1",
+                            "properties": {
+                                "side": "WEST"
+                            }
+                        },
+                        {
+                            "y": 0,
+                            "id": "bool-bool-0048-2",
+                            "properties": {
+                                "side": "EAST"
+                            }
+                        }
+                    ],
+                    "operator": "or",
+                    "flowNodeType": "logicNode",
+                    "realNodeType": "orNode"
+                }
+            },
+            "type": "logicNode",
+            "origin": [0, 0],
+            "measured": {
+                "width": 180,
+                "height": 166
+            },
+            "position": {
+                "x": 1175,
+                "y": 5175
+            },
+            "selected": false
+        },
+        {
+            "id": "0049",
+            "data": {
+                "nodeData": {
+                    "name": "Smaller than",
+                    "values": [null, 100],
+                    "handles": [
+                        {
+                            "y": 0,
+                            "id": "number-number-0049-0",
+                            "properties": {
+                                "side": "WEST"
+                            }
+                        },
+                        {
+                            "y": 1,
+                            "id": "number-number-0049-1",
+                            "properties": {
+                                "side": "WEST"
+                            }
+                        },
+                        {
+                            "y": 0,
+                            "id": "bool-bool-0049-2",
+                            "properties": {
+                                "side": "EAST"
+                            }
+                        }
+                    ],
+                    "operator": "<",
+                    "flowNodeType": "ifNode",
+                    "realNodeType": "stNode",
+                    "unit": [null, null]
+                }
+            },
+            "type": "ifNode",
+            "origin": [0, 0],
+            "measured": {
+                "width": 180,
+                "height": 182
+            },
+            "position": {
+                "x": 850,
+                "y": 5125
+            },
+            "selected": false
+        },
+        {
+            "id": "0050",
+            "data": {
+                "nodeData": {
+                    "name": "Smaller than",
+                    "values": [null, 300],
+                    "handles": [
+                        {
+                            "y": 0,
+                            "id": "number-number-0050-0",
+                            "properties": {
+                                "side": "WEST"
+                            }
+                        },
+                        {
+                            "y": 1,
+                            "id": "number-number-0050-1",
+                            "properties": {
+                                "side": "WEST"
+                            }
+                        },
+                        {
+                            "y": 0,
+                            "id": "bool-bool-0050-2",
+                            "properties": {
+                                "side": "EAST"
+                            }
+                        }
+                    ],
+                    "operator": "<",
+                    "flowNodeType": "ifNode",
+                    "realNodeType": "stNode",
+                    "unit": [null, null]
+                }
+            },
+            "type": "ifNode",
+            "origin": [0, 0],
+            "measured": {
+                "width": 180,
+                "height": 182
+            },
+            "position": {
+                "x": 850,
+                "y": 5950
+            },
+            "selected": false
+        },
+        {
+            "id": "0051",
+            "data": {
+                "nodeData": {
+                    "name": "Healthy branch",
+                    "cases": [
+                        {
+                            "caseId": 0,
+                            "caseName": "Length",
+                            "caseType": "number",
+                            "realCaseType": "number",
+                            "caseUnit": "mm"
+                        },
+                        {
+                            "caseId": 1,
+                            "caseName": "Width",
+                            "caseType": "number",
+                            "realCaseType": "number",
+                            "caseUnit": "mm"
+                        },
+                        {
+                            "caseId": 2,
+                            "caseName": "Diameter",
+                            "caseType": "number",
+                            "realCaseType": "number",
+                            "caseUnit": "mm"
+                        },
+                        {
+                            "caseId": 3,
+                            "caseName": "Brightness",
+                            "caseType": "number",
+                            "realCaseType": "number",
+                            "caseUnit": null
+                        },
+                        {
+                            "caseId": 4,
+                            "caseName": "Area",
+                            "caseType": "number",
+                            "realCaseType": "number",
+                            "caseUnit": "mm\u00b2"
+                        }
+                    ],
+                    "values": ["healthy_branch-object-0017-16"],
+                    "handles": [
+                        {
+                            "y": 0,
+                            "id": "number-number-0051-0",
+                            "properties": {
+                                "side": "EAST"
+                            }
+                        },
+                        {
+                            "y": 1,
+                            "id": "number-number-0051-1",
+                            "properties": {
+                                "side": "EAST"
+                            }
+                        },
+                        {
+                            "y": 2,
+                            "id": "number-number-0051-2",
+                            "properties": {
+                                "side": "EAST"
+                            }
+                        },
+                        {
+                            "y": 3,
+                            "id": "number-number-0051-3",
+                            "properties": {
+                                "side": "EAST"
+                            }
+                        },
+                        {
+                            "y": 4,
+                            "id": "number-number-0051-4",
+                            "properties": {
+                                "side": "EAST"
+                            }
+                        },
+                        {
+                            "y": 0,
+                            "id": "healthy_branch-object-0051-0",
+                            "properties": {
+                                "side": "WEST"
+                            }
+                        }
+                    ],
+                    "inputType": "object",
+                    "flowNodeType": "dynamicNode",
+                    "realNodeType": "dynamicNode",
+                    "realInputType": "healthy_branch"
+                }
+            },
+            "type": "dynamicNode",
+            "origin": [0, 0],
+            "dragging": false,
+            "measured": {
+                "width": 180,
+                "height": 352
+            },
+            "position": {
+                "x": 275,
+                "y": 3525
+            },
+            "selected": false
+        },
+        {
+            "id": "0052",
+            "data": {
+                "nodeData": {
+                    "name": "Smaller than",
+                    "values": [null, 200],
+                    "handles": [
+                        {
+                            "y": 0,
+                            "id": "number-number-0052-0",
+                            "properties": {
+                                "side": "WEST"
+                            }
+                        },
+                        {
+                            "y": 1,
+                            "id": "number-number-0052-1",
+                            "properties": {
+                                "side": "WEST"
+                            }
+                        },
+                        {
+                            "y": 0,
+                            "id": "bool-bool-0052-2",
+                            "properties": {
+                                "side": "EAST"
+                            }
+                        }
+                    ],
+                    "operator": "<",
+                    "flowNodeType": "ifNode",
+                    "realNodeType": "stNode",
+                    "unit": [null, null]
+                }
+            },
+            "type": "ifNode",
+            "origin": [0, 0],
+            "measured": {
+                "width": 180,
+                "height": 182
+            },
+            "position": {
+                "x": 1175,
+                "y": 3900
+            },
+            "selected": false
+        },
+        {
+            "id": "0053",
+            "data": {
+                "nodeData": {
+                    "name": "Bark",
+                    "cases": [
+                        {
+                            "caseId": 0,
+                            "caseName": "Length",
+                            "caseType": "number",
+                            "realCaseType": "number",
+                            "caseUnit": "mm"
+                        },
+                        {
+                            "caseId": 1,
+                            "caseName": "Width",
+                            "caseType": "number",
+                            "realCaseType": "number",
+                            "caseUnit": "mm"
+                        },
+                        {
+                            "caseId": 2,
+                            "caseName": "Aspect ratio",
+                            "caseType": "number",
+                            "realCaseType": "number",
+                            "caseUnit": null
+                        },
+                        {
+                            "caseId": 3,
+                            "caseName": "Area",
+                            "caseType": "number",
+                            "realCaseType": "number",
+                            "caseUnit": "mm\u00b2"
+                        }
+                    ],
+                    "values": ["bark-object-0017-18"],
+                    "handles": [
+                        {
+                            "y": 0,
+                            "id": "number-number-0053-0",
+                            "properties": {
+                                "side": "EAST"
+                            }
+                        },
+                        {
+                            "y": 1,
+                            "id": "number-number-0053-1",
+                            "properties": {
+                                "side": "EAST"
+                            }
+                        },
+                        {
+                            "y": 2,
+                            "id": "number-number-0053-2",
+                            "properties": {
+                                "side": "EAST"
+                            }
+                        },
+                        {
+                            "y": 3,
+                            "id": "number-number-0053-3",
+                            "properties": {
+                                "side": "EAST"
+                            }
+                        },
+                        {
+                            "y": 0,
+                            "id": "bark-object-0053-0",
+                            "properties": {
+                                "side": "WEST"
+                            }
+                        }
+                    ],
+                    "inputType": "object",
+                    "flowNodeType": "dynamicNode",
+                    "realNodeType": "dynamicNode",
+                    "realInputType": "bark"
+                }
+            },
+            "type": "dynamicNode",
+            "origin": [0, 0],
+            "measured": {
+                "width": 180,
+                "height": 300
+            },
+            "position": {
+                "x": 500,
+                "y": 9025
+            },
+            "selected": false
+        },
+        {
+            "id": "0054",
+            "data": {
+                "nodeData": {
+                    "name": "Smaller than",
+                    "values": [null, 1],
+                    "handles": [
+                        {
+                            "y": 0,
+                            "id": "number-number-0054-0",
+                            "properties": {
+                                "side": "WEST"
+                            }
+                        },
+                        {
+                            "y": 1,
+                            "id": "number-number-0054-1",
+                            "properties": {
+                                "side": "WEST"
+                            }
+                        },
+                        {
+                            "y": 0,
+                            "id": "bool-bool-0054-2",
+                            "properties": {
+                                "side": "EAST"
+                            }
+                        }
+                    ],
+                    "operator": "<",
+                    "flowNodeType": "ifNode",
+                    "realNodeType": "stNode",
+                    "unit": [null, null]
+                }
+            },
+            "type": "ifNode",
+            "origin": [0, 0],
+            "measured": {
+                "width": 180,
+                "height": 182
+            },
+            "position": {
+                "x": 500,
+                "y": 9450
+            },
+            "selected": false
+        },
+        {
+            "id": "0055",
+            "data": {
+                "nodeData": {
+                    "name": "Smaller than",
+                    "values": [null, 600],
+                    "handles": [
+                        {
+                            "y": 0,
+                            "id": "number-number-0055-0",
+                            "properties": {
+                                "side": "WEST"
+                            }
+                        },
+                        {
+                            "y": 1,
+                            "id": "number-number-0055-1",
+                            "properties": {
+                                "side": "WEST"
+                            }
+                        },
+                        {
+                            "y": 0,
+                            "id": "bool-bool-0055-2",
+                            "properties": {
+                                "side": "EAST"
+                            }
+                        }
+                    ],
+                    "operator": "<",
+                    "flowNodeType": "ifNode",
+                    "realNodeType": "stNode",
+                    "unit": [null, null]
+                }
+            },
+            "type": "ifNode",
+            "origin": [0, 0],
+            "measured": {
+                "width": 180,
+                "height": 182
+            },
+            "position": {
+                "x": 850,
+                "y": 9275
+            },
+            "selected": false
+        },
+        {
+            "id": "0056",
+            "data": {
+                "nodeData": {
+                    "name": "Smaller than",
+                    "values": [null, 200],
+                    "handles": [
+                        {
+                            "y": 0,
+                            "id": "number-number-0056-0",
+                            "properties": {
+                                "side": "WEST"
+                            }
+                        },
+                        {
+                            "y": 1,
+                            "id": "number-number-0056-1",
+                            "properties": {
+                                "side": "WEST"
+                            }
+                        },
+                        {
+                            "y": 0,
+                            "id": "bool-bool-0056-2",
+                            "properties": {
+                                "side": "EAST"
+                            }
+                        }
+                    ],
+                    "operator": "<",
+                    "flowNodeType": "ifNode",
+                    "realNodeType": "stNode",
+                    "unit": [null, null]
+                }
+            },
+            "type": "ifNode",
+            "origin": [0, 0],
+            "measured": {
+                "width": 180,
+                "height": 182
+            },
+            "position": {
+                "x": 850,
+                "y": 9000
+            },
+            "selected": false
+        },
+        {
+            "id": "0057",
+            "data": {
+                "nodeData": {
+                    "name": "Or",
+                    "values": [null, null],
+                    "handles": [
+                        {
+                            "y": 0,
+                            "id": "bool-bool-0057-0",
+                            "properties": {
+                                "side": "WEST"
+                            }
+                        },
+                        {
+                            "y": 1,
+                            "id": "bool-bool-0057-1",
+                            "properties": {
+                                "side": "WEST"
+                            }
+                        },
+                        {
+                            "y": 0,
+                            "id": "bool-bool-0057-2",
+                            "properties": {
+                                "side": "EAST"
+                            }
+                        }
+                    ],
+                    "operator": "or",
+                    "flowNodeType": "logicNode",
+                    "realNodeType": "orNode"
+                }
+            },
+            "type": "logicNode",
+            "origin": [0, 0],
+            "measured": {
+                "width": 180,
+                "height": 166
+            },
+            "position": {
+                "x": 1175,
+                "y": 9175
+            },
+            "selected": false
+        },
+        {
+            "id": "0058",
+            "data": {
+                "nodeData": {
+                    "name": "Black branch",
+                    "cases": [
+                        {
+                            "caseId": 0,
+                            "caseName": "Length",
+                            "caseType": "number",
+                            "realCaseType": "number",
+                            "caseUnit": "mm"
+                        },
+                        {
+                            "caseId": 1,
+                            "caseName": "Width",
+                            "caseType": "number",
+                            "realCaseType": "number",
+                            "caseUnit": "mm"
+                        },
+                        {
+                            "caseId": 2,
+                            "caseName": "Diameter",
+                            "caseType": "number",
+                            "realCaseType": "number",
+                            "caseUnit": "mm"
+                        },
+                        {
+                            "caseId": 3,
+                            "caseName": "Brightness",
+                            "caseType": "number",
+                            "realCaseType": "number",
+                            "caseUnit": null
+                        },
+                        {
+                            "caseId": 4,
+                            "caseName": "Area",
+                            "caseType": "number",
+                            "realCaseType": "number",
+                            "caseUnit": "mm\u00b2"
+                        }
+                    ],
+                    "values": ["black_branch-object-0017-17"],
+                    "handles": [
+                        {
+                            "y": 0,
+                            "id": "number-number-0058-0",
+                            "properties": {
+                                "side": "EAST"
+                            }
+                        },
+                        {
+                            "y": 1,
+                            "id": "number-number-0058-1",
+                            "properties": {
+                                "side": "EAST"
+                            }
+                        },
+                        {
+                            "y": 2,
+                            "id": "number-number-0058-2",
+                            "properties": {
+                                "side": "EAST"
+                            }
+                        },
+                        {
+                            "y": 3,
+                            "id": "number-number-0058-3",
+                            "properties": {
+                                "side": "EAST"
+                            }
+                        },
+                        {
+                            "y": 4,
+                            "id": "number-number-0058-4",
+                            "properties": {
+                                "side": "EAST"
+                            }
+                        },
+                        {
+                            "y": 0,
+                            "id": "black_branch-object-0058-0",
+                            "properties": {
+                                "side": "WEST"
+                            }
+                        }
+                    ],
+                    "inputType": "object",
+                    "flowNodeType": "dynamicNode",
+                    "realNodeType": "dynamicNode",
+                    "realInputType": "black_branch"
+                }
+            },
+            "type": "dynamicNode",
+            "origin": [0, 0],
+            "dragging": false,
+            "measured": {
+                "width": 180,
+                "height": 352
+            },
+            "position": {
+                "x": 275,
+                "y": 4400
+            },
+            "selected": false
+        },
+        {
+            "id": "0059",
+            "data": {
+                "nodeData": {
+                    "name": "Smaller than",
+                    "values": [null, 50],
+                    "handles": [
+                        {
+                            "y": 0,
+                            "id": "number-number-0059-0",
+                            "properties": {
+                                "side": "WEST"
+                            }
+                        },
+                        {
+                            "y": 1,
+                            "id": "number-number-0059-1",
+                            "properties": {
+                                "side": "WEST"
+                            }
+                        },
+                        {
+                            "y": 0,
+                            "id": "bool-bool-0059-2",
+                            "properties": {
+                                "side": "EAST"
+                            }
+                        }
+                    ],
+                    "operator": "<",
+                    "flowNodeType": "ifNode",
+                    "realNodeType": "stNode",
+                    "unit": [null, null]
+                }
+            },
+            "type": "ifNode",
+            "origin": [0, 0],
+            "measured": {
+                "width": 180,
+                "height": 182
+            },
+            "position": {
+                "x": 850,
+                "y": 4850
+            },
+            "selected": false
+        },
+        {
+            "id": "0060",
+            "data": {
+                "nodeData": {
+                    "name": "Smaller than",
+                    "values": [null, 25],
+                    "handles": [
+                        {
+                            "y": 0,
+                            "id": "number-number-0060-0",
+                            "properties": {
+                                "side": "WEST"
+                            }
+                        },
+                        {
+                            "y": 1,
+                            "id": "number-number-0060-1",
+                            "properties": {
+                                "side": "WEST"
+                            }
+                        },
+                        {
+                            "y": 0,
+                            "id": "bool-bool-0060-2",
+                            "properties": {
+                                "side": "EAST"
+                            }
+                        }
+                    ],
+                    "operator": "<",
+                    "flowNodeType": "ifNode",
+                    "realNodeType": "stNode",
+                    "unit": [null, null]
+                }
+            },
+            "type": "ifNode",
+            "origin": [0, 0],
+            "measured": {
+                "width": 180,
+                "height": 182
+            },
+            "position": {
+                "x": 850,
+                "y": 4300
+            },
+            "selected": false
+        },
+        {
+            "id": "0061",
+            "data": {
+                "nodeData": {
+                    "name": "Smaller than",
+                    "values": [null, 150],
+                    "handles": [
+                        {
+                            "y": 0,
+                            "id": "number-number-0061-0",
+                            "properties": {
+                                "side": "WEST"
+                            }
+                        },
+                        {
+                            "y": 1,
+                            "id": "number-number-0061-1",
+                            "properties": {
+                                "side": "WEST"
+                            }
+                        },
+                        {
+                            "y": 0,
+                            "id": "bool-bool-0061-2",
+                            "properties": {
+                                "side": "EAST"
+                            }
+                        }
+                    ],
+                    "operator": "<",
+                    "flowNodeType": "ifNode",
+                    "realNodeType": "stNode",
+                    "unit": [null, null]
+                }
+            },
+            "type": "ifNode",
+            "origin": [0, 0],
+            "measured": {
+                "width": 180,
+                "height": 182
+            },
+            "position": {
+                "x": 850,
+                "y": 4575
+            },
+            "selected": false
+        },
+        {
+            "id": "0062",
+            "data": {
+                "nodeData": {
+                    "name": "Smaller than",
+                    "values": ["number-number-0058-1", 150],
+                    "handles": [
+                        {
+                            "y": 0,
+                            "id": "number-number-0062-0",
+                            "properties": {
+                                "side": "WEST"
+                            }
+                        },
+                        {
+                            "y": 1,
+                            "id": "number-number-0062-1",
+                            "properties": {
+                                "side": "WEST"
+                            }
+                        },
+                        {
+                            "y": 0,
+                            "id": "bool-bool-0062-2",
+                            "properties": {
+                                "side": "EAST"
+                            }
+                        }
+                    ],
+                    "operator": "<",
+                    "flowNodeType": "ifNode",
+                    "realNodeType": "stNode",
+                    "unit": ["mm", null]
+                }
+            },
+            "type": "ifNode",
+            "origin": [0, 0],
+            "measured": {
+                "width": 180,
+                "height": 182
+            },
+            "position": {
+                "x": 850,
+                "y": 4050
+            },
+            "selected": false
+        },
+        {
+            "id": "0063",
+            "data": {
+                "nodeData": {
+                    "name": "Or",
+                    "values": [null, null],
+                    "handles": [
+                        {
+                            "y": 0,
+                            "id": "bool-bool-0063-0",
+                            "properties": {
+                                "side": "WEST"
+                            }
+                        },
+                        {
+                            "y": 1,
+                            "id": "bool-bool-0063-1",
+                            "properties": {
+                                "side": "WEST"
+                            }
+                        },
+                        {
+                            "y": 0,
+                            "id": "bool-bool-0063-2",
+                            "properties": {
+                                "side": "EAST"
+                            }
+                        }
+                    ],
+                    "operator": "or",
+                    "flowNodeType": "logicNode",
+                    "realNodeType": "orNode"
+                }
+            },
+            "type": "logicNode",
+            "origin": [0, 0],
+            "measured": {
+                "width": 180,
+                "height": 166
+            },
+            "position": {
+                "x": 1175,
+                "y": 4350
+            },
+            "selected": false
+        },
+        {
+            "id": "0064",
+            "data": {
+                "nodeData": {
+                    "name": "Or",
+                    "values": [null, null],
+                    "handles": [
+                        {
+                            "y": 0,
+                            "id": "bool-bool-0064-0",
+                            "properties": {
+                                "side": "WEST"
+                            }
+                        },
+                        {
+                            "y": 1,
+                            "id": "bool-bool-0064-1",
+                            "properties": {
+                                "side": "WEST"
+                            }
+                        },
+                        {
+                            "y": 0,
+                            "id": "bool-bool-0064-2",
+                            "properties": {
+                                "side": "EAST"
+                            }
+                        }
+                    ],
+                    "operator": "or",
+                    "flowNodeType": "logicNode",
+                    "realNodeType": "orNode"
+                }
+            },
+            "type": "logicNode",
+            "origin": [0, 0],
+            "measured": {
+                "width": 180,
+                "height": 166
+            },
+            "position": {
+                "x": 1175,
+                "y": 4625
+            },
+            "selected": false
+        },
+        {
+            "id": "0065",
+            "data": {
+                "nodeData": {
+                    "name": "Smaller than",
+                    "values": [null, 25],
+                    "handles": [
+                        {
+                            "y": 0,
+                            "id": "number-number-0065-0",
+                            "properties": {
+                                "side": "WEST"
+                            }
+                        },
+                        {
+                            "y": 1,
+                            "id": "number-number-0065-1",
+                            "properties": {
+                                "side": "WEST"
+                            }
+                        },
+                        {
+                            "y": 0,
+                            "id": "bool-bool-0065-2",
+                            "properties": {
+                                "side": "EAST"
+                            }
+                        }
+                    ],
+                    "operator": "<",
+                    "flowNodeType": "ifNode",
+                    "realNodeType": "stNode",
+                    "unit": [null, null]
+                }
+            },
+            "type": "ifNode",
+            "origin": [0, 0],
+            "measured": {
+                "width": 180,
+                "height": 182
+            },
+            "position": {
+                "x": 850,
+                "y": 8125
+            },
+            "selected": false
+        },
+        {
+            "id": "0066",
+            "data": {
+                "nodeData": {
+                    "name": "Smaller than",
+                    "values": [null, 25],
+                    "handles": [
+                        {
+                            "y": 0,
+                            "id": "number-number-0066-0",
+                            "properties": {
+                                "side": "WEST"
+                            }
+                        },
+                        {
+                            "y": 1,
+                            "id": "number-number-0066-1",
+                            "properties": {
+                                "side": "WEST"
+                            }
+                        },
+                        {
+                            "y": 0,
+                            "id": "bool-bool-0066-2",
+                            "properties": {
+                                "side": "EAST"
+                            }
+                        }
+                    ],
+                    "operator": "<",
+                    "flowNodeType": "ifNode",
+                    "realNodeType": "stNode",
+                    "unit": [null, null]
+                }
+            },
+            "type": "ifNode",
+            "origin": [0, 0],
+            "measured": {
+                "width": 180,
+                "height": 182
+            },
+            "position": {
+                "x": 850,
+                "y": 7575
+            },
+            "selected": false
+        },
+        {
+            "id": "0067",
+            "data": {
+                "nodeData": {
+                    "name": "Smaller than",
+                    "values": [null, 250],
+                    "handles": [
+                        {
+                            "y": 0,
+                            "id": "number-number-0067-0",
+                            "properties": {
+                                "side": "WEST"
+                            }
+                        },
+                        {
+                            "y": 1,
+                            "id": "number-number-0067-1",
+                            "properties": {
+                                "side": "WEST"
+                            }
+                        },
+                        {
+                            "y": 0,
+                            "id": "bool-bool-0067-2",
+                            "properties": {
+                                "side": "EAST"
+                            }
+                        }
+                    ],
+                    "operator": "<",
+                    "flowNodeType": "ifNode",
+                    "realNodeType": "stNode",
+                    "unit": [null, null]
+                }
+            },
+            "type": "ifNode",
+            "origin": [0, 0],
+            "measured": {
+                "width": 180,
+                "height": 182
+            },
+            "position": {
+                "x": 850,
+                "y": 7850
+            },
+            "selected": false
+        },
+        {
+            "id": "0068",
+            "data": {
+                "nodeData": {
+                    "name": "Smaller than",
+                    "values": [null, 250],
+                    "handles": [
+                        {
+                            "y": 0,
+                            "id": "number-number-0068-0",
+                            "properties": {
+                                "side": "WEST"
+                            }
+                        },
+                        {
+                            "y": 1,
+                            "id": "number-number-0068-1",
+                            "properties": {
+                                "side": "WEST"
+                            }
+                        },
+                        {
+                            "y": 0,
+                            "id": "bool-bool-0068-2",
+                            "properties": {
+                                "side": "EAST"
+                            }
+                        }
+                    ],
+                    "operator": "<",
+                    "flowNodeType": "ifNode",
+                    "realNodeType": "stNode",
+                    "unit": [null, null]
+                }
+            },
+            "type": "ifNode",
+            "origin": [0, 0],
+            "measured": {
+                "width": 180,
+                "height": 182
+            },
+            "position": {
+                "x": 850,
+                "y": 7300
+            },
+            "selected": false
+        },
+        {
+            "id": "0069",
+            "data": {
+                "nodeData": {
+                    "name": "Or",
+                    "values": [null, null],
+                    "handles": [
+                        {
+                            "y": 0,
+                            "id": "bool-bool-0069-0",
+                            "properties": {
+                                "side": "WEST"
+                            }
+                        },
+                        {
+                            "y": 1,
+                            "id": "bool-bool-0069-1",
+                            "properties": {
+                                "side": "WEST"
+                            }
+                        },
+                        {
+                            "y": 0,
+                            "id": "bool-bool-0069-2",
+                            "properties": {
+                                "side": "EAST"
+                            }
+                        }
+                    ],
+                    "operator": "or",
+                    "flowNodeType": "logicNode",
+                    "realNodeType": "orNode"
+                }
+            },
+            "type": "logicNode",
+            "origin": [0, 0],
+            "measured": {
+                "width": 180,
+                "height": 166
+            },
+            "position": {
+                "x": 1175,
+                "y": 7600
+            },
+            "selected": false
+        },
+        {
+            "id": "0070",
+            "data": {
+                "nodeData": {
+                    "name": "Or",
+                    "values": [null, null],
+                    "handles": [
+                        {
+                            "y": 0,
+                            "id": "bool-bool-0070-0",
+                            "properties": {
+                                "side": "WEST"
+                            }
+                        },
+                        {
+                            "y": 1,
+                            "id": "bool-bool-0070-1",
+                            "properties": {
+                                "side": "WEST"
+                            }
+                        },
+                        {
+                            "y": 0,
+                            "id": "bool-bool-0070-2",
+                            "properties": {
+                                "side": "EAST"
+                            }
+                        }
+                    ],
+                    "operator": "or",
+                    "flowNodeType": "logicNode",
+                    "realNodeType": "orNode"
+                }
+            },
+            "type": "logicNode",
+            "origin": [0, 0],
+            "measured": {
+                "width": 180,
+                "height": 166
+            },
+            "position": {
+                "x": 1175,
+                "y": 7875
+            },
+            "selected": false
+        },
+        {
+            "id": "0071",
+            "data": {
+                "nodeData": {
+                    "name": "White rot",
+                    "cases": [
+                        {
+                            "caseId": 0,
+                            "caseName": "Length",
+                            "caseType": "number",
+                            "realCaseType": "number",
+                            "caseUnit": "mm"
+                        },
+                        {
+                            "caseId": 1,
+                            "caseName": "Width",
+                            "caseType": "number",
+                            "realCaseType": "number",
+                            "caseUnit": "mm"
+                        },
+                        {
+                            "caseId": 2,
+                            "caseName": "Area",
+                            "caseType": "number",
+                            "realCaseType": "number",
+                            "caseUnit": "mm\u00b2"
+                        }
+                    ],
+                    "values": ["white_rot-object-0017-21"],
+                    "handles": [
+                        {
+                            "y": 0,
+                            "id": "number-number-0071-0",
+                            "properties": {
+                                "side": "EAST"
+                            }
+                        },
+                        {
+                            "y": 1,
+                            "id": "number-number-0071-1",
+                            "properties": {
+                                "side": "EAST"
+                            }
+                        },
+                        {
+                            "y": 2,
+                            "id": "number-number-0071-2",
+                            "properties": {
+                                "side": "EAST"
+                            }
+                        },
+                        {
+                            "y": 0,
+                            "id": "white_rot-object-0071-0",
+                            "properties": {
+                                "side": "WEST"
+                            }
+                        }
+                    ],
+                    "inputType": "object",
+                    "flowNodeType": "dynamicNode",
+                    "realNodeType": "dynamicNode",
+                    "realInputType": "white_rot"
+                }
+            },
+            "type": "dynamicNode",
+            "origin": [0, 0],
+            "measured": {
+                "width": 180,
+                "height": 248
+            },
+            "position": {
+                "x": 500,
+                "y": 7750
+            },
+            "selected": false
+        },
+        {
+            "id": "0072",
+            "data": {
+                "nodeData": {
+                    "name": "Smaller than",
+                    "values": [null, 25],
+                    "handles": [
+                        {
+                            "y": 0,
+                            "id": "number-number-0072-0",
+                            "properties": {
+                                "side": "WEST"
+                            }
+                        },
+                        {
+                            "y": 1,
+                            "id": "number-number-0072-1",
+                            "properties": {
+                                "side": "WEST"
+                            }
+                        },
+                        {
+                            "y": 0,
+                            "id": "bool-bool-0072-2",
+                            "properties": {
+                                "side": "EAST"
+                            }
+                        }
+                    ],
+                    "operator": "<",
+                    "flowNodeType": "ifNode",
+                    "realNodeType": "stNode",
+                    "unit": [null, null]
+                }
+            },
+            "type": "ifNode",
+            "origin": [0, 0],
+            "measured": {
+                "width": 180,
+                "height": 182
+            },
+            "position": {
+                "x": 850,
+                "y": 6750
+            },
+            "selected": false
+        },
+        {
+            "id": "0073",
+            "data": {
+                "nodeData": {
+                    "name": "Smaller than",
+                    "values": [null, 25],
+                    "handles": [
+                        {
+                            "y": 0,
+                            "id": "number-number-0073-0",
+                            "properties": {
+                                "side": "WEST"
+                            }
+                        },
+                        {
+                            "y": 1,
+                            "id": "number-number-0073-1",
+                            "properties": {
+                                "side": "WEST"
+                            }
+                        },
+                        {
+                            "y": 0,
+                            "id": "bool-bool-0073-2",
+                            "properties": {
+                                "side": "EAST"
+                            }
+                        }
+                    ],
+                    "operator": "<",
+                    "flowNodeType": "ifNode",
+                    "realNodeType": "stNode",
+                    "unit": [null, null]
+                }
+            },
+            "type": "ifNode",
+            "origin": [0, 0],
+            "measured": {
+                "width": 180,
+                "height": 182
+            },
+            "position": {
+                "x": 850,
+                "y": 6225
+            },
+            "selected": false
+        },
+        {
+            "id": "0074",
+            "data": {
+                "nodeData": {
+                    "name": "Smaller than",
+                    "values": [null, 250],
+                    "handles": [
+                        {
+                            "y": 0,
+                            "id": "number-number-0074-0",
+                            "properties": {
+                                "side": "WEST"
+                            }
+                        },
+                        {
+                            "y": 1,
+                            "id": "number-number-0074-1",
+                            "properties": {
+                                "side": "WEST"
+                            }
+                        },
+                        {
+                            "y": 0,
+                            "id": "bool-bool-0074-2",
+                            "properties": {
+                                "side": "EAST"
+                            }
+                        }
+                    ],
+                    "operator": "<",
+                    "flowNodeType": "ifNode",
+                    "realNodeType": "stNode",
+                    "unit": [null, null]
+                }
+            },
+            "type": "ifNode",
+            "origin": [0, 0],
+            "measured": {
+                "width": 180,
+                "height": 182
+            },
+            "position": {
+                "x": 850,
+                "y": 7025
+            },
+            "selected": false
+        },
+        {
+            "id": "0075",
+            "data": {
+                "nodeData": {
+                    "name": "Smaller than",
+                    "values": [null, 250],
+                    "handles": [
+                        {
+                            "y": 0,
+                            "id": "number-number-0075-0",
+                            "properties": {
+                                "side": "WEST"
+                            }
+                        },
+                        {
+                            "y": 1,
+                            "id": "number-number-0075-1",
+                            "properties": {
+                                "side": "WEST"
+                            }
+                        },
+                        {
+                            "y": 0,
+                            "id": "bool-bool-0075-2",
+                            "properties": {
+                                "side": "EAST"
+                            }
+                        }
+                    ],
+                    "operator": "<",
+                    "flowNodeType": "ifNode",
+                    "realNodeType": "stNode",
+                    "unit": [null, null]
+                }
+            },
+            "type": "ifNode",
+            "origin": [0, 0],
+            "measured": {
+                "width": 180,
+                "height": 182
+            },
+            "position": {
+                "x": 850,
+                "y": 6475
+            },
+            "selected": false
+        },
+        {
+            "id": "0076",
+            "data": {
+                "nodeData": {
+                    "name": "Or",
+                    "values": [null, null],
+                    "handles": [
+                        {
+                            "y": 0,
+                            "id": "bool-bool-0076-0",
+                            "properties": {
+                                "side": "WEST"
+                            }
+                        },
+                        {
+                            "y": 1,
+                            "id": "bool-bool-0076-1",
+                            "properties": {
+                                "side": "WEST"
+                            }
+                        },
+                        {
+                            "y": 0,
+                            "id": "bool-bool-0076-2",
+                            "properties": {
+                                "side": "EAST"
+                            }
+                        }
+                    ],
+                    "operator": "or",
+                    "flowNodeType": "logicNode",
+                    "realNodeType": "orNode"
+                }
+            },
+            "type": "logicNode",
+            "origin": [0, 0],
+            "measured": {
+                "width": 180,
+                "height": 166
+            },
+            "position": {
+                "x": 1175,
+                "y": 6800
+            },
+            "selected": false
+        },
+        {
+            "id": "0077",
+            "data": {
+                "nodeData": {
+                    "name": "Or",
+                    "values": [null, null],
+                    "handles": [
+                        {
+                            "y": 0,
+                            "id": "bool-bool-0077-0",
+                            "properties": {
+                                "side": "WEST"
+                            }
+                        },
+                        {
+                            "y": 1,
+                            "id": "bool-bool-0077-1",
+                            "properties": {
+                                "side": "WEST"
+                            }
+                        },
+                        {
+                            "y": 0,
+                            "id": "bool-bool-0077-2",
+                            "properties": {
+                                "side": "EAST"
+                            }
+                        }
+                    ],
+                    "operator": "or",
+                    "flowNodeType": "logicNode",
+                    "realNodeType": "orNode"
+                }
+            },
+            "type": "logicNode",
+            "origin": [0, 0],
+            "measured": {
+                "width": 180,
+                "height": 166
+            },
+            "position": {
+                "x": 1175,
+                "y": 6525
+            },
+            "selected": false
+        },
+        {
+            "id": "0078",
+            "data": {
+                "nodeData": {
+                    "name": "Brown rot",
+                    "cases": [
+                        {
+                            "caseId": 0,
+                            "caseName": "Length",
+                            "caseType": "number",
+                            "realCaseType": "number",
+                            "caseUnit": "mm"
+                        },
+                        {
+                            "caseId": 1,
+                            "caseName": "Width",
+                            "caseType": "number",
+                            "realCaseType": "number",
+                            "caseUnit": "mm"
+                        },
+                        {
+                            "caseId": 2,
+                            "caseName": "Area",
+                            "caseType": "number",
+                            "realCaseType": "number",
+                            "caseUnit": "mm\u00b2"
+                        }
+                    ],
+                    "values": ["brown_rot-object-0017-22"],
+                    "handles": [
+                        {
+                            "y": 0,
+                            "id": "number-number-0078-0",
+                            "properties": {
+                                "side": "EAST"
+                            }
+                        },
+                        {
+                            "y": 1,
+                            "id": "number-number-0078-1",
+                            "properties": {
+                                "side": "EAST"
+                            }
+                        },
+                        {
+                            "y": 2,
+                            "id": "number-number-0078-2",
+                            "properties": {
+                                "side": "EAST"
+                            }
+                        },
+                        {
+                            "y": 0,
+                            "id": "brown_rot-object-0078-0",
+                            "properties": {
+                                "side": "WEST"
+                            }
+                        }
+                    ],
+                    "inputType": "object",
+                    "flowNodeType": "dynamicNode",
+                    "realNodeType": "dynamicNode",
+                    "realInputType": "brown_rot"
+                }
+            },
+            "type": "dynamicNode",
+            "origin": [0, 0],
+            "measured": {
+                "width": 180,
+                "height": 248
+            },
+            "position": {
+                "x": 500,
+                "y": 6675
+            },
+            "selected": false
+        }
+    ]
+}
