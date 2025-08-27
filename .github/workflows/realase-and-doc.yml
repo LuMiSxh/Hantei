@@ -419,7 +419,6 @@ jobs:
                       }
 
                       // Upload python wheels
-                      const { glob } = require("glob");
                       const wheelPaths = await glob("wheels/**/*.whl");
                       for (const wheelPath of wheelPaths) {
                         console.log(`Uploading wheel: ${wheelPath}`);
