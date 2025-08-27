@@ -317,37 +317,10 @@ impl Compiler {
 
     /// Apply optimizations to the AST
     fn optimize_ast(&self, expr: Expression) -> Expression {
-        match expr {
-            Expression::GreaterThan(l, r) => {
-                let opt_l = self.optimize_ast(*l);
-                let opt_r = self.optimize_ast(*r);
-                // Constant folding for numeric comparisons
-                if let (
-                    Expression::Literal(Value::Number(lv)),
-                    Expression::Literal(Value::Number(rv)),
-                ) = (&opt_l, &opt_r)
-                {
-                    return Expression::Literal(Value::Bool(lv > rv));
-                }
-                Expression::GreaterThan(Box::new(opt_l), Box::new(opt_r))
-            }
-            Expression::Or(l, r) => {
-                let opt_l = self.optimize_ast(*l);
-                let opt_r = self.optimize_ast(*r);
-                // Short-circuit optimizations
-                match (&opt_l, &opt_r) {
-                    (Expression::Literal(Value::Bool(true)), _) => {
-                        Expression::Literal(Value::Bool(true))
-                    }
-                    (_, Expression::Literal(Value::Bool(true))) => {
-                        Expression::Literal(Value::Bool(true))
-                    }
-                    (Expression::Literal(Value::Bool(false)), _) => opt_r,
-                    (_, Expression::Literal(Value::Bool(false))) => opt_l,
-                    _ => Expression::Or(Box::new(opt_l), Box::new(opt_r)),
-                }
-            }
-            // Recursively optimize other expressions
+        // First, recursively optimize the children of the expression.
+        // This is a "post-order traversal", which is ideal for optimization
+        // as it ensures we work with already-optimized sub-trees.
+        let optimized_expr = match expr {
             Expression::Sum(l, r) => Expression::Sum(
                 Box::new(self.optimize_ast(*l)),
                 Box::new(self.optimize_ast(*r)),
@@ -370,6 +343,10 @@ impl Compiler {
                 Box::new(self.optimize_ast(*l)),
                 Box::new(self.optimize_ast(*r)),
             ),
+            Expression::Or(l, r) => Expression::Or(
+                Box::new(self.optimize_ast(*l)),
+                Box::new(self.optimize_ast(*r)),
+            ),
             Expression::Xor(l, r) => Expression::Xor(
                 Box::new(self.optimize_ast(*l)),
                 Box::new(self.optimize_ast(*r)),
@@ -379,6 +356,10 @@ impl Compiler {
                 Box::new(self.optimize_ast(*r)),
             ),
             Expression::NotEqual(l, r) => Expression::NotEqual(
+                Box::new(self.optimize_ast(*l)),
+                Box::new(self.optimize_ast(*r)),
+            ),
+            Expression::GreaterThan(l, r) => Expression::GreaterThan(
                 Box::new(self.optimize_ast(*l)),
                 Box::new(self.optimize_ast(*r)),
             ),
@@ -394,7 +375,159 @@ impl Compiler {
                 Box::new(self.optimize_ast(*l)),
                 Box::new(self.optimize_ast(*r)),
             ),
-            // Leaf nodes don't need optimization
+            // Leaf nodes don't have children to optimize.
+            other => other,
+        };
+
+        // Now, optimize the current node, whose children are already optimized.
+        match optimized_expr {
+            // --- ARITHMETIC OPTIMIZATIONS ---
+            Expression::Sum(l, r) => {
+                match (*l, *r) {
+                    // Constant folding: 5 + 10 -> 15
+                    (
+                        Expression::Literal(Value::Number(lv)),
+                        Expression::Literal(Value::Number(rv)),
+                    ) => Expression::Literal(Value::Number(lv + rv)),
+                    // Identity: x + 0 -> x
+                    (expr, Expression::Literal(Value::Number(rv))) if rv == 0.0 => expr,
+                    // Identity: 0 + x -> x
+                    (Expression::Literal(Value::Number(lv)), expr) if lv == 0.0 => expr,
+                    (opt_l, opt_r) => Expression::Sum(Box::new(opt_l), Box::new(opt_r)),
+                }
+            }
+            Expression::Subtract(l, r) => {
+                match (*l, *r) {
+                    // Constant folding: 10 - 5 -> 5
+                    (
+                        Expression::Literal(Value::Number(lv)),
+                        Expression::Literal(Value::Number(rv)),
+                    ) => Expression::Literal(Value::Number(lv - rv)),
+                    // Identity: x - 0 -> x
+                    (expr, Expression::Literal(Value::Number(rv))) if rv == 0.0 => expr,
+                    (opt_l, opt_r) => Expression::Subtract(Box::new(opt_l), Box::new(opt_r)),
+                }
+            }
+            Expression::Multiply(l, r) => {
+                match (*l, *r) {
+                    // Constant folding: 5 * 10 -> 50
+                    (
+                        Expression::Literal(Value::Number(lv)),
+                        Expression::Literal(Value::Number(rv)),
+                    ) => Expression::Literal(Value::Number(lv * rv)),
+                    // Identity: x * 1 -> x
+                    (expr, Expression::Literal(Value::Number(rv))) if rv == 1.0 => expr,
+                    (Expression::Literal(Value::Number(lv)), expr) if lv == 1.0 => expr,
+                    // Annihilation: x * 0 -> 0
+                    (_, Expression::Literal(Value::Number(rv))) if rv == 0.0 => {
+                        Expression::Literal(Value::Number(0.0))
+                    }
+                    (Expression::Literal(Value::Number(lv)), _) if lv == 0.0 => {
+                        Expression::Literal(Value::Number(0.0))
+                    }
+                    (opt_l, opt_r) => Expression::Multiply(Box::new(opt_l), Box::new(opt_r)),
+                }
+            }
+            Expression::Divide(l, r) => {
+                match (*l, *r) {
+                    // Constant folding: 10 / 5 -> 2
+                    (
+                        Expression::Literal(Value::Number(lv)),
+                        Expression::Literal(Value::Number(rv)),
+                    ) if rv != 0.0 => Expression::Literal(Value::Number(lv / rv)),
+                    // Identity: x / 1 -> x
+                    (expr, Expression::Literal(Value::Number(rv))) if rv == 1.0 => expr,
+                    // Annihilation: 0 / x -> 0
+                    (Expression::Literal(Value::Number(lv)), _) if lv == 0.0 => {
+                        Expression::Literal(Value::Number(0.0))
+                    }
+                    (opt_l, opt_r) => Expression::Divide(Box::new(opt_l), Box::new(opt_r)),
+                }
+            }
+            Expression::Abs(v) => {
+                if let Expression::Literal(Value::Number(val)) = *v {
+                    Expression::Literal(Value::Number(val.abs()))
+                } else {
+                    Expression::Abs(v)
+                }
+            }
+
+            // --- LOGICAL OPTIMIZATIONS ---
+            Expression::Not(v) => {
+                match *v {
+                    // Constant folding: NOT true -> false
+                    Expression::Literal(Value::Bool(b)) => Expression::Literal(Value::Bool(!b)),
+                    // Double negation: NOT (NOT x) -> x
+                    Expression::Not(inner_v) => *inner_v,
+                    opt_v => Expression::Not(Box::new(opt_v)),
+                }
+            }
+            Expression::Or(l, r) => {
+                match (*l, *r) {
+                    // Short-circuit: x OR true -> true
+                    (_, Expression::Literal(Value::Bool(true))) => {
+                        Expression::Literal(Value::Bool(true))
+                    }
+                    (Expression::Literal(Value::Bool(true)), _) => {
+                        Expression::Literal(Value::Bool(true))
+                    }
+                    // Identity: x OR false -> x
+                    (expr, Expression::Literal(Value::Bool(false))) => expr,
+                    (Expression::Literal(Value::Bool(false)), expr) => expr,
+                    (opt_l, opt_r) => Expression::Or(Box::new(opt_l), Box::new(opt_r)),
+                }
+            }
+            Expression::And(l, r) => {
+                match (*l, *r) {
+                    // Short-circuit: x AND false -> false
+                    (_, Expression::Literal(Value::Bool(false))) => {
+                        Expression::Literal(Value::Bool(false))
+                    }
+                    (Expression::Literal(Value::Bool(false)), _) => {
+                        Expression::Literal(Value::Bool(false))
+                    }
+                    // Identity: x AND true -> x
+                    (expr, Expression::Literal(Value::Bool(true))) => expr,
+                    (Expression::Literal(Value::Bool(true)), expr) => expr,
+                    (opt_l, opt_r) => Expression::And(Box::new(opt_l), Box::new(opt_r)),
+                }
+            }
+
+            // --- COMPARISON OPTIMIZATIONS ---
+            Expression::Equal(l, r) => {
+                if let (Expression::Literal(lv), Expression::Literal(rv)) = (&*l, &*r) {
+                    Expression::Literal(Value::Bool(lv == rv))
+                } else if *l == *r {
+                    // Tautology: x == x -> true
+                    Expression::Literal(Value::Bool(true))
+                } else {
+                    Expression::Equal(l, r)
+                }
+            }
+            Expression::NotEqual(l, r) => {
+                if let (Expression::Literal(lv), Expression::Literal(rv)) = (&*l, &*r) {
+                    Expression::Literal(Value::Bool(lv != rv))
+                } else if *l == *r {
+                    // Contradiction: x != x -> false
+                    Expression::Literal(Value::Bool(false))
+                } else {
+                    Expression::NotEqual(l, r)
+                }
+            }
+            Expression::GreaterThan(l, r) => {
+                if let (
+                    Expression::Literal(Value::Number(lv)),
+                    Expression::Literal(Value::Number(rv)),
+                ) = (&*l, &*r)
+                {
+                    Expression::Literal(Value::Bool(lv > rv))
+                } else {
+                    Expression::GreaterThan(l, r)
+                }
+            }
+            // ... similar constant folding patterns for SmallerThan, GreaterThanOrEqual, SmallerThanOrEqual ...
+
+            // Fallback for all other expressions
             other => other,
         }
     }

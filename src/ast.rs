@@ -72,125 +72,12 @@ pub enum Expression {
 
 impl fmt::Display for Expression {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        // Start the recursive formatting with the lowest parent precedence.
-        self.fmt_with_precedence(f, 0, 0)
+        // Start the recursive tree formatting with an empty prefix
+        self.fmt_as_tree(f, "", true)
     }
 }
 
 impl Expression {
-    /// Gets the precedence level for an expression type. Higher numbers bind more tightly.
-    fn precedence(&self) -> u8 {
-        match self {
-            Expression::Or(_, _) => 1,
-            Expression::And(_, _) => 2,
-            Expression::Xor(_, _) => 3,
-            Expression::Equal(_, _) | Expression::NotEqual(_, _) => 4,
-            Expression::GreaterThan(_, _)
-            | Expression::GreaterThanOrEqual(_, _)
-            | Expression::SmallerThan(_, _)
-            | Expression::SmallerThanOrEqual(_, _) => 5,
-            Expression::Sum(_, _) | Expression::Subtract(_, _) => 6,
-            Expression::Multiply(_, _) | Expression::Divide(_, _) => 7,
-            Expression::Not(_) | Expression::Abs(_) => 8,
-            Expression::Literal(_) | Expression::Input(_) => 9,
-        }
-    }
-
-    /// Recursively formats the expression, adding parentheses only when necessary.
-    fn fmt_with_precedence(
-        &self,
-        f: &mut fmt::Formatter<'_>,
-        indent: usize,
-        parent_precedence: u8,
-    ) -> fmt::Result {
-        let current_precedence = self.precedence();
-        let needs_parens = current_precedence < parent_precedence;
-
-        if needs_parens {
-            write!(f, "(")?;
-        }
-
-        match self {
-            // Special handling for OR/AND to add newlines for readability
-            Expression::Or(l, r) => {
-                l.fmt_with_precedence(f, indent, current_precedence)?;
-                write!(f, "\n{}OR\n", "  ".repeat(indent))?;
-                r.fmt_with_precedence(f, indent, current_precedence)?;
-            }
-            Expression::And(l, r) => {
-                l.fmt_with_precedence(f, indent + 1, current_precedence)?;
-                write!(f, " AND ")?;
-                r.fmt_with_precedence(f, indent + 1, current_precedence)?;
-            }
-
-            // Generic binary operators
-            Expression::GreaterThan(l, r) => {
-                self.fmt_binary(f, ">", l, r, indent, current_precedence)?
-            }
-            Expression::SmallerThan(l, r) => {
-                self.fmt_binary(f, "<", l, r, indent, current_precedence)?
-            }
-            Expression::GreaterThanOrEqual(l, r) => {
-                self.fmt_binary(f, ">=", l, r, indent, current_precedence)?
-            }
-            Expression::SmallerThanOrEqual(l, r) => {
-                self.fmt_binary(f, "<=", l, r, indent, current_precedence)?
-            }
-            Expression::Equal(l, r) => {
-                self.fmt_binary(f, "==", l, r, indent, current_precedence)?
-            }
-            Expression::NotEqual(l, r) => {
-                self.fmt_binary(f, "!=", l, r, indent, current_precedence)?
-            }
-            Expression::Sum(l, r) => self.fmt_binary(f, "+", l, r, indent, current_precedence)?,
-            Expression::Subtract(l, r) => {
-                self.fmt_binary(f, "-", l, r, indent, current_precedence)?
-            }
-            Expression::Multiply(l, r) => {
-                self.fmt_binary(f, "*", l, r, indent, current_precedence)?
-            }
-            Expression::Divide(l, r) => {
-                self.fmt_binary(f, "/", l, r, indent, current_precedence)?
-            }
-            Expression::Xor(l, r) => self.fmt_binary(f, "XOR", l, r, indent, current_precedence)?,
-
-            // Unary operators
-            Expression::Not(v) => {
-                write!(f, "NOT ")?;
-                v.fmt_with_precedence(f, indent, current_precedence)?;
-            }
-            Expression::Abs(v) => {
-                write!(f, "ABS")?;
-                v.fmt_with_precedence(f, indent, current_precedence)?;
-            }
-
-            // Leaf nodes
-            Expression::Literal(v) => write!(f, "{}", v)?,
-            Expression::Input(s) => write!(f, "{}", s)?,
-        }
-
-        if needs_parens {
-            write!(f, ")")?;
-        }
-        Ok(())
-    }
-
-    /// Helper function to format a generic binary expression.
-    fn fmt_binary(
-        &self,
-        f: &mut fmt::Formatter<'_>,
-        op: &str,
-        l: &Expression,
-        r: &Expression,
-        indent: usize,
-        current_precedence: u8,
-    ) -> fmt::Result {
-        l.fmt_with_precedence(f, indent, current_precedence)?;
-        write!(f, " {} ", op)?;
-        r.fmt_with_precedence(f, indent, current_precedence)?;
-        Ok(())
-    }
-
     // This function is still required by the evaluator and should be kept.
     pub fn get_required_events(&self, events: &mut HashSet<String>) {
         match self {
@@ -218,6 +105,110 @@ impl Expression {
             }
             Expression::Literal(_) | Expression::Input(InputSource::Static { .. }) => {}
         }
+    }
+
+    /// Recursively collects all non-OR operands from a nested chain of OR expressions.
+    fn collect_or_operands<'a>(&'a self, operands: &mut Vec<&'a Expression>) {
+        if let Expression::Or(l, r) = self {
+            l.collect_or_operands(operands);
+            r.collect_or_operands(operands);
+        } else {
+            operands.push(self);
+        }
+    }
+
+    /// Formats the expression as a hierarchical, human-readable tree.
+    fn fmt_as_tree(&self, f: &mut fmt::Formatter<'_>, prefix: &str, is_last: bool) -> fmt::Result {
+        let line_prefix = if prefix.is_empty() { "" } else { prefix };
+        let node_marker = if is_last { "└── " } else { "├── " };
+        write!(f, "{}{}", line_prefix, node_marker)?;
+
+        let child_prefix = format!("{}{}", prefix, if is_last { "    " } else { "│   " });
+
+        match self {
+            // SPECIAL CASE: Visually flatten OR chains
+            Expression::Or(_, _) => {
+                writeln!(f, "orNode (OR)")?;
+                let mut operands = Vec::new();
+                self.collect_or_operands(&mut operands);
+                let num_operands = operands.len();
+                for (i, operand) in operands.iter().enumerate() {
+                    let is_last_operand = i == num_operands - 1;
+                    operand.fmt_as_tree(f, &child_prefix, is_last_operand)?;
+                }
+            }
+
+            // Other nodes are handled normally
+            Expression::Literal(v) => match v {
+                Value::Number(_) => writeln!(f, "Literal(Number): {}", v)?,
+                Value::Bool(_) => writeln!(f, "Literal(Bool): {}", v)?,
+                Value::Null => writeln!(f, "Literal(Null)")?,
+            },
+            Expression::Input(s) => match s {
+                InputSource::Static { .. } => writeln!(f, "Input(Static): {}", s)?,
+                InputSource::Dynamic { .. } => writeln!(f, "Input(Dynamic): {}", s)?,
+            },
+            Expression::Not(v) => {
+                writeln!(f, "notNode (NOT)")?;
+                v.fmt_as_tree(f, &child_prefix, true)?;
+            }
+            Expression::Abs(v) => {
+                writeln!(f, "absNode (ABS)")?;
+                v.fmt_as_tree(f, &child_prefix, true)?;
+            }
+            Expression::GreaterThan(l, r) => {
+                self.fmt_binary_as_tree(f, "gtNode (>)", l, r, &child_prefix)?
+            }
+            Expression::SmallerThan(l, r) => {
+                self.fmt_binary_as_tree(f, "stNode (<)", l, r, &child_prefix)?
+            }
+            Expression::GreaterThanOrEqual(l, r) => {
+                self.fmt_binary_as_tree(f, "gteqNode (>=)", l, r, &child_prefix)?
+            }
+            Expression::SmallerThanOrEqual(l, r) => {
+                self.fmt_binary_as_tree(f, "steqNode (<=)", l, r, &child_prefix)?
+            }
+            Expression::Equal(l, r) => {
+                self.fmt_binary_as_tree(f, "eqNode (==)", l, r, &child_prefix)?
+            }
+            Expression::NotEqual(l, r) => {
+                self.fmt_binary_as_tree(f, "neqNode (!=)", l, r, &child_prefix)?
+            }
+            Expression::Sum(l, r) => {
+                self.fmt_binary_as_tree(f, "sumNode (+)", l, r, &child_prefix)?
+            }
+            Expression::Subtract(l, r) => {
+                self.fmt_binary_as_tree(f, "subNode (-)", l, r, &child_prefix)?
+            }
+            Expression::Multiply(l, r) => {
+                self.fmt_binary_as_tree(f, "multNode (*)", l, r, &child_prefix)?
+            }
+            Expression::Divide(l, r) => {
+                self.fmt_binary_as_tree(f, "divideNode (/)", l, r, &child_prefix)?
+            }
+            Expression::And(l, r) => {
+                self.fmt_binary_as_tree(f, "andNode (AND)", l, r, &child_prefix)?
+            }
+            Expression::Xor(l, r) => {
+                self.fmt_binary_as_tree(f, "xorNode (XOR)", l, r, &child_prefix)?
+            }
+        }
+        Ok(())
+    }
+
+    /// Helper for formatting all binary operators except for OR.
+    fn fmt_binary_as_tree(
+        &self,
+        f: &mut fmt::Formatter<'_>,
+        node_name: &str,
+        l: &Expression,
+        r: &Expression,
+        child_prefix: &str,
+    ) -> fmt::Result {
+        writeln!(f, "{}", node_name)?;
+        l.fmt_as_tree(f, child_prefix, false)?;
+        r.fmt_as_tree(f, child_prefix, true)?;
+        Ok(())
     }
 }
 
