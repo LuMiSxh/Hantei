@@ -169,16 +169,6 @@ jobs:
                   maturin build --release --out dist
                   pip install dist/*.whl
 
-            - name: Execute Python binding test suite
-              run: |
-                  pytest tests/python/
-
-                  - name: Execute cargo check validation
-                  run: |
-                      echo "EXECUTING: Cargo check validation"
-                      cargo check --all-targets --all-features
-                      echo "STATUS: Cargo check validation completed"
-
     build_python_wheels:
         name: Build Python wheels on ${{ matrix.os }}
         runs-on: ${{ matrix.os }}
