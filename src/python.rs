@@ -115,18 +115,22 @@ impl<'py> IntoPyObject<'py> for EvaluationResult {
     type Error = std::convert::Infallible;
 
     fn into_pyobject(self, py: Python<'py>) -> Result<Self::Output, Self::Error> {
-        let dict = PyDict::new_bound(py);
+        let dict = PyDict::new(py);
 
+        // Handle Option fields - convert to Python None if None, otherwise convert the value
         match self.quality_name {
             Some(name) => dict.set_item("quality_name", name).unwrap(),
             None => dict.set_item("quality_name", py.None()).unwrap(),
         }
+
         match self.quality_priority {
             Some(priority) => dict.set_item("quality_priority", priority).unwrap(),
             None => dict.set_item("quality_priority", py.None()).unwrap(),
         }
+
         dict.set_item("reason", self.reason).unwrap();
-        dict.into()
+
+        Ok(dict)
     }
 }
 
@@ -138,7 +142,25 @@ struct HanteiPy {
 
 #[pymethods]
 impl HanteiPy {
-    /// Initializes and compiles the Hantei evaluator from JSON strings.
+    /// Initializes and compiles the Hantei evaluator.
+    ///
+    /// This method parses the provided JSON strings, builds an Abstract
+    /// Syntax Tree (AST) for each quality path, and applies optimizations.
+    /// The resulting compiled engine is stored in the instance.
+    ///
+    /// Args:
+    ///     recipe_json (str): A string containing the JSON definition of the
+    ///         recipe flow, including nodes and edges.
+    ///     qualities_json (str): A string containing the JSON array of
+    ///         quality definitions, including names and priorities.
+    ///
+    /// Returns:
+    ///     Hantei: An initialized instance of the Hantei evaluator.
+    ///
+    /// Raises:
+    ///     ValueError: If there is an error during JSON parsing or recipe
+    ///         compilation (e.g., malformed JSON, invalid node types,
+    ///         missing nodes).
     #[new]
     fn new(recipe_json: &str, qualities_json: &str) -> PyResult<Self> {
         // 1. Parse the raw JSON strings into our temporary models.
@@ -181,6 +203,30 @@ impl HanteiPy {
     }
 
     /// Evaluates the compiled recipe against the provided data.
+    ///
+    /// This method executes the pre-compiled logic against a set of static
+    /// and dynamic data. It efficiently handles cross-product evaluation
+    /// for dynamic events and returns the highest-priority quality that
+    /// triggers.
+    ///
+    /// Args:
+    ///     static_data (dict): A dictionary of static measurements, where keys
+    ///         are measurement names (str) and values are numbers (float/int).
+    ///     dynamic_data (dict): A dictionary of dynamic events. Keys are event
+    ///         type names (str), and values are lists of dictionaries, where
+    ///         each inner dictionary represents an event instance.
+    ///
+    /// Returns:
+    ///     dict: A dictionary containing the evaluation result with three keys:
+    ///         - "quality_name" (str | None): The name of the triggered quality.
+    ///         - "quality_priority" (int | None): The priority of the triggered quality.
+    ///         - "reason" (str): A human-readable trace of the logic that
+    ///           led to the result.
+    ///
+    /// Raises:
+    ///     RuntimeError: If an error occurs during evaluation, such as a
+    ///         type mismatch in the expression logic or a required input
+    ///         value not being found in the provided data.
     fn evaluate(
         &self,
         static_data_py: &Bound<'_, PyDict>,
@@ -197,7 +243,11 @@ impl HanteiPy {
     }
 }
 
-/// Python bindings for the Hantei compilation and evaluation engine.
+/// A high-performance recipe compilation and evaluation engine.
+///
+/// This module provides Python bindings to the Hantei Rust library, allowing for
+/// fast, ahead-of-time compilation of node-based decision trees and their
+/// subsequent evaluation against runtime data.
 #[pymodule]
 fn hantei(_py: Python, m: &Bound<'_, PyModule>) -> PyResult<()> {
     m.add_class::<HanteiPy>()?;
