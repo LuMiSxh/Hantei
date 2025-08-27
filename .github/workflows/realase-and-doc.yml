@@ -164,9 +164,10 @@ jobs:
               run: |
                   pip install maturin pytest
 
-            - name: Build and install Python package in editable mode
+            - name: Build and install Python package
               run: |
-                  maturin develop
+                  maturin build --release --out dist
+                  pip install dist/*.whl
 
             - name: Execute Python binding test suite
               run: |
