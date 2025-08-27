@@ -4,34 +4,56 @@
 [![Build Status](https://github.com/lumisxh/hantei/workflows/Release%20and%20Documentation/badge.svg)](https://github.com/lumisxh/hantei/actions)
 [![Documentation](https://img.shields.io/badge/docs-latest-blue.svg)](https://lumisxh.github.io/hantei/)
 
-**Hantei** is a high-performance recipe compilation and evaluation engine that transforms node-based decision trees into optimized Abstract Syntax Trees (ASTs). Built with Rust's type safety and performance in mind, Hantei compiles UI-based recipes ahead of time for lightning-fast runtime evaluation.
+**Hantei** is a high-performance recipe compilation and evaluation engine that transforms node-based decision trees into optimized Abstract Syntax Trees (ASTs). Built with Rust's type safety and performance in mind, Hantei compiles UI-based recipes ahead of time for lightning-fast runtime evaluation
 
-> **Note**: This project is currently in development and not yet ready for production use.
+> **Note**: This project is currently in development and not yet ready for production use
 
 ## Features
 
 - **High Performance**: Compile-time optimization with constant folding and logical simplification
+- **Python Bindings**: A simple, fast, and idiomatic Python API powered by PyO3.
 - **Type-Safe AST**: Strongly typed expression trees with comprehensive error handling
-- **Modular Architecture**: Clean separation between compilation, evaluation, and data handling
 - **Cross-Product Evaluation**: Efficient handling of dynamic event combinations
 - **Debug Output**: Detailed AST visualization and compilation traces
 - **Zero-Runtime Overhead**: All recipe logic compiled ahead of time
-- **Extensible Design**: Easy to add new node types and operations
-- **Memory Efficient**: Optimized data structures with minimal allocations
 
 ## Installation
+
+### Rust Library
 
 Add Hantei to your `Cargo.toml`:
 
 ```toml
 [dependencies]
 hantei = { git = "https://github.com/lumisxh/hantei", tag = "v0.1.1" }
-
-# To also include the CLI tools
-hantei = { git = "https://github.com/lumisxh/hantei", tag = "v0.1.1", features = ["hantei-cli", "data-gen"] }
 ```
 
-## Quick Example
+### Python Bindings
+
+To use Hantei from Python, you can install it directly from the GitHub repository using `pip`
+
+**Prerequisites:**
+
+- A recent version of the Rust toolchain (install via [rustup.rs](https://rustup.rs/))
+- Python 3.11+ and `pip`
+
+**Installation**
+
+The package can be installed directly from this repository. It is highly recommended to install from a specific tag to ensure you are using a stable release
+
+```bash
+# Make sure your Python virtual environment is active
+
+# Recommended: Install a specific version/tag
+pip install git+https://github.com/lumisxh/hantei.git@v0.1.0
+
+# Or, to install the latest development version from the main branch:
+pip install git+https://github.com/lumisxh/hantei.git
+```
+
+This command will download the source, compile the Rust extension module using your local Rust toolchain, and install it into your Python environment.
+
+## Quick Example (Rust)
 
 ```rust
 use hantei::{Compiler, Evaluator, SampleData};
@@ -46,12 +68,8 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     let compiler = Compiler::new(&recipe_json, &qualities_json)?;
     let (_logical_repr, compiled_paths) = compiler.compile()?;
 
-    println!("Compiled {} quality paths", compiled_paths.len());
-
-    // Load sample data
+    // Load and evaluate sample data
     let sample_data = SampleData::from_file("sample_data.json")?;
-
-    // Evaluate against sample data
     let evaluator = Evaluator::new(compiled_paths);
     let result = evaluator.eval(sample_data.static_data(), sample_data.dynamic_data())?;
 
@@ -63,6 +81,41 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     Ok(())
 }
 ```
+
+## Python Usage
+
+The Python API provides the same "compile once, evaluate many" workflow in an idiomatic package.
+
+```python
+import hantei
+import json
+
+# 1. Load recipe and quality JSON from files
+with open("data/flow.json", "r") as f:
+    recipe_json = f.read()
+with open("data/qualities_becker.json", "r") as f:
+    qualities_json = f.read()
+
+try:
+    # 2. Initialize the Hantei class (compiles the recipe)
+    evaluator = hantei.Hantei(recipe_json, qualities_json)
+
+    # 3. Load sample data (can be from any source)
+    with open("data/sample_data.json", "r") as f:
+        data = json.load(f)
+
+    # 4. Evaluate using standard Python dictionaries
+    result = evaluator.evaluate(data["static_data"], data["dynamic_data"])
+
+    # 5. The result is a dictionary
+    print(json.dumps(result, indent=2))
+
+except (ValueError, RuntimeError) as e:
+    print(f"An error occurred: {e}")
+
+```
+
+The `Hantei` class compiles the recipe in its constructor and the `evaluate` method runs the logic against Python dictionaries, returning a result dictionary. See the [full Python API documentation](docs/python_api.md) for more details.
 
 ## Input Format Specifications
 
@@ -199,13 +252,10 @@ The included CLI tool provides easy testing and evaluation:
 
 ```bash
 # Basic usage
-cargo run -- recipe.json qualities.json sample_data.json
+cargo run --bin hantei-cli -- recipe.json qualities.json sample_data.json
 
 # With default mock data
-cargo run -- recipe.json qualities.json
-
-# Check compilation without evaluation
-cargo check
+cargo run --bin hantei-cli -- recipe.json qualities.json
 ```
 
 **Output Files:**

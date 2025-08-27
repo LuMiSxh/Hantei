@@ -1,6 +1,6 @@
 [package]
 name = "hantei"
-version = "0.1.1"
+version = "0.1.2"
 authors = ["LuMiSxh"]
 edition = "2024"
 license = "MIT"
@@ -15,10 +15,11 @@ categories = ["algorithms", "compilers", "data-structures"]
 
 [lib]
 name = "hantei"
+crate-type = ["cdylib", "rlib"]
 path = "src/lib.rs"
 
 [[bin]]
-name = "hantei"
+name = "hantei-cli"
 path = "tools/hantei-cli/main.rs"
 required-features = ["hantei-cli"]
 
@@ -28,12 +29,13 @@ path = "tools/data-generator/main.rs"
 required-features = ["data-gen"]
 
 [dependencies]
-rayon = "1.11.0"
 serde = { version = "1", features = ["derive"] }
 serde_json = "1"
 thiserror = "2"
 rand = { version = "0.8", optional = true }
 clap = { version = "4.4", features = ["derive"], optional = true }
+pyo3 = { version = "0.25", features = ["extension-module"], optional = true }
+rayon = "1.11"
 
 [dev-dependencies]
 tokio-test = "0.4"
@@ -43,3 +45,4 @@ default = []
 
 hantei-cli = ["dep:clap"]
 data-gen = ["dep:rand", "dep:clap"]
+python-bindings = ["dep:pyo3"]

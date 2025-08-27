@@ -1,0 +1,31 @@
+[build-system]
+# Specifies that Maturin is the build backend
+requires = ["maturin>=1.5,<2.0"]
+build-backend = "maturin"
+
+[project]
+name = "hantei"
+version = "0.1.2"
+authors = [
+    { name = "LuMiSxh", email = "76248448+LuMiSxh@users.noreply.github.com" },
+]
+description = "A high-performance recipe compilation and evaluation engine for node-based decision trees"
+readme = "README.md"
+license = { file = "LICENSE" }
+requires-python = ">=3.11"
+classifiers = [
+    "Programming Language :: Rust",
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Intended Audience :: Developers",
+    "Topic :: Software Development :: Compilers",
+]
+keywords = ["compiler", "ast", "evaluation", "decision-tree", "recipe", "rust"]
+homepage = "https://github.com/lumisxh/hantei"
+repository = "https://github.com/lumisxh/hantei"
+
+[tool.maturin]
+features = ["python-bindings"]
+module = "hantei"
+name = "hantei"

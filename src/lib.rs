@@ -60,6 +60,8 @@ pub mod compiler;
 pub mod data;
 pub mod error;
 pub mod evaluator;
+#[cfg(feature = "python-bindings")]
+mod python;
 pub mod trace;
 pub mod ui;
 

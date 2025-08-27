@@ -155,11 +155,55 @@ jobs:
                   cargo build --release --verbose
                   echo "STATUS: Release build completed successfully"
 
-            - name: Execute cargo check validation
+            - name: Set up Python
+              uses: actions/setup-python@v4
+              with:
+                  python-version: "3.11"
+
+            - name: Install Maturin and test dependencies
               run: |
-                  echo "EXECUTING: Cargo check validation"
-                  cargo check --all-targets --all-features
-                  echo "STATUS: Cargo check validation completed"
+                  pip install maturin pytest
+
+            - name: Build and install Python package in editable mode
+              run: |
+                  maturin develop
+
+            - name: Execute Python binding test suite
+              run: |
+                  pytest tests/python/
+
+                  - name: Execute cargo check validation
+                  run: |
+                      echo "EXECUTING: Cargo check validation"
+                      cargo check --all-targets --all-features
+                      echo "STATUS: Cargo check validation completed"
+
+    build_python_wheels:
+        name: Build Python wheels on ${{ matrix.os }}
+        runs-on: ${{ matrix.os }}
+        strategy:
+            matrix:
+                os: [ubuntu-latest, windows-latest, macos-latest]
+
+        steps:
+            - uses: actions/checkout@v4
+            - uses: actions/setup-python@v4
+              with:
+                  python-version: "3.11"
+
+            - name: Install Maturin
+              run: pip install maturin
+
+            - name: Build wheel
+              # Maturin automatically finds the Rust code and builds the wheel
+              # using the configuration from pyproject.toml
+              run: maturin build --release --out dist
+
+            - name: Upload wheel as artifact
+              uses: actions/upload-artifact@v3
+              with:
+                  name: python-wheels-${{ matrix.os }}
+                  path: dist
 
     generate_documentation:
         runs-on: ubuntu-latest
@@ -221,7 +265,13 @@ jobs:
 
     create_release:
         runs-on: ubuntu-latest
-        needs: [detect_version_change, validate_and_test, generate_documentation]
+        needs:
+            [
+                detect_version_change,
+                validate_and_test,
+                generate_documentation,
+                build_python_wheels,
+            ]
         if: ${{ needs.detect_version_change.outputs.version_changed == 'true' }}
 
         steps:
@@ -328,6 +378,11 @@ jobs:
 
                   echo "STATUS: Release notes generated"
 
+            - name: Download all Python wheel artifacts
+              uses: actions/download-artifact@v3
+              with:
+                  path: wheels
+
             - name: Execute GitHub release creation
               uses: actions/github-script@v7
               with:
@@ -371,6 +426,21 @@ jobs:
 
                         console.log('STATUS: Release archive uploaded successfully');
                       }
+
+                      // Upload python wheels
+                      const { glob } = require("glob");
+                      const wheelPaths = await glob("wheels/**/*.whl");
+                      for (const wheelPath of wheelPaths) {
+                        console.log(`Uploading wheel: ${wheelPath}`);
+                        await github.rest.repos.uploadReleaseAsset({
+                        owner: context.repo.owner,
+                        repo: context.repo.repo,
+                        release_id: release.data.id,
+                        name: path.basename(wheelPath),
+                        data: fs.readFileSync(wheelPath)
+                        });
+                      }
+                      console.log('STATUS: All Python wheels uploaded successfully.');
 
             - name: Generate release completion notification
               uses: actions/github-script@v7
