@@ -1,6 +1,6 @@
 [package]
 name = "hantei"
-version = "0.1.0"
+version = "0.1.1"
 authors = ["LuMiSxh"]
 edition = "2024"
 license = "MIT"
@@ -19,18 +19,27 @@ path = "src/lib.rs"
 
 [[bin]]
 name = "hantei"
-path = "src/main.rs"
-required-features = ["cli"]
+path = "tools/hantei-cli/main.rs"
+required-features = ["hantei-cli"]
+
+[[bin]]
+name = "data-gen"
+path = "tools/data-generator/main.rs"
+required-features = ["data-gen"]
 
 [dependencies]
+rayon = "1.11.0"
 serde = { version = "1", features = ["derive"] }
 serde_json = "1"
 thiserror = "2"
+rand = { version = "0.8", optional = true }
+clap = { version = "4.4", features = ["derive"], optional = true }
 
 [dev-dependencies]
 tokio-test = "0.4"
 
 [features]
 default = []
-# The "cli" feature enables the command-line binary.
-cli = []
+
+hantei-cli = ["dep:clap"]
+data-gen = ["dep:rand", "dep:clap"]

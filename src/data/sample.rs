@@ -1,9 +1,9 @@
-use serde::Deserialize;
+use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
 use std::fs;
 
 /// Sample data structure that matches the JSON format
-#[derive(Deserialize, Debug)]
+#[derive(Serialize, Deserialize, Debug)]
 pub struct SampleData {
     pub static_data: HashMap<String, f64>,
     pub dynamic_data: HashMap<String, Vec<HashMap<String, f64>>>,

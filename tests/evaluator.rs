@@ -181,15 +181,10 @@ mod evaluator_tests {
         let dynamic_data = HashMap::new(); // Missing the required event
 
         let result = evaluator.eval(&static_data, &dynamic_data);
-        assert!(result.is_err());
-
-        match result {
-            Err(EvaluationError::InputNotFound(name)) => {
-                assert!(name.contains("nonexistent"));
-                println!("Correctly handled missing dynamic input: {}", name);
-            }
-            _ => panic!("Expected InputNotFound error"),
-        }
+        assert!(result.is_ok());
+        let eval_result = result.unwrap();
+        assert!(eval_result.quality_name.is_none());
+        println!("Correctly handled missing dynamic input as a non-match");
     }
 
     #[test]

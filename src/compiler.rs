@@ -2,7 +2,7 @@ use crate::ast::*;
 use crate::error::CompileError;
 use crate::ui::*;
 use std::collections::HashMap;
-#[cfg(feature = "cli")]
+#[cfg(feature = "hantei-cli")]
 use std::fs;
 
 /// Compiles UI recipes into optimized Abstract Syntax Trees
@@ -78,7 +78,7 @@ impl Compiler {
 
                 let optimized_ast = self.optimize_ast(naive_ast.clone());
 
-                #[cfg(feature = "cli")]
+                #[cfg(feature = "hantei-cli")]
                 {
                     let sanitized_name = Self::sanitize_filename(&quality.name);
                     Self::write_debug_file(
@@ -414,8 +414,8 @@ impl Compiler {
     }
 
     /// Sanitize filename by removing special characters
-    /// This helper is only compiled with the 'cli' feature.
-    #[cfg(feature = "cli")]
+    /// This helper is only compiled with the 'hantei-cli' feature.
+    #[cfg(feature = "hantei-cli")]
     fn sanitize_filename(name: &str) -> String {
         name.chars()
             .filter(|c| c.is_alphanumeric() || *c == '_')
@@ -423,8 +423,8 @@ impl Compiler {
     }
 
     /// Write debug file, creating directory if needed
-    /// This helper is only compiled with the 'cli' feature.
-    #[cfg(feature = "cli")]
+    /// This helper is only compiled with the 'hantei-cli' feature.
+    #[cfg(feature = "hantei-cli")]
     fn write_debug_file(path: &str, content: &str) -> Result<(), CompileError> {
         if let Some(parent) = std::path::Path::new(path).parent() {
             fs::create_dir_all(parent).map_err(|e| {

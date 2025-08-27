@@ -1,6 +1,7 @@
 use crate::ast::*;
 use crate::error::EvaluationError;
 use crate::trace::TraceFormatter;
+use rayon::prelude::*;
 use std::collections::{HashMap, HashSet};
 
 /// Evaluates compiled ASTs against runtime data
@@ -19,68 +20,75 @@ pub struct EvaluationResult {
 
 impl Evaluator {
     /// Create new evaluator with compiled quality paths
-    pub fn new(quality_paths: Vec<(i32, String, Expression)>) -> Self {
+    pub fn new(mut quality_paths: Vec<(i32, String, Expression)>) -> Self {
+        quality_paths.sort_by_key(|(priority, _, _)| *priority);
         Self { quality_paths }
     }
 
-    /// Evaluate all quality paths against provided data
+    /// Evaluate all quality paths in parallel against provided data.
     pub fn eval(
         &self,
         static_data: &HashMap<String, f64>,
         dynamic_data: &HashMap<String, Vec<HashMap<String, f64>>>,
     ) -> Result<EvaluationResult, EvaluationError> {
-        // Sort by priority (lowest number = highest priority)
-        let mut sorted_paths = self.quality_paths.clone();
-        sorted_paths.sort_by_key(|(priority, _, _)| *priority);
+        // `find_map_any` will stop on the first Some(...) it finds, which could
+        // be a successful result OR an error that we need to propagate.
+        let maybe_result = self
+            .quality_paths
+            .par_iter()
+            .find_map_any(|(priority, name, ast)| {
+                // Determine the evaluation result for this single path.
+                let eval_result: Result<Option<EvaluationTrace>, EvaluationError> = {
+                    let mut required_events = HashSet::new();
+                    ast.get_required_events(&mut required_events);
 
-        for (priority, name, ast) in &sorted_paths {
-            let mut required_events = HashSet::new();
-            ast.get_required_events(&mut required_events);
-
-            if required_events.is_empty() {
-                // Static path - evaluate once
-                let trace = self.evaluate_ast(ast, static_data, &HashMap::new())?;
-                if let Value::Bool(true) = trace.get_outcome() {
-                    return Ok(EvaluationResult {
-                        quality_name: Some(name.clone()),
-                        quality_priority: Some(*priority),
-                        reason: TraceFormatter::format_trace(&trace),
-                    });
-                }
-            } else {
-                // Dynamic path - evaluate cross-product of events
-                let event_list: Vec<String> = required_events.into_iter().collect();
-
-                // Check if all required events exist in dynamic_data
-                for event_type in &event_list {
-                    if !dynamic_data.contains_key(event_type) {
-                        return Err(EvaluationError::InputNotFound(event_type.clone()));
+                    if required_events.is_empty() {
+                        // Static Path
+                        self.evaluate_ast(ast, static_data, &HashMap::new())
+                            .map(Some)
+                    } else {
+                        // Dynamic Path
+                        let event_list: Vec<String> = required_events.into_iter().collect();
+                        let mut context = HashMap::new();
+                        self.eval_cross_product(
+                            ast,
+                            &event_list,
+                            &mut context,
+                            static_data,
+                            dynamic_data,
+                        )
                     }
-                }
+                };
 
-                let mut context: HashMap<String, &HashMap<String, f64>> = HashMap::new();
-
-                if let Some(trace) = self.eval_cross_product(
-                    ast,
-                    &event_list,
-                    &mut context,
-                    static_data,
-                    dynamic_data,
-                )? {
-                    return Ok(EvaluationResult {
-                        quality_name: Some(name.clone()),
-                        quality_priority: Some(*priority),
-                        reason: TraceFormatter::format_trace(&trace),
-                    });
+                match eval_result {
+                    // Case 1: Success, a triggering trace was found.
+                    Ok(Some(trace)) if matches!(trace.get_outcome(), Value::Bool(true)) => {
+                        Some(Ok(EvaluationResult {
+                            quality_name: Some(name.clone()),
+                            quality_priority: Some(*priority),
+                            reason: TraceFormatter::format_trace(&trace),
+                        }))
+                    }
+                    // Case 2: A hard error occurred during evaluation (e.g., type mismatch). Stop everything.
+                    Err(e) => Some(Err(e)),
+                    // Case 3: Evaluation succeeded but was non-triggering (result was false, or no dynamic combination matched).
+                    // Return None to let Rayon continue searching other parallel paths.
+                    _ => None,
                 }
-            }
+            });
+
+        match maybe_result {
+            // A result was found, and it was Ok
+            Some(Ok(result)) => Ok(result),
+            // A result was found, but it was an Err that we must propagate
+            Some(Err(e)) => Err(e),
+            // No quality triggered across all parallel tasks
+            None => Ok(EvaluationResult {
+                quality_name: None,
+                quality_priority: None,
+                reason: "No quality triggered".to_string(),
+            }),
         }
-
-        Ok(EvaluationResult {
-            quality_name: None,
-            quality_priority: None,
-            reason: "No quality triggered".to_string(),
-        })
     }
 
     /// Recursively evaluate cross-product of dynamic events
@@ -105,10 +113,10 @@ impl Evaluator {
         let current_event_type = &event_types[0];
         let remaining_event_types = &event_types[1..];
 
+        // If the event type doesn't exist in the data, it's a non-match, not an error.
         if let Some(defects) = dynamic_data.get(current_event_type) {
             for defect in defects {
                 context.insert(current_event_type.clone(), defect);
-
                 if let Some(trace) = self.eval_cross_product(
                     ast,
                     remaining_event_types,
