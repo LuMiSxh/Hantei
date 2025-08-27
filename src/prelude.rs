@@ -1,53 +1,49 @@
-//! Prelude module for convenient imports
+//! # Hantei Prelude
 //!
-//! This module re-exports the most commonly used types and traits from the hantei crate.
-//! Import this module to get access to the core functionality without having to import
-//! each type individually.
+//! This module re-exports the most commonly used types and traits from the `hantei`
+//! crate for convenience.
 //!
-//! # Example
+//! By importing this prelude, you get easy access to the core components needed to
+//! build a compiler, create an evaluator, and handle results, without needing
+
+//! to import each type individually.
+//!
+//! ## Example
 //!
 //! ```rust,no_run
-//! // Use the prelude to get easy access to all the core types.
+//! // Use the prelude to bring all core types into scope.
 //! use hantei::prelude::*;
 //!
-//! # fn run_example() -> Result<()> {
-//! // Load and compile recipe
-//! let recipe_json = std::fs::read_to_string("path/to/recipe.json")?;
-//! let qualities_json = std::fs::read_to_string("path/to/qualities.json")?;
-//!
-//! let compiler = Compiler::new(&recipe_json, &qualities_json)?;
-//! let (_logical_repr, compiled_paths) = compiler.compile()?;
-//!
-//! // Load sample data and evaluate
-//! let sample_data = SampleData::from_file("path/to/data.json")?;
-//! let evaluator = Evaluator::new(compiled_paths);
-//! let result = evaluator.eval(sample_data.static_data(), sample_data.dynamic_data())?;
-//!
-//! println!("Evaluation Result: {:?}", result);
-//! # Ok(())
-//! # }
+//! fn run_example() -> Result<(), Box<dyn std::error::Error>> {
+//!     // Now you can directly use types like `Compiler`, `Evaluator`, `FlowDefinition`, etc.
+//!     // let flow: FlowDefinition = ...;
+//!     // let qualities: Vec<Quality> = ...;
+//!     // let compiler = Compiler::builder(flow, qualities).build();
+//!     Ok(())
+//! }
 //! ```
 
 // Core compilation and evaluation
-pub use crate::compiler::Compiler;
+pub use crate::compiler::{Compiler, CompilerBuilder};
 pub use crate::evaluator::{EvaluationResult, Evaluator};
 
 // AST and expression types
 pub use crate::ast::{EvaluationTrace, Expression, InputSource, Value};
 
-// Data structures
+// Recipe data structures and traits
+pub use crate::recipe::{
+    DataFieldDefinition, FlowDefinition, FlowEdgeDefinition, FlowNodeDefinition, IntoFlow, Quality,
+};
+
+// Runtime data model
 pub use crate::data::SampleData;
-pub use crate::ui::{Quality, UiRecipe};
 
 // Error types
-pub use crate::error::{CompileError, EvaluationError};
+pub use crate::error::{CompileError, EvaluationError, RecipeConversionError};
 
 // Trace formatting
 pub use crate::trace::TraceFormatter;
 
-// Standard library re-exports commonly used with this crate
+// Standard library re-exports
 pub use std::collections::HashMap;
 pub use std::path::Path;
-
-// Result type alias for convenience
-pub type Result<T> = std::result::Result<T, Box<dyn std::error::Error>>;
