@@ -56,7 +56,7 @@ pub struct UiRecipe {
 }
 
 /// Quality definition with name and priority
-#[derive(Debug, Deserialize)]
+#[derive(Debug, Deserialize, Clone)]
 pub struct Quality {
     pub name: String,
     pub priority: i32,

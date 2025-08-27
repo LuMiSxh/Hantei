@@ -35,6 +35,16 @@
             }
         ],
         "branch": [],
-        "inner_tear": []
+        "inner_tear": [],
+        "clipping_strip": [],
+        "discoloration": [],
+        "stipple": [],
+        "healthy_branch": [],
+        "black_branch": [],
+        "bark": [],
+        "rotary_growth": [],
+        "missing_edge": [],
+        "white_rot": [],
+        "brown_rot": []
     }
 }

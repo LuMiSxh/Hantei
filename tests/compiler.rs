@@ -15,9 +15,8 @@ mod compiler_tests {
         let compiler = Compiler::new(SIMPLE_RECIPE_JSON, SIMPLE_QUALITIES_JSON)
             .expect("Failed to create basic compiler");
 
-        let (logical_repr, compiled_paths) = compiler
-            .compile(false)
-            .expect("Failed to compile basic recipe");
+        let (logical_repr, compiled_paths) =
+            compiler.compile().expect("Failed to compile basic recipe");
 
         assert!(!logical_repr.is_empty());
         println!("Logical representation length: {}", logical_repr.len());
@@ -313,9 +312,8 @@ mod compiler_tests {
         let compiler = Compiler::new(SIMPLE_RECIPE_JSON, SIMPLE_QUALITIES_JSON)
             .expect("Failed to create compiler for edge test");
 
-        let (logical_repr, _compiled_paths) = compiler
-            .compile(false)
-            .expect("Failed to compile for edge test");
+        let (logical_repr, _compiled_paths) =
+            compiler.compile().expect("Failed to compile for edge test");
 
         // The logical representation should contain connection information
         assert!(logical_repr.contains("0001") || logical_repr.contains("0002"));
@@ -359,7 +357,7 @@ mod compiler_tests {
             .expect("Compiler should be created even with invalid nodes");
 
         // Compilation should fail due to invalid node type
-        let result = compiler.compile(false);
+        let result = compiler.compile();
         match result {
             Err(e) => {
                 println!("Correctly rejected invalid node type: {}", e);
@@ -402,7 +400,7 @@ mod compiler_tests {
         let compiler = Compiler::new(recipe_with_missing_node, SIMPLE_QUALITIES_JSON)
             .expect("Compiler should be created with missing node reference");
 
-        let result = compiler.compile(false);
+        let result = compiler.compile();
         match result {
             Err(e) => {
                 println!("Correctly handled missing node reference: {}", e);
@@ -423,7 +421,7 @@ mod compiler_tests {
             .expect("Failed to create compiler for AST validation");
 
         let (_logical_repr, compiled_paths) = compiler
-            .compile(false)
+            .compile()
             .expect("Failed to compile for AST validation");
 
         if !compiled_paths.is_empty() {
@@ -500,7 +498,7 @@ mod compiler_tests {
 
         let compiler = Compiler::new(optimizable_recipe, SIMPLE_QUALITIES_JSON);
         if let Ok(compiler) = compiler {
-            if let Ok((_logical_repr, compiled_paths)) = compiler.compile(false) {
+            if let Ok((_logical_repr, compiled_paths)) = compiler.compile() {
                 if !compiled_paths.is_empty() {
                     for (_, name, ast) in &compiled_paths {
                         let ast_string = format!("{}", ast);
@@ -529,7 +527,7 @@ mod compiler_tests {
 
         let compiler = Compiler::new(SIMPLE_RECIPE_JSON, qualities_with_multiple);
         if let Ok(compiler) = compiler {
-            if let Ok((_logical_repr, compiled_paths)) = compiler.compile(false) {
+            if let Ok((_logical_repr, compiled_paths)) = compiler.compile() {
                 println!("Quality connection mapping test:");
                 println!("  Total qualities defined: 3");
                 println!("  Compiled paths generated: {}", compiled_paths.len());
@@ -599,7 +597,7 @@ mod compiler_tests {
 
         if let Ok(compiler) = complex_compiler {
             // Test compilation once (compile takes ownership)
-            let result = compiler.compile(false);
+            let result = compiler.compile();
             match result {
                 Ok((logical_repr, compiled_paths)) => {
                     println!(

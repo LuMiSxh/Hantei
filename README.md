@@ -27,8 +27,8 @@ Add Hantei to your `Cargo.toml`:
 [dependencies]
 hantei = { git = "https://github.com/lumisxh/hantei", tag = "v0.1.0" }
 
-# For library use only (without CLI)
-hantei = { git = "https://github.com/lumisxh/hantei", tag = "v0.1.0", default-features = false }
+# To include the CLI tool and debugging features
+hantei = { git = "https://github.com/lumisxh/hantei", tag = "v0.1.0", features = ["cli"] }
 ```
 
 ## Quick Example

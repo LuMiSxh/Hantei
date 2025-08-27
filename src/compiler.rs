@@ -2,14 +2,15 @@ use crate::ast::*;
 use crate::error::CompileError;
 use crate::ui::*;
 use std::collections::HashMap;
+#[cfg(feature = "cli")]
 use std::fs;
 
 /// Compiles UI recipes into optimized Abstract Syntax Trees
 pub struct Compiler {
     recipe: UiRecipe,
     qualities: Vec<Quality>,
-    // Maps target node ID -> input index -> (source node ID, source index)
-    connections: HashMap<String, HashMap<u32, (String, u32)>>,
+    // Maps target node ID -> input index -> Vec<(source node ID, source index)>
+    connections: HashMap<String, HashMap<u32, Vec<(String, u32)>>>,
     // Cache to avoid recomputing ASTs for the same nodes
     ast_cache: HashMap<String, Expression>,
 }
@@ -23,7 +24,7 @@ impl Compiler {
             .map_err(|e| CompileError::JsonParseError(e.to_string()))?;
 
         // Build connection lookup map for efficient AST traversal
-        let mut connections: HashMap<String, HashMap<u32, (String, u32)>> = HashMap::new();
+        let mut connections: HashMap<String, HashMap<u32, Vec<(String, u32)>>> = HashMap::new();
         for edge in &recipe.edges {
             let target_handle_idx = Self::parse_handle_index(&edge.target_handle);
             let source_handle_idx = Self::parse_handle_index(&edge.source_handle);
@@ -31,7 +32,9 @@ impl Compiler {
             connections
                 .entry(edge.target.clone())
                 .or_default()
-                .insert(target_handle_idx, (edge.source.clone(), source_handle_idx));
+                .entry(target_handle_idx)
+                .or_default()
+                .push((edge.source.clone(), source_handle_idx));
         }
 
         Ok(Self {
@@ -43,66 +46,53 @@ impl Compiler {
     }
 
     /// Compile the recipe into ASTs for each quality
-    pub fn compile(
-        mut self,
-        write_debug_files: bool,
-    ) -> Result<(String, Vec<(i32, String, Expression)>), CompileError> {
+    pub fn compile(mut self) -> Result<(String, Vec<(i32, String, Expression)>), CompileError> {
         let logical_repr = format!("{:#?}", self.connections);
 
-        // Find quality trigger nodes by looking for setQualityNode types
-        let mut quality_triggers = Vec::new();
+        let quality_node_id = {
+            let quality_node = self
+                .recipe
+                .nodes
+                .iter()
+                .find(|n| n.data.node_data.real_node_type == "setQualityNode")
+                .ok_or_else(|| {
+                    CompileError::InvalidNodeType("setQualityNode not found".to_string())
+                })?;
+            quality_node.id.clone()
+        };
 
-        // Find all setQualityNode nodes
-        for node in &self.recipe.nodes {
-            let node_data = &node.data.node_data;
-            {
-                if node_data.real_node_type == "setQualityNode" {
-                    // For each quality, check if there's a connection to this setQualityNode
-                    for quality in &self.qualities {
-                        if let Some(inputs_map) = self.connections.get(&node.id) {
-                            // Try to find input connection for this quality
-                            // For simplicity, we'll use the first available input connection
-                            if let Some((source_node_id, _)) = inputs_map.values().next() {
-                                quality_triggers.push((
-                                    quality.priority,
-                                    quality.name.clone(),
-                                    source_node_id.clone(),
-                                ));
-                                break; // Only one quality per setQualityNode for now
-                            }
-                        }
-                    }
-                }
-            }
-        }
+        let naive_ast_map = self.gather_inputs_as_map(&quality_node_id)?;
 
         let mut quality_asts = Vec::new();
 
-        for (priority, name, source_node_id) in quality_triggers {
-            // Build naive AST
-            let naive_ast = self.build_ast_for_node(&source_node_id)?;
+        // Iterate through the qualities list to maintain order and context
+        for (index, quality) in self.qualities.iter().enumerate() {
+            let handle_index = index as u32;
 
-            // Write debug files
-            let sanitized_name = Self::sanitize_filename(&name);
-            if write_debug_files {
-                let sanitized_name = Self::sanitize_filename(&name);
-                Self::write_debug_file(
-                    &format!("tmp/quality_{}_naive_ast.txt", sanitized_name),
-                    &naive_ast.to_string(),
-                )?;
+            // Only proceed if the map contains an AST for this quality's index.
+            if let Some(naive_ast) = naive_ast_map.get(&handle_index) {
+                // If the AST is just a literal null, it's also an effectively empty path. Skip it.
+                if let Expression::Literal(Value::Null) = naive_ast {
+                    continue;
+                }
+
+                let optimized_ast = self.optimize_ast(naive_ast.clone());
+
+                #[cfg(feature = "cli")]
+                {
+                    let sanitized_name = Self::sanitize_filename(&quality.name);
+                    Self::write_debug_file(
+                        &format!("tmp/quality_{}_naive_ast.txt", &sanitized_name),
+                        &naive_ast.to_string(),
+                    )?;
+                    Self::write_debug_file(
+                        &format!("tmp/quality_{}_optimized_ast.txt", &sanitized_name),
+                        &optimized_ast.to_string(),
+                    )?;
+                }
+
+                quality_asts.push((quality.priority, quality.name.clone(), optimized_ast));
             }
-
-            // Optimize AST
-            let optimized_ast = self.optimize_ast(naive_ast);
-            if write_debug_files {
-                let sanitized_name = Self::sanitize_filename(&name);
-                Self::write_debug_file(
-                    &format!("tmp/quality_{}_optimized_ast.txt", sanitized_name),
-                    &optimized_ast.to_string(),
-                )?;
-            }
-
-            quality_asts.push((priority, name.clone(), optimized_ast));
         }
 
         quality_asts.sort_by_key(|(p, _, _)| *p);
@@ -116,61 +106,71 @@ impl Compiler {
         }
 
         let node_data = self.find_node(node_id)?.data.node_data.clone();
-        let inputs = self.gather_inputs_for_node(node_id)?;
 
         let expression = match node_data.real_node_type.as_str() {
-            "gtNode" => {
-                Expression::GreaterThan(Box::new(inputs[0].clone()), Box::new(inputs[1].clone()))
-            }
-            "stNode" => {
-                Expression::SmallerThan(Box::new(inputs[0].clone()), Box::new(inputs[1].clone()))
-            }
-            "gteqNode" => Expression::GreaterThanOrEqual(
-                Box::new(inputs[0].clone()),
-                Box::new(inputs[1].clone()),
-            ),
-            "steqNode" => Expression::SmallerThanOrEqual(
-                Box::new(inputs[0].clone()),
-                Box::new(inputs[1].clone()),
-            ),
-            "eqNode" => Expression::Equal(Box::new(inputs[0].clone()), Box::new(inputs[1].clone())),
-            "orNode" => Expression::Or(Box::new(inputs[0].clone()), Box::new(inputs[1].clone())),
-            "andNode" => Expression::And(Box::new(inputs[0].clone()), Box::new(inputs[1].clone())),
-            "sumNode" => Expression::Sum(Box::new(inputs[0].clone()), Box::new(inputs[1].clone())),
-            "subNode" => {
-                Expression::Subtract(Box::new(inputs[0].clone()), Box::new(inputs[1].clone()))
-            }
-            "multNode" => {
-                Expression::Multiply(Box::new(inputs[0].clone()), Box::new(inputs[1].clone()))
-            }
-            "divideNode" => {
-                Expression::Divide(Box::new(inputs[0].clone()), Box::new(inputs[1].clone()))
-            }
-            "notNode" => Expression::Not(Box::new(inputs[0].clone())),
             "dynamicNode" => {
-                // Handle dynamic nodes as input sources
-                let cases = node_data
-                    .cases
-                    .as_ref()
-                    .ok_or_else(|| CompileError::InvalidNodeType(node_id.to_string()))?;
-                let first_case = cases
-                    .get(0)
-                    .ok_or_else(|| CompileError::InvalidNodeType(node_id.to_string()))?;
-
-                // Determine if this is static or dynamic based on real_input_type
-                let source = if let Some(event_type) = &node_data.real_input_type {
-                    InputSource::Dynamic {
-                        event: event_type.clone(),
-                        field: first_case.case_name.clone(),
-                    }
+                if node_data.real_input_type.is_some() {
+                    let inputs = self.gather_inputs_as_map(node_id)?;
+                    // A pass-through dynamic node should only have one input connection (at index 0)
+                    inputs.get(&0).cloned().ok_or_else(|| {
+                        CompileError::InvalidInputRef(format!(
+                            "Dynamic node '{}' is missing its input connection",
+                            node_id
+                        ))
+                    })?
                 } else {
-                    InputSource::Static {
-                        name: first_case.case_name.clone(),
-                    }
-                };
-                Expression::Input(source)
+                    return Err(CompileError::InvalidNodeType(format!(
+                        "Cannot build a standalone AST for the root input node '{}'",
+                        node_id
+                    )));
+                }
             }
-            _ => return Err(CompileError::InvalidNodeType(node_id.to_string())),
+            _ => {
+                let inputs = self.gather_inputs_for_node(node_id)?;
+                match node_data.real_node_type.as_str() {
+                    "gtNode" => Expression::GreaterThan(
+                        Box::new(inputs[0].clone()),
+                        Box::new(inputs[1].clone()),
+                    ),
+                    "stNode" => Expression::SmallerThan(
+                        Box::new(inputs[0].clone()),
+                        Box::new(inputs[1].clone()),
+                    ),
+                    "gteqNode" => Expression::GreaterThanOrEqual(
+                        Box::new(inputs[0].clone()),
+                        Box::new(inputs[1].clone()),
+                    ),
+                    "steqNode" => Expression::SmallerThanOrEqual(
+                        Box::new(inputs[0].clone()),
+                        Box::new(inputs[1].clone()),
+                    ),
+                    "eqNode" => {
+                        Expression::Equal(Box::new(inputs[0].clone()), Box::new(inputs[1].clone()))
+                    }
+                    "orNode" => {
+                        Expression::Or(Box::new(inputs[0].clone()), Box::new(inputs[1].clone()))
+                    }
+                    "andNode" => {
+                        Expression::And(Box::new(inputs[0].clone()), Box::new(inputs[1].clone()))
+                    }
+                    "sumNode" => {
+                        Expression::Sum(Box::new(inputs[0].clone()), Box::new(inputs[1].clone()))
+                    }
+                    "subNode" => Expression::Subtract(
+                        Box::new(inputs[0].clone()),
+                        Box::new(inputs[1].clone()),
+                    ),
+                    "multNode" => Expression::Multiply(
+                        Box::new(inputs[0].clone()),
+                        Box::new(inputs[1].clone()),
+                    ),
+                    "divideNode" => {
+                        Expression::Divide(Box::new(inputs[0].clone()), Box::new(inputs[1].clone()))
+                    }
+                    "notNode" => Expression::Not(Box::new(inputs[0].clone())),
+                    _ => return Err(CompileError::InvalidNodeType(node_id.to_string())),
+                }
+            }
         };
 
         self.ast_cache
@@ -178,54 +178,57 @@ impl Compiler {
         Ok(expression)
     }
 
-    /// Gather all inputs for a node (from connections and literal values)
-    fn gather_inputs_for_node(&mut self, node_id: &str) -> Result<Vec<Expression>, CompileError> {
-        let node_values = self.find_node(node_id)?.data.node_data.values.clone();
+    /// Gathers all inputs for a node into a HashMap, which preserves sparse indices.
+    /// This is the primary function for building connections.
+    fn gather_inputs_as_map(
+        &mut self,
+        node_id: &str,
+    ) -> Result<HashMap<u32, Expression>, CompileError> {
+        let node_data = self.find_node(node_id)?.data.node_data.clone();
         let mut expressions: HashMap<u32, Expression> = HashMap::new();
 
-        // Process connections first
-        let connections_data: Vec<(u32, String, u32)> =
-            if let Some(connections_map) = self.connections.get(node_id) {
-                connections_map
-                    .iter()
-                    .map(|(target_idx, (source_id, source_idx))| {
-                        (*target_idx, source_id.clone(), *source_idx)
-                    })
-                    .collect()
-            } else {
-                Vec::new()
-            };
+        let connections_to_process: Vec<(u32, Vec<(String, u32)>)> = self
+            .connections
+            .get(node_id)
+            .map(|conn_map| conn_map.iter().map(|(k, v)| (*k, v.clone())).collect())
+            .unwrap_or_default();
 
-        for (target_handle_idx, source_node_id, source_handle_idx) in connections_data {
-            let source_node_data = self.find_node(&source_node_id)?.data.node_data.clone();
-
-            let expr = if source_node_data.real_node_type == "dynamicNode" {
-                let cases = source_node_data
-                    .cases
-                    .as_ref()
-                    .ok_or_else(|| CompileError::InvalidNodeType(source_node_id.clone()))?;
-                let case = &cases[source_handle_idx as usize];
-
-                // Determine if this is static or dynamic based on real_input_type
-                let source = if let Some(event_type) = &source_node_data.real_input_type {
-                    InputSource::Dynamic {
-                        event: event_type.clone(),
-                        field: case.case_name.clone(),
-                    }
+        for (target_handle_idx, sources) in connections_to_process {
+            let mut source_expressions = Vec::new();
+            for (source_node_id, source_handle_idx) in sources {
+                let source_node_data = self.find_node(&source_node_id)?.data.node_data.clone();
+                let expr = if source_node_data.real_node_type == "dynamicNode" {
+                    let cases = source_node_data
+                        .cases
+                        .as_ref()
+                        .ok_or_else(|| CompileError::InvalidNodeType(source_node_id.clone()))?;
+                    let case = &cases[source_handle_idx as usize];
+                    let source = if let Some(event_type) = &source_node_data.real_input_type {
+                        InputSource::Dynamic {
+                            event: event_type.clone(),
+                            field: case.case_name.clone(),
+                        }
+                    } else {
+                        InputSource::Static {
+                            name: case.case_name.clone(),
+                        }
+                    };
+                    Expression::Input(source)
                 } else {
-                    InputSource::Static {
-                        name: case.case_name.clone(),
-                    }
+                    self.build_ast_for_node(&source_node_id)?
                 };
-                Expression::Input(source)
-            } else {
-                self.build_ast_for_node(&source_node_id)?
-            };
-            expressions.insert(target_handle_idx, expr);
+                source_expressions.push(expr);
+            }
+
+            if let Some(combined_expr) = source_expressions
+                .into_iter()
+                .reduce(|acc, expr| Expression::Or(Box::new(acc), Box::new(expr)))
+            {
+                expressions.insert(target_handle_idx, combined_expr);
+            }
         }
 
-        // Fill in literal values from node data
-        if let Some(values) = node_values {
+        if let Some(values) = node_data.values {
             for (i, val) in values.iter().enumerate() {
                 expressions.entry(i as u32).or_insert_with(|| {
                     if let Some(num) = val.as_f64() {
@@ -239,7 +242,71 @@ impl Compiler {
             }
         }
 
-        // Sort by input index and return as vector
+        Ok(expressions)
+    }
+
+    /// Gather all inputs for a node, combining them with OR if necessary
+    fn gather_inputs_for_node(&mut self, node_id: &str) -> Result<Vec<Expression>, CompileError> {
+        let node_data = self.find_node(node_id)?.data.node_data.clone();
+        let mut expressions: HashMap<u32, Expression> = HashMap::new();
+
+        let connections_to_process: Vec<(u32, Vec<(String, u32)>)> = self
+            .connections
+            .get(node_id)
+            .map(|conn_map| conn_map.iter().map(|(k, v)| (*k, v.clone())).collect())
+            .unwrap_or_default();
+
+        // This loop no longer holds an immutable borrow on `self`
+        for (target_handle_idx, sources) in connections_to_process {
+            let mut source_expressions = Vec::new();
+            for (source_node_id, source_handle_idx) in sources {
+                let source_node_data = self.find_node(&source_node_id)?.data.node_data.clone();
+                let expr = if source_node_data.real_node_type == "dynamicNode" {
+                    let cases = source_node_data
+                        .cases
+                        .as_ref()
+                        .ok_or_else(|| CompileError::InvalidNodeType(source_node_id.clone()))?;
+                    let case = &cases[source_handle_idx as usize];
+                    let source = if let Some(event_type) = &source_node_data.real_input_type {
+                        InputSource::Dynamic {
+                            event: event_type.clone(),
+                            field: case.case_name.clone(),
+                        }
+                    } else {
+                        InputSource::Static {
+                            name: case.case_name.clone(),
+                        }
+                    };
+                    Expression::Input(source)
+                } else {
+                    // This mutable call is now safe
+                    self.build_ast_for_node(&source_node_id)?
+                };
+                source_expressions.push(expr);
+            }
+
+            if let Some(combined_expr) = source_expressions
+                .into_iter()
+                .reduce(|acc, expr| Expression::Or(Box::new(acc), Box::new(expr)))
+            {
+                expressions.insert(target_handle_idx, combined_expr);
+            }
+        }
+
+        if let Some(values) = node_data.values {
+            for (i, val) in values.iter().enumerate() {
+                expressions.entry(i as u32).or_insert_with(|| {
+                    if let Some(num) = val.as_f64() {
+                        Expression::Literal(Value::Number(num))
+                    } else if let Some(b) = val.as_bool() {
+                        Expression::Literal(Value::Bool(b))
+                    } else {
+                        Expression::Literal(Value::Null)
+                    }
+                });
+            }
+        }
+
         let mut sorted_expressions: Vec<_> = expressions.into_iter().collect();
         sorted_expressions.sort_by_key(|(idx, _)| *idx);
         Ok(sorted_expressions
@@ -347,6 +414,8 @@ impl Compiler {
     }
 
     /// Sanitize filename by removing special characters
+    /// This helper is only compiled with the 'cli' feature.
+    #[cfg(feature = "cli")]
     fn sanitize_filename(name: &str) -> String {
         name.chars()
             .filter(|c| c.is_alphanumeric() || *c == '_')
@@ -354,7 +423,14 @@ impl Compiler {
     }
 
     /// Write debug file, creating directory if needed
+    /// This helper is only compiled with the 'cli' feature.
+    #[cfg(feature = "cli")]
     fn write_debug_file(path: &str, content: &str) -> Result<(), CompileError> {
+        if let Some(parent) = std::path::Path::new(path).parent() {
+            fs::create_dir_all(parent).map_err(|e| {
+                CompileError::JsonParseError(format!("Failed to create debug directory: {}", e))
+            })?;
+        }
         fs::write(path, content)
             .map_err(|e| CompileError::JsonParseError(format!("Failed to write debug file: {}", e)))
     }

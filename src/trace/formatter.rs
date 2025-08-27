@@ -4,13 +4,22 @@ use crate::ast::{EvaluationTrace, Value};
 pub struct TraceFormatter;
 
 impl TraceFormatter {
-    /// Format an evaluation trace into a human-readable explanation
+    /// Format an evaluation trace into a human-readable explanation.
     pub fn format_trace(trace: &EvaluationTrace) -> String {
-        Self::format_trace_recursive(trace)
+        // Start the recursive formatting with the lowest possible parent precedence.
+        Self::format_recursive(trace, 0)
     }
 
-    /// Recursively format trace components
-    fn format_trace_recursive(trace: &EvaluationTrace) -> String {
+    /// Recursively formats the trace, adding parentheses only when necessary.
+    fn format_recursive(trace: &EvaluationTrace, parent_precedence: u8) -> String {
+        let current_precedence = trace.precedence();
+        let needs_parens = current_precedence < parent_precedence;
+
+        let mut result = String::new();
+        if needs_parens {
+            result.push('(');
+        }
+
         match trace {
             EvaluationTrace::BinaryOp {
                 op_symbol,
@@ -18,37 +27,45 @@ impl TraceFormatter {
                 right,
                 ..
             } => {
-                // Format binary operations like "A > B" or "X AND Y"
-                format!(
-                    "{} {} {}",
-                    Self::format_trace_recursive(left),
-                    op_symbol,
-                    Self::format_trace_recursive(right)
-                )
+                let left_str = Self::format_recursive(left, current_precedence);
+
+                // For short-circuiting operators, only include the right side if it was evaluated.
+                if !matches!(**right, EvaluationTrace::NotEvaluated) {
+                    let right_str = Self::format_recursive(right, current_precedence);
+                    result.push_str(&format!("{} {} {}", left_str, op_symbol, right_str));
+                } else {
+                    // If short-circuited, just show the left side that caused the result.
+                    result.push_str(&left_str);
+                }
             }
             EvaluationTrace::UnaryOp {
                 op_symbol, child, ..
             } => {
-                // Format unary operations like "NOT (expression)"
-                format!("{} ({})", op_symbol, Self::format_trace_recursive(child))
+                let child_str = Self::format_recursive(child, current_precedence);
+                result.push_str(&format!("{} {}", op_symbol, child_str));
             }
             EvaluationTrace::Leaf { source, value } => {
-                // Format leaf nodes with their source and evaluated value
-                if source.starts_with('$') {
+                let formatted_leaf = if source.starts_with('$') {
                     format!("{} (was {})", source, Self::format_value(value))
                 } else {
                     source.clone()
-                }
+                };
+                result.push_str(&formatted_leaf);
             }
-            EvaluationTrace::NotEvaluated => "[Not Evaluated]".to_string(),
+            // This case is now only hit if a branch is explicitly NotEvaluated, and will be skipped by the BinaryOp logic.
+            EvaluationTrace::NotEvaluated => {}
         }
+
+        if needs_parens {
+            result.push(')');
+        }
+        result
     }
 
-    /// Format a value for display
+    /// Format a value for display.
     fn format_value(value: &Value) -> String {
         match value {
             Value::Number(n) => {
-                // Format numbers nicely, removing unnecessary decimals
                 if n.fract() == 0.0 {
                     format!("{}", *n as i64)
                 } else {
