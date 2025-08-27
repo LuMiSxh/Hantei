@@ -1,0 +1,19 @@
+# ==============================================================================
+# Release Profile (`cargo build --release`)
+# ==============================================================================
+[profile.release]
+# Link-Time Optimization (LTO) performs optimizations across the entire crate graph.
+# "fat" is the most aggressive option: it's slower to compile but generates the fastest code.
+lto = "fat"
+
+# Using a single codegen unit allows for more cross-function and cross-module
+# optimizations, at the cost of slower parallel compilation. Ideal for a final release build.
+codegen-units = 1
+
+# Aborting on panic can produce smaller and faster binaries by removing the code
+# for stack unwinding. This is suitable for a library where panics are considered
+# unrecoverable bugs and errors should be handled via the Result type.
+panic = "abort"
+
+# Remove debug symbols from the final binary to significantly reduce its size.
+strip = true

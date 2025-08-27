@@ -5,7 +5,7 @@ build-backend = "maturin"
 
 [project]
 name = "hantei"
-version = "0.1.2"
+version = "0.2.0"
 authors = [
     { name = "LuMiSxh", email = "76248448+LuMiSxh@users.noreply.github.com" },
 ]
@@ -22,8 +22,6 @@ classifiers = [
     "Topic :: Software Development :: Compilers",
 ]
 keywords = ["compiler", "ast", "evaluation", "decision-tree", "recipe", "rust"]
-homepage = "https://github.com/lumisxh/hantei"
-repository = "https://github.com/lumisxh/hantei"
 
 [tool.maturin]
 features = ["python-bindings"]

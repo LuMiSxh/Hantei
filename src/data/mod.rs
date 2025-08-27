@@ -1,3 +1,2 @@
-pub mod sample;
-
-pub use sample::*;
+pub mod model;
+pub use model::*;

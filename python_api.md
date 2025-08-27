@@ -4,36 +4,86 @@ This document provides a comprehensive overview of the Hantei Python API, which 
 
 ## Core Concepts
 
-The Python API simplifies the Hantei engine into a single, powerful class: `hantei.Hantei`. The workflow is identical to the Rust library's:
+The Python API simplifies the Hantei engine into a powerful, configurable workflow:
 
-1.  **Initialize Once**: Create an instance of the `Hantei` class by providing the recipe and quality JSON. This step compiles the recipe into an optimized, in-memory representation.
+1.  **Initialize Once**: Create an instance of the `Hantei` class. For simple cases, you can do this directly. for advanced customization, you use the `Hantei.builder()`. This step always compiles the recipe into an optimized, in-memory representation.
 2.  **Evaluate Many Times**: Call the `.evaluate()` method on the instance with your `static_data` and `dynamic_data` dictionaries. This evaluation step is extremely fast, as the complex logic has already been compiled.
 
 ## The `hantei.Hantei` Class
 
-This is the main entry point for using the Hantei engine in Python. It handles the compilation of the recipe upon initialization and provides a method for evaluation.
+This is the main entry point for using the Hantei engine in Python. It handles the compilation of the recipe and provides a method for evaluation.
 
 ---
 
-### `Hantei(recipe_json, qualities_json)`
+### Simple Initialization
 
-The constructor for the `Hantei` class. It loads, parses, and compiles the provided recipe and quality definitions.
+For most use cases, you can initialize the evaluator directly from your JSON strings.
+
+#### `Hantei(recipe_json, qualities_json)`
+
+The standard constructor for the `Hantei` class. It loads, parses, and compiles the provided recipe and quality definitions with default settings.
 
 - **Parameters:**
     - `recipe_json` (str): A string containing the entire JSON content of the recipe flow (e.g., from `flow.json`).
     - `qualities_json` (str): A string containing the JSON array of quality definitions (e.g., from `qualities_becker.json`).
-
 - **Returns:**
     - An instance of the `Hantei` class, ready for evaluation.
-
 - **Raises:**
-    - `ValueError`: If the JSON is malformed, a required node is missing, or any other compilation error occurs. The error message will contain details from the Rust core.
+    - `ValueError`: If the JSON is malformed, a required node is missing, or any other compilation error occurs.
+
+---
+
+### Advanced Usage: The Builder Pattern
+
+If you need to customize the compilation process—for example, by using different names for node types—you should use the builder pattern.
+
+#### `Hantei.builder(recipe_json, qualities_json)`
+
+A class method that returns a `HanteiBuilder` instance, allowing you to configure the compiler before building the final evaluator.
+
+- **Parameters:**
+    - `recipe_json` (str): The recipe flow JSON string.
+    - `qualities_json` (str): The qualities definition JSON string.
+- **Returns:**
+    - A `HanteiBuilder` instance.
+
+#### `HanteiBuilder.with_type_mapping(custom_name, hantei_name)`
+
+Configures a custom name mapping. This is useful if your recipe JSON uses names like `"CompareGreaterThan"` instead of Hantei's internal `"gtNode"`.
+
+- **Parameters:**
+    - `custom_name` (str): The node type name used in your JSON file.
+    - `hantei_name` (str): The corresponding internal Hantei node type name (e.g., `"gtNode"`, `"andNode"`).
+- **Returns:**
+    - The `HanteiBuilder` instance, to allow for chaining calls.
+
+#### `HanteiBuilder.build()`
+
+Consumes the builder and constructs the final, compiled `Hantei` instance.
+
+- **Returns:**
+    - An instance of the `Hantei` class.
+- **Raises:**
+    - `ValueError`: If any compilation errors occur during the build.
+
+**Example of the Builder Pattern:**
+
+```python
+# Assume my_recipe.json uses "GreaterThan" instead of "gtNode"
+builder = hantei.Hantei.builder(my_recipe_json, qualities_json)
+
+# Map the custom name to the internal Hantei name
+builder.with_type_mapping("GreaterThan", "gtNode")
+
+# Build the final evaluator
+evaluator = builder.build()
+```
 
 ---
 
 ### `evaluate(static_data, dynamic_data)`
 
-Evaluates the pre-compiled recipe against a set of runtime data.
+Evaluates the pre-compiled recipe against a set of runtime data. This method is the same whether you used the direct constructor or the builder.
 
 - **Parameters:**
     - `static_data` (dict): A dictionary containing the static measurements.
@@ -42,13 +92,11 @@ Evaluates the pre-compiled recipe against a set of runtime data.
     - `dynamic_data` (dict): A dictionary containing the dynamic, event-based data.
         - **Keys** are `str` representing the event type (e.g., `"hole"`).
         - **Values** are a `list` of dictionaries, where each inner dictionary represents a single detected event instance.
-
 - **Returns:**
     - A `dict` containing the evaluation result with the following keys:
         - `quality_name` (str | None): The name of the highest-priority quality that was triggered. `None` if no quality was triggered.
         - `quality_priority` (int | None): The priority of the triggered quality. `None` if no quality was triggered.
         - `reason` (str): A human-readable explanation of the evaluation path that led to the result.
-
 - **Raises:**
     - `RuntimeError`: If an evaluation error occurs, such as a type mismatch in the AST or a required input value not being found in the provided data.
 

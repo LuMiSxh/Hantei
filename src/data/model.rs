@@ -2,7 +2,7 @@ use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
 use std::fs;
 
-/// Sample data structure that matches the JSON format
+/// Represents the runtime data structure, matching the expected JSON format for evaluation.
 #[derive(Serialize, Deserialize, Debug)]
 pub struct SampleData {
     pub static_data: HashMap<String, f64>,
@@ -10,14 +10,14 @@ pub struct SampleData {
 }
 
 impl SampleData {
-    /// Load sample data from a JSON file
+    /// Load sample data from a JSON file.
     pub fn from_file(path: &str) -> Result<Self, Box<dyn std::error::Error>> {
         let content = fs::read_to_string(path)?;
         let data = serde_json::from_str(&content)?;
         Ok(data)
     }
 
-    /// Create default mock data when no file is provided
+    /// Creates default mock data when no file is provided.
     pub fn default() -> Self {
         let mut static_data = HashMap::new();
         static_data.insert("Leading width".to_string(), 1970.0);
@@ -34,12 +34,12 @@ impl SampleData {
         }
     }
 
-    /// Get reference to static data
+    /// Get a reference to the static data.
     pub fn static_data(&self) -> &HashMap<String, f64> {
         &self.static_data
     }
 
-    /// Get reference to dynamic data
+    /// Get a reference to the dynamic data.
     pub fn dynamic_data(&self) -> &HashMap<String, Vec<HashMap<String, f64>>> {
         &self.dynamic_data
     }
