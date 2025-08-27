@@ -418,19 +418,61 @@ jobs:
                         console.log('STATUS: Release archive uploaded successfully');
                       }
 
-                      // Upload python wheels
-                      const wheelPaths = await glob("wheels/**/*.whl");
-                      for (const wheelPath of wheelPaths) {
-                        console.log(`Uploading wheel: ${wheelPath}`);
-                        await github.rest.repos.uploadReleaseAsset({
-                        owner: context.repo.owner,
-                        repo: context.repo.repo,
-                        release_id: release.data.id,
-                        name: path.basename(wheelPath),
-                        data: fs.readFileSync(wheelPath)
-                        });
+                      // Function to find wheel files recursively
+                      function findWheelFiles(dir) {
+                          const results = [];
+
+                          function traverse(currentPath) {
+                            if (!fs.existsSync(currentPath)) {
+                              console.log(`Directory ${currentPath} does not exist`);
+                              return;
+                            }
+
+                            const items = fs.readdirSync(currentPath);
+                            for (const item of items) {
+                                const fullPath = path.join(currentPath, item);
+                                const stat = fs.statSync(fullPath);
+
+                                if (stat.isDirectory()) {
+                                    traverse(fullPath);
+                                } else if (item.endsWith('.whl')) {
+                                    results.push(fullPath);
+                                    console.log(`Found wheel: ${fullPath}`);
+                                }
+                            }
+                        }
+
+                        traverse(dir);
+                        return results;
                       }
-                      console.log('STATUS: All Python wheels uploaded successfully.');
+
+                      // Upload python wheels
+                      console.log('Searching for wheel files...');
+                      const wheelPaths = findWheelFiles('wheels');
+
+                      if (wheelPaths.length === 0) {
+                          console.log('No wheel files found');
+                      } else {
+                          console.log(`Found ${wheelPaths.length} wheel file(s)`);
+
+                          for (const wheelPath of wheelPaths) {
+                            console.log(`Uploading wheel: ${wheelPath}`);
+                            try {
+                                await github.rest.repos.uploadReleaseAsset({
+                                owner: context.repo.owner,
+                                repo: context.repo.repo,
+                                release_id: release.data.id,
+                                name: path.basename(wheelPath),
+                                data: fs.readFileSync(wheelPath)
+                                });
+                                console.log(`Successfully uploaded: ${path.basename(wheelPath)}`);
+                            } catch (error) {
+                                console.error(`Failed to upload ${wheelPath}:`, error.message);
+                            }
+                          }
+                      }
+
+                      console.log('STATUS: Wheel upload process completed');
 
             - name: Generate release completion notification
               uses: actions/github-script@v7
