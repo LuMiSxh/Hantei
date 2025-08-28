@@ -1,8 +1,9 @@
 use crate::ast::{Expression, Value};
 use crate::error::EvaluationError;
 use crate::trace::TraceFormatter;
+use ahash::AHashMap;
 use rayon::prelude::*;
-use std::collections::{HashMap, HashSet};
+use std::collections::HashSet;
 
 mod dynamic;
 mod engine;
@@ -46,10 +47,10 @@ impl Evaluator {
     ///
     /// # Arguments
     ///
-    /// * `static_data`: A `HashMap` of static measurements, where keys are measurement
+    /// * `static_data`: A `AHashMap` of static measurements, where keys are measurement
     ///   names (e.g., `"Humidity"`) and values are numbers.
-    /// * `dynamic_data`: A `HashMap` representing event-based data. Keys are event
-    ///   types (e.g., `"hole"`), and values are a `Vec` of `HashMap`s, where each
+    /// * `dynamic_data`: A `AHashMap` representing event-based data. Keys are event
+    ///   types (e.g., `"hole"`), and values are a `Vec` of `AHashMap`s, where each
     ///   inner map is a distinct instance of that event.
     ///
     /// # Returns
@@ -59,8 +60,8 @@ impl Evaluator {
     /// * `Err(EvaluationError)`: If a fatal error occurred, such as a type mismatch or a missing input value.
     pub fn eval(
         &self,
-        static_data: &HashMap<String, f64>,
-        dynamic_data: &HashMap<String, Vec<HashMap<String, f64>>>,
+        static_data: &AHashMap<String, f64>,
+        dynamic_data: &AHashMap<String, Vec<AHashMap<String, f64>>>,
     ) -> Result<EvaluationResult, EvaluationError> {
         let maybe_result = self
             .quality_paths
@@ -70,7 +71,7 @@ impl Evaluator {
                 ast.get_required_events(&mut required_events);
 
                 let eval_result = if required_events.is_empty() {
-                    let empty_context = HashMap::new();
+                    let empty_context = AHashMap::new();
                     let engine = AstEngine::new(ast, static_data, &empty_context);
                     engine.evaluate().map(Some)
                 } else {

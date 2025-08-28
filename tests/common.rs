@@ -1,4 +1,5 @@
 //! Common test utilities for building recipe definitions and data.
+use ahash::AHashMap;
 use hantei::prelude::*;
 
 /// Creates a simple, valid `FlowDefinition` for basic tests.
@@ -185,18 +186,18 @@ pub fn create_complex_qualities() -> Vec<Quality> {
 
 /// Creates sample static data for testing.
 #[allow(dead_code)]
-pub fn create_sample_static_data() -> HashMap<String, f64> {
-    let mut data = HashMap::new();
+pub fn create_sample_static_data() -> AHashMap<String, f64> {
+    let mut data = AHashMap::new();
     data.insert("Temperature".to_string(), 32.5);
     data
 }
 
 /// Creates sample dynamic data for testing.
 #[allow(dead_code)]
-pub fn create_sample_dynamic_data() -> HashMap<String, Vec<HashMap<String, f64>>> {
-    let mut data = HashMap::new();
+pub fn create_sample_dynamic_data() -> AHashMap<String, Vec<AHashMap<String, f64>>> {
+    let mut data = AHashMap::new();
     let mut hole_events = Vec::new();
-    let mut hole1 = HashMap::new();
+    let mut hole1 = AHashMap::new();
     hole1.insert("Diameter".to_string(), 8.7);
     hole_events.push(hole1);
     data.insert("hole".to_string(), hole_events);

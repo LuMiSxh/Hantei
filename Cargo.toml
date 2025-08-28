@@ -1,6 +1,6 @@
 [package]
 name = "hantei"
-version = "0.2.0"
+version = "0.2.1"
 authors = ["LuMiSxh"]
 edition = "2024"
 license = "MIT"
@@ -36,6 +36,7 @@ rand = { version = "0.8", optional = true }
 clap = { version = "4.4", features = ["derive"], optional = true }
 pyo3 = { version = "0.25", features = ["extension-module"], optional = true }
 rayon = "1.11"
+ahash = { version = "0.8.12", features = ["serde"] }
 
 [dev-dependencies]
 tokio-test = "0.4"

@@ -1,7 +1,7 @@
+use ahash::AHashMap;
 use clap::Parser;
 use hantei::data::SampleData;
 use rand::prelude::*;
-use std::collections::HashMap;
 use std::fs;
 
 /// A CLI tool to generate sample data for the Hantei evaluator
@@ -60,9 +60,9 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
 }
 
 /// Generates the static "veneer" data.
-fn generate_static_data(rng: &mut ThreadRng) -> HashMap<String, f64> {
+fn generate_static_data(rng: &mut ThreadRng) -> AHashMap<String, f64> {
     // ... (this function is unchanged)
-    let mut data = HashMap::new();
+    let mut data = AHashMap::new();
     data.insert("Leading width".to_string(), rng.gen_range(1800.0..2200.0));
     data.insert("Trailing width".to_string(), rng.gen_range(1800.0..2200.0));
     data.insert("Upper length".to_string(), rng.gen_range(2000.0..2500.0));
@@ -80,12 +80,12 @@ fn generate_dynamic_data(
     rng: &mut ThreadRng,
     min_events: usize,
     max_events: usize,
-) -> HashMap<String, Vec<HashMap<String, f64>>> {
-    let mut data = HashMap::new();
+) -> AHashMap<String, Vec<AHashMap<String, f64>>> {
+    let mut data = AHashMap::new();
 
     // We now just define the event type and its field generator.
     // The number of instances will be determined by the CLI arguments.
-    let event_configs: Vec<(&str, fn(&mut ThreadRng) -> HashMap<String, f64>)> = vec![
+    let event_configs: Vec<(&str, fn(&mut ThreadRng) -> AHashMap<String, f64>)> = vec![
         ("hole", generate_hole_event),
         ("tear", generate_tear_event),
         ("inner_tear", generate_inner_tear_event),
@@ -127,38 +127,38 @@ fn generate_dynamic_data(
 
 // --- Field Generator Functions for Each Event Type ---
 
-fn generate_hole_event(rng: &mut ThreadRng) -> HashMap<String, f64> {
-    let mut fields = HashMap::new();
+fn generate_hole_event(rng: &mut ThreadRng) -> AHashMap<String, f64> {
+    let mut fields = AHashMap::new();
     fields.insert("Diameter".to_string(), rng.gen_range(5.0..100.0));
     fields.insert("Length".to_string(), rng.gen_range(10.0..150.0));
     fields.insert("Area".to_string(), rng.gen_range(50.0..5000.0));
     fields
 }
 
-fn generate_tear_event(rng: &mut ThreadRng) -> HashMap<String, f64> {
-    let mut fields = HashMap::new();
+fn generate_tear_event(rng: &mut ThreadRng) -> AHashMap<String, f64> {
+    let mut fields = AHashMap::new();
     fields.insert("Length".to_string(), rng.gen_range(50.0..1000.0));
     fields.insert("Width".to_string(), rng.gen_range(1.0..20.0));
     fields.insert("Area".to_string(), rng.gen_range(50.0..20000.0));
     fields
 }
 
-fn generate_inner_tear_event(rng: &mut ThreadRng) -> HashMap<String, f64> {
-    let mut fields = HashMap::new();
+fn generate_inner_tear_event(rng: &mut ThreadRng) -> AHashMap<String, f64> {
+    let mut fields = AHashMap::new();
     fields.insert("Length".to_string(), rng.gen_range(100.0..800.0));
     fields.insert("Width".to_string(), rng.gen_range(2.0..15.0));
     fields
 }
 
-fn generate_branch_event(rng: &mut ThreadRng) -> HashMap<String, f64> {
-    let mut fields = HashMap::new();
+fn generate_branch_event(rng: &mut ThreadRng) -> AHashMap<String, f64> {
+    let mut fields = AHashMap::new();
     fields.insert("Diameter".to_string(), rng.gen_range(10.0..80.0));
     fields.insert("Length".to_string(), rng.gen_range(10.0..80.0));
     fields
 }
 
-fn generate_bark_event(rng: &mut ThreadRng) -> HashMap<String, f64> {
-    let mut fields = HashMap::new();
+fn generate_bark_event(rng: &mut ThreadRng) -> AHashMap<String, f64> {
+    let mut fields = AHashMap::new();
     fields.insert("Length".to_string(), rng.gen_range(100.0..1000.0));
     fields.insert("Width".to_string(), rng.gen_range(10.0..200.0));
     fields

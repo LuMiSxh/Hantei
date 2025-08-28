@@ -1,6 +1,6 @@
 use crate::ast::{EvaluationTrace, Expression, InputSource, Value};
 use crate::error::EvaluationError;
-use std::collections::HashMap;
+use ahash::AHashMap;
 
 // This macro generates a match arm for a binary operation.
 macro_rules! eval_op {
@@ -15,15 +15,15 @@ macro_rules! eval_op {
 /// The core recursive engine for evaluating a single, fully-contextualized AST.
 pub(super) struct AstEngine<'a> {
     expression: &'a Expression,
-    static_data: &'a HashMap<String, f64>,
-    dynamic_context: &'a HashMap<String, &'a HashMap<String, f64>>,
+    static_data: &'a AHashMap<String, f64>,
+    dynamic_context: &'a AHashMap<String, &'a AHashMap<String, f64>>,
 }
 
 impl<'a> AstEngine<'a> {
     pub(super) fn new(
         expression: &'a Expression,
-        static_data: &'a HashMap<String, f64>,
-        dynamic_context: &'a HashMap<String, &'a HashMap<String, f64>>,
+        static_data: &'a AHashMap<String, f64>,
+        dynamic_context: &'a AHashMap<String, &'a AHashMap<String, f64>>,
     ) -> Self {
         Self {
             expression,

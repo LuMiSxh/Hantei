@@ -5,7 +5,7 @@ build-backend = "maturin"
 
 [project]
 name = "hantei"
-version = "0.2.0"
+version = "0.2.1"
 authors = [
     { name = "LuMiSxh", email = "76248448+LuMiSxh@users.noreply.github.com" },
 ]

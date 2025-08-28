@@ -1,12 +1,14 @@
+use std::collections::HashMap;
+
 use crate::compiler::Compiler;
 use crate::error::RecipeConversionError;
 use crate::evaluator::{EvaluationResult, Evaluator};
 use crate::recipe::{
     DataFieldDefinition, FlowDefinition, FlowEdgeDefinition, FlowNodeDefinition, IntoFlow, Quality,
 };
+use ahash::AHashMap;
 use pyo3::prelude::*;
 use pyo3::types::PyDict;
-use std::collections::HashMap;
 
 // --- JSON Deserialization Structs (Input Format Specific) ---
 // These structs are private to the Python module and are used to parse the
@@ -232,9 +234,25 @@ impl HanteiPy {
         static_data_py: &Bound<'_, PyDict>,
         dynamic_data_py: &Bound<'_, PyDict>,
     ) -> PyResult<EvaluationResult> {
-        let static_data: HashMap<String, f64> = static_data_py.extract()?;
-        let dynamic_data: HashMap<String, Vec<HashMap<String, f64>>> = dynamic_data_py.extract()?;
+        // 1. Extract into standard HashMaps.
+        let static_data_std: HashMap<String, f64> = static_data_py.extract()?;
+        let dynamic_data_std: HashMap<String, Vec<HashMap<String, f64>>> =
+            dynamic_data_py.extract()?;
 
+        // 2. Convert to AHashMaps. This is a very fast operation.
+        let static_data: AHashMap<String, f64> = static_data_std.into_iter().collect();
+        let dynamic_data: AHashMap<String, Vec<AHashMap<String, f64>>> = dynamic_data_std
+            .into_iter()
+            .map(|(key, vec_of_maps)| {
+                let new_vec = vec_of_maps
+                    .into_iter()
+                    .map(|std_map| std_map.into_iter().collect()) // Convert inner maps
+                    .collect();
+                (key, new_vec)
+            })
+            .collect(); // Convert outer map
+
+        // 3. Call the evaluator with the high-performance maps.
         let result = self
             .evaluator
             .eval(&static_data, &dynamic_data)

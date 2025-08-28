@@ -25,7 +25,7 @@ Add Hantei to your `Cargo.toml`:
 
 ```toml
 [dependencies]
-hantei = { git = "https://github.com/lumisxh/hantei", tag = "v0.2.0" }
+hantei = { git = "https://github.com/lumisxh/hantei", tag = "v0.2.1" }
 ```
 
 ### Python Bindings

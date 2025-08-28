@@ -23,7 +23,7 @@
 //! use hantei::prelude::*;
 //! use hantei::recipe::{FlowDefinition, FlowNodeDefinition, FlowEdgeDefinition, Quality, IntoFlow};
 //! use hantei::error::RecipeConversionError;
-//! use std::collections::HashMap;
+//! use ahash::AHashMap;
 //!
 //! // 1. Define structs that represent your custom recipe format.
 //! struct MyNode {
@@ -101,9 +101,9 @@
 //!     // 4. Create an evaluator and provide runtime data.
 //!     let evaluator = Evaluator::new(compiled_paths);
 //!
-//!     let mut static_data = HashMap::new();
+//!     let mut static_data = AHashMap::new();
 //!     static_data.insert("Temperature".to_string(), 30.0); // This will trigger the rule
-//!     let dynamic_data = HashMap::new();
+//!     let dynamic_data = AHashMap::new();
 //!
 //!     // Evaluate the data
 //!     println!("Evaluating data...");

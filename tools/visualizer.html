@@ -1,0 +1,284 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Hantei Recipe Visualizer</title>
+        <style>
+            /* --- CSS Variables for Theming --- */
+            :root {
+                --bg-primary: #f0f2f5;
+                --bg-secondary: #ffffff;
+                --bg-tertiary: #fafafa;
+                --text-primary: #222;
+                --text-secondary: #555;
+                --border-color: #ddd;
+                --shadow-color: rgba(0, 0, 0, 0.05);
+                --node-border: #999;
+                --node-shadow: rgba(0, 0, 0, 0.1);
+            }
+
+            .dark {
+                --bg-primary: #121212;
+                --bg-secondary: #1e1e1e;
+                --bg-tertiary: #2a2a2a;
+                --text-primary: #e0e0e0;
+                --text-secondary: #a0a0a0;
+                --border-color: #333;
+                --shadow-color: rgba(0, 0, 0, 0.2);
+                --node-border: #666;
+                --node-shadow: rgba(0, 0, 0, 0.3);
+            }
+            /* --- Base Styles --- */
+            body,
+            html {
+                margin: 0;
+                padding: 0;
+                height: 100%;
+                font-family:
+                    -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen,
+                    Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
+                background-color: var(--bg-primary);
+                color: var(--text-primary);
+                transition:
+                    background-color 0.3s,
+                    color 0.3s;
+            }
+            #root {
+                width: 100vw;
+                height: 100vh;
+            }
+            .container {
+                display: flex;
+                flex-direction: column;
+                height: 100%;
+            }
+            .header {
+                padding: 15px 20px;
+                background-color: var(--bg-secondary);
+                border-bottom: 1px solid var(--border-color);
+                box-shadow: 0 2px 4px var(--shadow-color);
+                display: flex;
+                align-items: center;
+                gap: 20px;
+                transition:
+                    background-color 0.3s,
+                    border-color 0.3s;
+            }
+            .header h1 {
+                margin: 0;
+                font-size: 1.5em;
+            }
+            .header .controls {
+                margin-left: auto;
+                display: flex;
+                gap: 15px;
+            }
+            .header button {
+                padding: 8px 12px;
+                border: 1px solid var(--border-color);
+                border-radius: 4px;
+                background-color: var(--bg-tertiary);
+                color: var(--text-primary);
+                cursor: pointer;
+                transition:
+                    background-color 0.2s,
+                    border-color 0.2s;
+            }
+            .header button:hover {
+                background-color: var(--bg-primary);
+            }
+
+            .flow-container {
+                flex-grow: 1;
+            }
+
+            /* --- React Flow Theming --- */
+            .react-flow__node {
+                font-size: 12px;
+                border-radius: 6px;
+                border: 1px solid var(--node-border);
+                box-shadow: 0 2px 5px var(--node-shadow);
+                white-space: pre-wrap;
+                transition:
+                    background-color 0.3s,
+                    color 0.3s,
+                    border-color 0.3s;
+            }
+            .react-flow__node-default {
+                background-color: var(--bg-secondary);
+                color: var(--text-primary);
+            }
+            .react-flow__node-input {
+                background-color: #1d3c4e;
+                border-color: #367a9e;
+                color: #e6f7ff;
+            }
+            .dark .react-flow__node-input {
+                background-color: #003a5c;
+                border-color: #005a8d;
+            }
+            .react-flow__node-output {
+                background-color: #4d4221;
+                border-color: #9e8c4e;
+                color: #fffbe6;
+            }
+            .dark .react-flow__node-output {
+                background-color: #5c4f1c;
+                border-color: #8d7a31;
+            }
+            .react-flow__handle {
+                width: 8px;
+                height: 8px;
+            }
+            .react-flow__edge-path {
+                stroke: var(--text-secondary);
+                stroke-width: 1.5;
+                transition: stroke 0.3s;
+            }
+            .react-flow__controls button {
+                background-color: var(--bg-secondary);
+                border-bottom: 1px solid var(--border-color);
+                fill: var(--text-secondary);
+            }
+            .react-flow__controls button:hover {
+                background-color: var(--bg-tertiary);
+            }
+            .react-flow__minimap {
+                background-color: var(--bg-tertiary);
+                border: 1px solid var(--border-color);
+            }
+        </style>
+    </head>
+    <body>
+        <div id="root"></div>
+
+        <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+        <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+        <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+        <script src="https://unpkg.com/react-flow-renderer@10.3.17/dist/umd/index.js"></script>
+
+        <script type="text/babel">
+            const { useState, useCallback, useEffect } = React;
+            const ReactFlowComponent = ReactFlow.default;
+            const { MiniMap, Controls, Background, addEdge } = ReactFlow;
+
+            const App = () => {
+                const [nodes, setNodes] = useState([]);
+                const [edges, setEdges] = useState([]);
+                const [theme, setTheme] = useState("light");
+
+                useEffect(() => {
+                    document.body.className = theme;
+                }, [theme]);
+
+                const onConnect = useCallback(
+                    (params) => setEdges((eds) => addEdge(params, eds)),
+                    [setEdges],
+                );
+
+                const handleFileChange = (event) => {
+                    const file = event.target.files[0];
+                    if (!file) return;
+
+                    const reader = new FileReader();
+                    reader.onload = (e) => {
+                        try {
+                            const flowData = JSON.parse(e.target.result);
+
+                            const newNodes = flowData.nodes.map((node) => {
+                                const nodeData = node.data.nodeData;
+                                const name = nodeData.name || nodeData.realNodeType;
+
+                                let label = `ID: ${node.id}\n${name}`;
+                                if (nodeData.operator)
+                                    label += ` (${nodeData.operator})`;
+
+                                if (nodeData.values && nodeData.values.length > 0) {
+                                    const valuesStr = nodeData.values
+                                        .filter((v) => v !== null)
+                                        .map((v) => JSON.stringify(v))
+                                        .join(", ");
+                                    if (valuesStr) label += `\nValues: [${valuesStr}]`;
+                                }
+
+                                let type = "default";
+                                if (name === "Start") type = "input";
+                                if (name === "Set Quality") type = "output";
+
+                                return {
+                                    id: node.id,
+                                    type,
+                                    data: { label },
+                                    position: node.position,
+                                    sourcePosition: "right",
+                                    targetPosition: "left",
+                                };
+                            });
+
+                            // --- THIS IS THE CORRECTED PART ---
+                            // Explicitly create clean edge objects for React Flow,
+                            // picking only the properties it needs and omitting the custom type.
+                            const newEdges = flowData.edges.map((edge) => ({
+                                id: edge.id,
+                                source: edge.source,
+                                target: edge.target,
+                                sourceHandle: edge.sourceHandle,
+                                targetHandle: edge.targetHandle,
+                                animated: true,
+                            }));
+
+                            setNodes(newNodes);
+                            setEdges(newEdges);
+                        } catch (error) {
+                            console.error("Failed to parse JSON file:", error);
+                            alert(
+                                "Error: Could not parse flow.json. Make sure the file is valid.",
+                            );
+                        }
+                    };
+                    reader.readAsText(file);
+                };
+
+                const toggleTheme = () =>
+                    setTheme((currentTheme) =>
+                        currentTheme === "light" ? "dark" : "light",
+                    );
+
+                return (
+                    <div className={`container ${theme}`}>
+                        <div className="header">
+                            <h1>Hantei Recipe Visualizer</h1>
+                            <div className="controls">
+                                <input
+                                    type="file"
+                                    accept=".json"
+                                    onChange={handleFileChange}
+                                />
+                                <button onClick={toggleTheme}>Toggle Theme</button>
+                            </div>
+                        </div>
+                        <div className="flow-container">
+                            <ReactFlowComponent
+                                nodes={nodes}
+                                edges={edges}
+                                onConnect={onConnect}
+                                fitView
+                            >
+                                <MiniMap />
+                                <Controls />
+                                <Background
+                                    color={theme === "dark" ? "#555" : "#ccc"}
+                                    gap={20}
+                                />
+                            </ReactFlowComponent>
+                        </div>
+                    </div>
+                );
+            };
+
+            const root = ReactDOM.createRoot(document.getElementById("root"));
+            root.render(<App />);
+        </script>
+    </body>
+</html>

@@ -1,11 +1,12 @@
 # Hantei Command-Line Tools
 
-This directory contains optional, feature-gated command-line tools for the Hantei evaluation engine. These tools are not included in a default library build and are intended for debugging, testing, and data generation.
+This directory contains optional, feature-gated command-line tools and utilities for the Hantei evaluation engine. These tools are intended for debugging, testing, and data generation.
 
 ## Tools Overview
 
 1.  **Hantei CLI (`hantei-cli`)**: The main debugging and evaluation runner.
 2.  **Data Generator (`data-gen`)**: A utility for creating randomized test data.
+3.  **Recipe Visualizer (`visualizer.html`)**: An interactive, browser-based tool to view recipe graphs.
 
 ---
 
@@ -24,12 +25,11 @@ To build and run the CLI, you must enable the `hantei-cli` feature:
 # Basic syntax
 cargo run --features hantei-cli -- [OPTIONS] <RECIPE> <QUALITIES> [DATA]
 
-# Example run with sample data and debug file output
+# Example run with sample data
 cargo run --features hantei-cli -- \
     data/flow.json \
     data/qualities_becker.json \
-    data/sample_data.json \
-    --write-debug-files
+    data/sample_data.json
 ```
 
 #### Arguments
@@ -40,7 +40,6 @@ cargo run --features hantei-cli -- \
 
 #### Options
 
-- `--write-debug-files`: If present, the tool will generate naive and optimized AST (`.txt`) files for each compiled quality path in the `tmp/` directory.
 - `--help`: Display the help message with all arguments and options.
 
 ---
@@ -63,3 +62,26 @@ cargo run --bin data-gen --features data-gen
 # Generate a file with a custom name
 cargo run --bin data-gen --features data-gen -- --output my_custom_data.json
 ```
+
+---
+
+### 3. Recipe Visualizer
+
+**Source**: `tools/visualizer.html`
+
+This is a self-contained HTML file for graphically rendering a `flow.json` recipe. It is incredibly useful for visually inspecting and debugging a recipe's structure, verifying that node connections and data flow are correct before analyzing the AST output.
+
+It requires no compilation, server, or feature flags to run.
+
+#### How to Use
+
+1.  Open the `tools/visualizer.html` file directly in a modern web browser (e.g., Chrome, Firefox, Edge).
+2.  Click the **"Choose File"** button.
+3.  Select your `flow.json` file to render the graph.
+
+#### Features
+
+- **Interactive View**: Pan and zoom the graph to inspect complex recipes.
+- **Dark Mode**: Includes a "Toggle Theme" button for better visibility.
+- **Clear Data Flow**: Nodes are rendered with inputs on the left and outputs on the right for a clear, logical layout.
+- **Detailed Nodes**: Nodes display their ID, type, and any literal values they contain.

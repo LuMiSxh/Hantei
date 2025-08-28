@@ -1,5 +1,6 @@
 //! End-to-end tests that verify the complete functionality works together.
 mod common;
+use ahash::AHashMap;
 use common::*;
 use hantei::prelude::*;
 
@@ -17,9 +18,9 @@ fn test_full_workflow_simple() {
     let evaluator = Evaluator::new(compiled_paths);
 
     // 4. Provide data and evaluate
-    let mut static_data = HashMap::new();
+    let mut static_data = AHashMap::new();
     static_data.insert("Temperature".to_string(), 99.0);
-    let dynamic_data = HashMap::new();
+    let dynamic_data = AHashMap::new();
 
     let result = evaluator
         .eval(&static_data, &dynamic_data)
