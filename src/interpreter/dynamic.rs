@@ -33,7 +33,6 @@ impl<'a> DynamicEvaluator<'a> {
     }
 
     /// Searches for any combination of dynamic events that makes the AST true.
-    /// Returns the first successful trace found.
     pub(super) fn evaluate(&self) -> Result<Option<EvaluationTrace>, EvaluationError> {
         let mut context = AHashMap::new();
         self.evaluate_recursive(&self.event_types, &mut context)

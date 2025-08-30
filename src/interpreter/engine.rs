@@ -2,16 +2,6 @@ use crate::ast::{EvaluationTrace, Expression, InputSource, Value};
 use crate::error::EvaluationError;
 use ahash::AHashMap;
 
-// This macro generates a match arm for a binary operation.
-macro_rules! eval_op {
-    ($self:ident, $l:ident, $r:ident, $op_str:expr, $op_fn:expr, number) => {
-        $self.eval_binary($l, $r, $op_str, $op_fn)
-    };
-    ($self:ident, $l:ident, $r:ident, $op_str:expr, $op_fn:expr, bool) => {
-        $self.eval_comparison($l, $r, $op_str, $op_fn)
-    };
-}
-
 /// The core recursive engine for evaluating a single, fully-contextualized AST.
 pub(super) struct AstEngine<'a> {
     expression: &'a Expression,
@@ -39,8 +29,6 @@ impl<'a> AstEngine<'a> {
 
     fn evaluate_recursive(&self, expr: &Expression) -> Result<EvaluationTrace, EvaluationError> {
         match expr {
-            // This arm should now be unreachable if the linking step was successful.
-            // It acts as a safeguard against bugs in the compiler.
             Expression::Reference(id) => {
                 return Err(EvaluationError::BackendError(format!(
                     "Encountered an unlinked Reference node (#{}) during interpreter execution. This is a compiler bug.",
@@ -48,10 +36,10 @@ impl<'a> AstEngine<'a> {
                 )));
             }
             // --- Arithmetic Operations ---
-            Expression::Sum(l, r) => eval_op!(self, l, r, "+", |a, b| a + b, number),
-            Expression::Subtract(l, r) => eval_op!(self, l, r, "-", |a, b| a - b, number),
-            Expression::Multiply(l, r) => eval_op!(self, l, r, "*", |a, b| a * b, number),
-            Expression::Divide(l, r) => eval_op!(self, l, r, "/", |a, b| a / b, number),
+            Expression::Sum(l, r) => self.eval_binary(l, r, "+", |a, b| a + b),
+            Expression::Subtract(l, r) => self.eval_binary(l, r, "-", |a, b| a - b),
+            Expression::Multiply(l, r) => self.eval_binary(l, r, "*", |a, b| a * b),
+            Expression::Divide(l, r) => self.eval_binary(l, r, "/", |a, b| a / b),
             Expression::Abs(v) => {
                 let child_trace = self.evaluate_recursive(v)?;
                 let outcome = match child_trace.get_outcome() {
@@ -66,10 +54,10 @@ impl<'a> AstEngine<'a> {
             }
 
             // --- Comparison Operations ---
-            Expression::GreaterThan(l, r) => eval_op!(self, l, r, ">", |a, b| a > b, bool),
-            Expression::SmallerThan(l, r) => eval_op!(self, l, r, "<", |a, b| a < b, bool),
-            Expression::GreaterThanOrEqual(l, r) => eval_op!(self, l, r, ">=", |a, b| a >= b, bool),
-            Expression::SmallerThanOrEqual(l, r) => eval_op!(self, l, r, "<=", |a, b| a <= b, bool),
+            Expression::GreaterThan(l, r) => self.eval_comparison(l, r, ">", |a, b| a > b),
+            Expression::SmallerThan(l, r) => self.eval_comparison(l, r, "<", |a, b| a < b),
+            Expression::GreaterThanOrEqual(l, r) => self.eval_comparison(l, r, ">=", |a, b| a >= b),
+            Expression::SmallerThanOrEqual(l, r) => self.eval_comparison(l, r, "<=", |a, b| a <= b),
 
             // --- Equality ---
             Expression::Equal(l, r) => {
@@ -157,6 +145,7 @@ impl<'a> AstEngine<'a> {
                 let right_trace = self.evaluate_recursive(r)?;
                 let outcome = match (left_trace.get_outcome(), right_trace.get_outcome()) {
                     (Value::Bool(lv), Value::Bool(rv)) => Value::Bool(lv ^ rv),
+                    (Value::Bool(_), r_val) => return Err(self.type_mismatch("XOR", "Bool", r_val)),
                     (l_val, _) => return Err(self.type_mismatch("XOR", "Bool", l_val)),
                 };
                 Ok(EvaluationTrace::BinaryOp {

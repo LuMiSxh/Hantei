@@ -5,40 +5,34 @@ use crate::error::VmError;
 use ahash::AHashMap;
 
 macro_rules! binary_op {
-    ($self:ident, $op:tt) => {
-        {
-            let right = $self.pop()?;
-            let left = $self.pop()?;
-            match (left, right) {
-                (Value::Number(l), Value::Number(r)) => $self.push(Value::Number(l $op r)),
-                (l, _) => return Err(VmError::TypeMismatch { expected: "Number".to_string(), found: l })
-            }
+    ($self:ident, $op:tt) => {{
+        let right = $self.pop()?;
+        let left = $self.pop()?;
+        match (left, right) {
+            (Value::Number(l), Value::Number(r)) => $self.push(Value::Number(l $op r)),
+            (l, _r) => return Err(VmError::TypeMismatch { expected: "Number".to_string(), found: l })
         }
-    };
+    }};
 }
 
 macro_rules! comparison_op {
-    ($self:ident, $op:tt) => {
-        {
-            let right = $self.pop()?;
-            let left = $self.pop()?;
-            match (left, right) {
-                (Value::Number(l), Value::Number(r)) => $self.push(Value::Bool(l $op r)),
-                (l, _) => return Err(VmError::TypeMismatch { expected: "Number".to_string(), found: l })
-            }
+    ($self:ident, $op:tt) => {{
+        let right = $self.pop()?;
+        let left = $self.pop()?;
+        match (left, right) {
+            (Value::Number(l), Value::Number(r)) => $self.push(Value::Bool(l $op r)),
+            (l, _r) => return Err(VmError::TypeMismatch { expected: "Number".to_string(), found: l })
         }
-    };
+    }};
 }
 
 /// A stack-based Virtual Machine with support for subroutines.
 pub(super) struct Vm<'a> {
     program: &'a BytecodeProgram,
     ip: usize,
-    // The currently executing chunk of bytecode (either main or a subroutine).
     bytecode: &'a [OpCode],
     stack: Vec<Value>,
-    // A stack of instruction pointers to return to after a Call.
-    call_stack: Vec<usize>,
+    call_stack: Vec<(usize, &'a [OpCode])>,
     static_data: &'a AHashMap<String, f64>,
     dynamic_context: &'a AHashMap<String, &'a AHashMap<String, f64>>,
 }
@@ -52,7 +46,7 @@ impl<'a> Vm<'a> {
         Self {
             program,
             ip: 0,
-            bytecode: &program.main, // Start execution in the main program
+            bytecode: &program.main,
             stack: Vec::with_capacity(16),
             call_stack: Vec::with_capacity(8),
             static_data,
@@ -74,17 +68,19 @@ impl<'a> Vm<'a> {
 
                 // --- Subroutine Instructions ---
                 OpCode::Call(id) => {
-                    self.call_stack.push(self.ip); // Store return address
+                    self.call_stack.push((self.ip, self.bytecode));
                     self.bytecode = self
                         .program
                         .subroutines
                         .get(id)
                         .ok_or_else(|| VmError::UnknownSubroutine(*id))?;
-                    self.ip = 0; // Jump to start of subroutine
+                    self.ip = 0;
                 }
                 OpCode::Return => {
-                    self.ip = self.call_stack.pop().ok_or(VmError::StackUnderflow)?; // Get return address
-                    self.bytecode = &self.program.main; // Assume calls are only from main for now
+                    let (ret_ip, prev_bytecode) =
+                        self.call_stack.pop().ok_or(VmError::StackUnderflow)?;
+                    self.ip = ret_ip;
+                    self.bytecode = prev_bytecode;
                 }
 
                 // --- Stack Operations ---
@@ -117,19 +113,16 @@ impl<'a> Vm<'a> {
                 OpCode::Subtract => binary_op!(self, -),
                 OpCode::Multiply => binary_op!(self, *),
                 OpCode::Divide => binary_op!(self, /),
-                OpCode::GreaterThan => comparison_op!(self, >),
-                OpCode::LessThan => comparison_op!(self, <),
-                OpCode::GreaterThanOrEqual => comparison_op!(self, >=),
-                OpCode::LessThanOrEqual => comparison_op!(self, <=),
-                OpCode::Equal => {
-                    let r = self.pop()?;
-                    let l = self.pop()?;
-                    self.push(Value::Bool(l == r));
-                }
-                OpCode::NotEqual => {
-                    let r = self.pop()?;
-                    let l = self.pop()?;
-                    self.push(Value::Bool(l != r));
+                OpCode::Abs => {
+                    let val = self.pop()?;
+                    if let Value::Number(n) = val {
+                        self.push(Value::Number(n.abs()));
+                    } else {
+                        return Err(VmError::TypeMismatch {
+                            expected: "Number".to_string(),
+                            found: val,
+                        });
+                    }
                 }
                 OpCode::Not => {
                     let val = self.pop()?;
@@ -143,7 +136,41 @@ impl<'a> Vm<'a> {
                     }
                 }
 
-                // --- Control Flow ---
+                OpCode::GreaterThan => comparison_op!(self, >),
+                OpCode::LessThan => comparison_op!(self, <),
+                OpCode::GreaterThanOrEqual => comparison_op!(self, >=),
+                OpCode::LessThanOrEqual => comparison_op!(self, <=),
+
+                OpCode::Equal => {
+                    let r = self.pop()?;
+                    let l = self.pop()?;
+                    self.push(Value::Bool(l == r));
+                }
+                OpCode::NotEqual => {
+                    let r = self.pop()?;
+                    let l = self.pop()?;
+                    self.push(Value::Bool(l != r));
+                }
+                OpCode::Xor => {
+                    let r = self.pop()?;
+                    let l = self.pop()?;
+                    match (&l, &r) {
+                        (Value::Bool(lb), Value::Bool(rb)) => self.push(Value::Bool(lb ^ rb)),
+                        (Value::Bool(_), _) => {
+                            return Err(VmError::TypeMismatch {
+                                expected: "Bool".to_string(),
+                                found: r.clone(),
+                            });
+                        }
+                        _ => {
+                            return Err(VmError::TypeMismatch {
+                                expected: "Bool".to_string(),
+                                found: l.clone(),
+                            });
+                        }
+                    }
+                }
+
                 OpCode::Jump(addr) => self.ip = *addr,
                 OpCode::JumpIfFalse(addr) => {
                     let val = self.stack.last().ok_or(VmError::StackUnderflow)?;
@@ -157,6 +184,7 @@ impl<'a> Vm<'a> {
                         self.ip = *addr;
                     }
                 }
+
                 _ => return Err(VmError::UnhandledOpCode(instruction.to_owned())),
             }
         }

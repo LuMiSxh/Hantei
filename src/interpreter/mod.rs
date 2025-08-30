@@ -25,11 +25,9 @@ impl EvaluationBackend for InterpreterBackend {
         &self,
         paths: Vec<(i32, String, Expression, AHashMap<u64, Expression>)>,
     ) -> Result<Box<dyn ExecutableRecipe>, BackendError> {
-        // The "linking" phase: transform the AST graph into a simple tree for each path.
         let linked_paths = paths
             .into_iter()
             .map(|(p, n, ast, defs)| {
-                // We use a temporary HashMap for memoization *during this link pass only* to avoid re-linking the same sub-tree.
                 let mut visited = HashMap::new();
                 let linked_ast = link_ast(&ast, &defs, &mut visited)?;
                 Ok((p, n, linked_ast))
@@ -42,7 +40,6 @@ impl EvaluationBackend for InterpreterBackend {
     }
 }
 
-/// The executable now holds fully self-contained, "linked" ASTs with no References.
 struct AstExecutable {
     paths: Vec<(i32, String, Expression)>,
 }
@@ -55,7 +52,6 @@ impl ExecutableRecipe for AstExecutable {
     ) -> Result<EvaluationResult, EvaluationError> {
         let maybe_result = self.paths.par_iter().find_map_any(|(priority, name, ast)| {
             let mut required_events = HashSet::new();
-            // We can now use the simpler get_required_events because the AST is just a tree.
             ast.get_required_events(&mut required_events);
 
             let eval_result = if required_events.is_empty() {
@@ -93,11 +89,10 @@ impl ExecutableRecipe for AstExecutable {
     }
 }
 
-/// Recursively walks an expression, inlining any `Reference` nodes to produce a flat tree.
 fn link_ast(
     expr: &Expression,
     definitions: &AHashMap<u64, Expression>,
-    visited: &mut HashMap<u64, Expression>, // Memoization for this link pass
+    visited: &mut HashMap<u64, Expression>,
 ) -> Result<Expression, BackendError> {
     match expr {
         Expression::Reference(id) => {
