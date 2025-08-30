@@ -2,6 +2,7 @@
 mod common;
 use ahash::AHashMap;
 use common::*;
+use hantei::backend::BackendChoice;
 use hantei::prelude::*;
 
 #[test]
@@ -10,7 +11,7 @@ fn test_static_evaluation_trigger() {
     let qualities = create_simple_qualities();
     let compiler = Compiler::builder(flow, qualities).build();
     let compiled_paths = compiler.compile().unwrap();
-    let evaluator = Evaluator::new(compiled_paths);
+    let evaluator = Evaluator::new(BackendChoice::Interpreter, compiled_paths).unwrap();
 
     let mut static_data = AHashMap::new();
     static_data.insert("Temperature".to_string(), 30.0); // Should trigger > 25
@@ -27,7 +28,7 @@ fn test_static_evaluation_no_trigger() {
     let qualities = create_simple_qualities();
     let compiler = Compiler::builder(flow, qualities).build();
     let compiled_paths = compiler.compile().unwrap();
-    let evaluator = Evaluator::new(compiled_paths);
+    let evaluator = Evaluator::new(BackendChoice::Interpreter, compiled_paths).unwrap();
 
     let mut static_data = AHashMap::new();
     static_data.insert("Temperature".to_string(), 20.0); // Should NOT trigger > 25
@@ -43,7 +44,7 @@ fn test_dynamic_cross_product_evaluation() {
     let qualities = create_complex_qualities();
     let compiler = Compiler::builder(flow, qualities).build();
     let compiled_paths = compiler.compile().unwrap();
-    let evaluator = Evaluator::new(compiled_paths);
+    let evaluator = Evaluator::new(BackendChoice::Interpreter, compiled_paths).unwrap();
 
     let mut static_data = AHashMap::new();
     static_data.insert("Temperature".to_string(), 35.0); // Condition met

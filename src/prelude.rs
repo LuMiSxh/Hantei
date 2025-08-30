@@ -25,7 +25,7 @@
 
 // Core compilation and evaluation
 pub use crate::compiler::{Compiler, CompilerBuilder};
-pub use crate::evaluator::{EvaluationResult, Evaluator};
+pub use crate::evaluator::Evaluator;
 
 // AST and expression types
 pub use crate::ast::{EvaluationTrace, Expression, InputSource, Value};
@@ -39,7 +39,9 @@ pub use crate::recipe::{
 pub use crate::data::SampleData;
 
 // Error types
-pub use crate::error::{CompileError, EvaluationError, RecipeConversionError};
+pub use crate::error::{
+    AstBuildError, BackendError, EvaluationError, RecipeConversionError, VmError,
+};
 
 // Trace formatting
 pub use crate::trace::TraceFormatter;

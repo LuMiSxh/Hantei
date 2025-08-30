@@ -1,5 +1,6 @@
 //! Unit tests for core Hantei functionality.
 mod common;
+use hantei::error::{AstBuildError, EvaluationError, VmError};
 use hantei::prelude::*;
 use std::collections::HashSet;
 
@@ -59,7 +60,7 @@ fn test_trace_formatter_short_circuit() {
 
 #[test]
 fn test_error_display() {
-    let err = CompileError::NodeNotFound {
+    let err = AstBuildError::NodeNotFound {
         missing_node_id: "node_B".to_string(),
         source_node_id: "node_A".to_string(),
     };
@@ -74,4 +75,7 @@ fn test_error_display() {
     assert!(eval_err.to_string().contains('+'));
     assert!(eval_err.to_string().contains("Number"));
     assert!(eval_err.to_string().contains("false"));
+
+    let vm_err = VmError::StackUnderflow;
+    assert!(vm_err.to_string().contains("Stack underflow"));
 }

@@ -28,7 +28,7 @@ cargo run --features hantei-cli -- [OPTIONS] <RECIPE> <QUALITIES> [DATA]
 # Example run with sample data
 cargo run --features hantei-cli -- \
     data/flow.json \
-    data/qualities_becker.json \
+    data/qualities.json \
     data/sample_data.json
 ```
 

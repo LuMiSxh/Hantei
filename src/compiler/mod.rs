@@ -1,9 +1,12 @@
 use crate::ast::{Expression, Value};
-use crate::error::CompileError;
+use crate::error::AstBuildError;
 use crate::recipe::{FlowDefinition, Quality};
 use std::collections::HashMap;
-#[cfg(feature = "hantei-cli")]
-use std::fs;
+#[cfg(all(feature = "hantei-cli", debug_assertions))]
+use {
+    crate::bytecode::{compiler as bytecode_compiler, visualizer as bytecode_visualizer},
+    std::fs,
+};
 
 mod builder;
 mod optimizer;
@@ -114,14 +117,14 @@ impl Compiler {
     ///
     /// # Returns
     ///
-    /// A `Result` containing either the vector of compiled paths or a `CompileError`.
-    pub fn compile(mut self) -> Result<Vec<(i32, String, Expression)>, CompileError> {
+    /// A `Result` containing either the vector of compiled paths or a `AstBuildError`.
+    pub fn compile(mut self) -> Result<Vec<(i32, String, Expression)>, AstBuildError> {
         let quality_node_id = self
             .flow
             .nodes
             .iter()
             .find(|n| n.operation_type == "setQualityNode")
-            .ok_or_else(|| CompileError::InvalidNodeType {
+            .ok_or_else(|| AstBuildError::InvalidNodeType {
                 node_id: "N/A".to_string(),
                 type_name: "setQualityNode not found".to_string(),
             })?
@@ -142,7 +145,7 @@ impl Compiler {
 
                 let optimized_ast = optimizer.optimize(naive_ast.clone());
 
-                #[cfg(feature = "hantei-cli")]
+                #[cfg(all(feature = "hantei-cli", debug_assertions))]
                 {
                     let sanitized_name = self.sanitize_filename(&quality.name);
                     self.write_debug_file(
@@ -153,6 +156,25 @@ impl Compiler {
                         &format!("tmp/quality_{}_optimized_ast.txt", &sanitized_name),
                         &optimized_ast.to_string(),
                     )?;
+
+                    // --- NEW: Generate and write bytecode visualization ---
+                    match bytecode_compiler::compile_ast(&optimized_ast) {
+                        Ok(bytecode) => {
+                            let viz =
+                                bytecode_visualizer::visualize_bytecode(&bytecode, &quality.name);
+                            self.write_debug_file(
+                                &format!("tmp/quality_{}_bytecode.txt", &sanitized_name),
+                                &viz,
+                            )?;
+                        }
+                        Err(e) => {
+                            eprintln!(
+                                "Warning: Could not compile bytecode for debug file for quality '{}': {}",
+                                quality.name, e
+                            );
+                        }
+                    }
+                    // --- END NEW ---
                 }
                 quality_asts.push((quality.priority, quality.name.clone(), optimized_ast));
             }
@@ -162,21 +184,22 @@ impl Compiler {
         Ok(quality_asts)
     }
 
-    #[cfg(feature = "hantei-cli")]
+    #[cfg(all(feature = "hantei-cli", debug_assertions))]
     fn sanitize_filename(&self, name: &str) -> String {
         name.chars()
             .filter(|c| c.is_alphanumeric() || *c == '_')
             .collect::<String>()
     }
 
-    #[cfg(feature = "hantei-cli")]
-    fn write_debug_file(&self, path: &str, content: &str) -> Result<(), CompileError> {
+    #[cfg(all(feature = "hantei-cli", debug_assertions))]
+    fn write_debug_file(&self, path: &str, content: &str) -> Result<(), AstBuildError> {
         if let Some(parent) = std::path::Path::new(path).parent() {
             fs::create_dir_all(parent).map_err(|e| {
-                CompileError::JsonParseError(format!("Failed to create debug directory: {}", e))
+                AstBuildError::JsonParseError(format!("Failed to create debug directory: {}", e))
             })?;
         }
-        fs::write(path, content)
-            .map_err(|e| CompileError::JsonParseError(format!("Failed to write debug file: {}", e)))
+        fs::write(path, content).map_err(|e| {
+            AstBuildError::JsonParseError(format!("Failed to write debug file: {}", e))
+        })
     }
 }

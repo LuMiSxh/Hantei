@@ -23,6 +23,7 @@
 //! use hantei::prelude::*;
 //! use hantei::recipe::{FlowDefinition, FlowNodeDefinition, FlowEdgeDefinition, Quality, IntoFlow};
 //! use hantei::error::RecipeConversionError;
+//! use hantei::backend::BackendChoice; // <-- FIX: Import BackendChoice
 //! use ahash::AHashMap;
 //!
 //! // 1. Define structs that represent your custom recipe format.
@@ -90,7 +91,6 @@
 //!     let flow = my_recipe.into_flow()?;
 //!
 //!     // 3. Use the builder to create the compiler.
-//!     // You can add customizations here, like `.with_type_mapping("GreaterThan", "gtNode")`.
 //!     let compiler = Compiler::builder(flow, qualities).build();
 //!
 //!     // Compile the flow into optimized ASTs
@@ -98,8 +98,9 @@
 //!     let compiled_paths = compiler.compile()?;
 //!     println!("Compilation successful!");
 //!
-//!     // 4. Create an evaluator and provide runtime data.
-//!     let evaluator = Evaluator::new(compiled_paths);
+//!     // 4. Create an evaluator, choosing a backend. Handle the Result.
+//!     // --- FIX: Add BackendChoice and use `?` to handle the Result ---
+//!     let evaluator = Evaluator::new(BackendChoice::Interpreter, compiled_paths)?;
 //!
 //!     let mut static_data = AHashMap::new();
 //!     static_data.insert("Temperature".to_string(), 30.0); // This will trigger the rule
@@ -122,10 +123,13 @@
 //! ```
 
 pub mod ast;
+pub mod backend;
+pub mod bytecode;
 pub mod compiler;
 pub mod data;
 pub mod error;
 pub mod evaluator;
+pub mod interpreter;
 pub mod prelude;
 pub mod recipe;
 pub mod trace;

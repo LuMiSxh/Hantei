@@ -1,0 +1,161 @@
+pub mod compiler;
+pub mod opcode;
+pub mod visualizer;
+pub mod vm;
+
+use crate::ast::{Expression, Value};
+use crate::backend::{EvaluationBackend, ExecutableRecipe};
+use crate::error::{BackendError, EvaluationError, VmError};
+use crate::interpreter::EvaluationResult;
+use ahash::AHashMap;
+use rayon::prelude::*;
+use std::collections::HashSet;
+
+use self::vm::Vm;
+
+/// A backend that compiles ASTs to bytecode and runs them on a VM.
+pub struct BytecodeBackend;
+
+impl EvaluationBackend for BytecodeBackend {
+    fn compile(
+        &self,
+        paths: Vec<(i32, String, Expression)>,
+    ) -> Result<Box<dyn ExecutableRecipe>, BackendError> {
+        let compiled_paths = paths
+            .into_iter()
+            .map(|(p, n, ast)| compiler::compile_ast(&ast).map(|bytecode| (p, n, bytecode)))
+            .collect::<Result<Vec<_>, _>>()?;
+
+        Ok(Box::new(BytecodeExecutable { compiled_paths }))
+    }
+}
+
+/// The `ExecutableRecipe` for the bytecode backend, holding compiled bytecode for each quality.
+struct BytecodeExecutable {
+    compiled_paths: Vec<(i32, String, Vec<opcode::OpCode>)>,
+}
+
+impl ExecutableRecipe for BytecodeExecutable {
+    fn evaluate(
+        &self,
+        static_data: &AHashMap<String, f64>,
+        dynamic_data: &AHashMap<String, Vec<AHashMap<String, f64>>>,
+    ) -> Result<EvaluationResult, EvaluationError> {
+        let maybe_result =
+            self.compiled_paths
+                .par_iter()
+                .find_map_any(|(priority, name, bytecode)| {
+                    // This is a simplified dynamic evaluation. A full implementation
+                    // would pre-calculate required events for each bytecode chunk.
+                    let mut required_events = HashSet::new();
+                    for op in bytecode {
+                        if let opcode::OpCode::LoadDynamic(event, _) = op {
+                            required_events.insert(event.clone());
+                        }
+                    }
+                    // If no dynamic data is required, run a simple VM instance.
+                    // Otherwise, use the dynamic evaluator.
+
+                    let dynamic_context = AHashMap::new();
+                    let vm_result = if required_events.is_empty() {
+                        let mut vm = Vm::new(bytecode, static_data, &dynamic_context);
+                        vm.run().map(Some)
+                    } else {
+                        let dynamic_eval = DynamicVmEvaluator::new(
+                            bytecode,
+                            &required_events,
+                            static_data,
+                            dynamic_data,
+                        );
+                        dynamic_eval.evaluate()
+                    };
+
+                    match vm_result {
+                        Ok(Some(Value::Bool(true))) => Some(Ok(EvaluationResult {
+                            quality_name: Some(name.clone()),
+                            quality_priority: Some(*priority),
+                            reason: format!("Bytecode evaluation for '{}' returned true", name),
+                        })),
+                        Err(e) => Some(Err(EvaluationError::BackendError(e.to_string()))),
+                        _ => None,
+                    }
+                });
+
+        match maybe_result {
+            Some(Ok(result)) => Ok(result),
+            Some(Err(e)) => Err(e),
+            None => Ok(EvaluationResult {
+                quality_name: None,
+                quality_priority: None,
+                reason: "No quality triggered".to_string(),
+            }),
+        }
+    }
+}
+
+// --- Dynamic Evaluator for the VM ---
+// This is analogous to the interpreter's DynamicEvaluator but runs the VM instead of the AST engine.
+
+struct DynamicVmEvaluator<'a> {
+    bytecode: &'a [opcode::OpCode],
+    event_types: Vec<String>,
+    static_data: &'a AHashMap<String, f64>,
+    dynamic_data: &'a AHashMap<String, Vec<AHashMap<String, f64>>>,
+}
+
+impl<'a> DynamicVmEvaluator<'a> {
+    fn new(
+        bytecode: &'a [opcode::OpCode],
+        required_events: &HashSet<String>,
+        static_data: &'a AHashMap<String, f64>,
+        dynamic_data: &'a AHashMap<String, Vec<AHashMap<String, f64>>>,
+    ) -> Self {
+        let mut event_types: Vec<String> = required_events.iter().cloned().collect();
+        event_types.sort_by_key(|event_type| dynamic_data.get(event_type).map_or(0, |v| v.len()));
+        Self {
+            bytecode,
+            event_types,
+            static_data,
+            dynamic_data,
+        }
+    }
+
+    fn evaluate(&self) -> Result<Option<Value>, VmError> {
+        let mut context = AHashMap::new();
+        self.evaluate_recursive(&self.event_types, &mut context)
+    }
+
+    fn evaluate_recursive(
+        &self,
+        remaining_events: &[String],
+        context: &mut AHashMap<String, &'a AHashMap<String, f64>>,
+    ) -> Result<Option<Value>, VmError> {
+        if remaining_events.is_empty() {
+            let mut vm = Vm::new(self.bytecode, self.static_data, context);
+            let result = vm.run()?;
+            if matches!(result, Value::Bool(true)) {
+                return Ok(Some(result));
+            }
+            return Ok(None);
+        }
+
+        let current_event_type = &remaining_events[0];
+        let next_event_types = &remaining_events[1..];
+
+        if let Some(instances) = self.dynamic_data.get(current_event_type) {
+            if instances.is_empty() {
+                return Ok(None);
+            }
+            for instance in instances {
+                context.insert(current_event_type.clone(), instance);
+                if let Some(result) = self.evaluate_recursive(next_event_types, context)? {
+                    return Ok(Some(result));
+                }
+            }
+        } else {
+            return Ok(None);
+        }
+
+        Ok(None)
+    }
+}

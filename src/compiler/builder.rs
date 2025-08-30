@@ -1,6 +1,6 @@
 use crate::ast::{Expression, InputSource, Value};
 use crate::compiler::parsing::NodeParser;
-use crate::error::CompileError;
+use crate::error::AstBuildError;
 use crate::recipe::{FlowDefinition, FlowNodeDefinition};
 use std::collections::HashMap;
 
@@ -43,7 +43,7 @@ impl<'a> AstBuilder<'a> {
     pub(super) fn build_asts_for_node(
         &mut self,
         node_id: &str,
-    ) -> Result<HashMap<u32, Expression>, CompileError> {
+    ) -> Result<HashMap<u32, Expression>, AstBuildError> {
         let node = self.find_node(node_id, "N/A")?;
         let mut expressions = self.gather_connected_inputs(node_id)?;
 
@@ -65,7 +65,7 @@ impl<'a> AstBuilder<'a> {
     }
 
     /// Recursively builds the AST for a single node, handling caching.
-    fn build_ast(&mut self, node_id: &str, source_id: &str) -> Result<Expression, CompileError> {
+    fn build_ast(&mut self, node_id: &str, source_id: &str) -> Result<Expression, AstBuildError> {
         if let Some(cached) = self.ast_cache.get(node_id) {
             return Ok(cached.clone());
         }
@@ -81,7 +81,7 @@ impl<'a> AstBuilder<'a> {
             .collect();
 
         let parser = self.registry.get(&node.operation_type).ok_or_else(|| {
-            CompileError::InvalidNodeType {
+            AstBuildError::InvalidNodeType {
                 node_id: node.id.clone(),
                 type_name: node.operation_type.clone(),
             }
@@ -97,7 +97,7 @@ impl<'a> AstBuilder<'a> {
     fn gather_connected_inputs(
         &mut self,
         node_id: &str,
-    ) -> Result<HashMap<u32, Expression>, CompileError> {
+    ) -> Result<HashMap<u32, Expression>, AstBuildError> {
         let mut expressions: HashMap<u32, Expression> = HashMap::new();
 
         // **FIX:** Clone the connection data to iterate over, releasing the borrow on `self`.
@@ -135,12 +135,12 @@ impl<'a> AstBuilder<'a> {
         &self,
         source_node: &FlowNodeDefinition,
         source_handle_idx: u32,
-    ) -> Result<Expression, CompileError> {
+    ) -> Result<Expression, AstBuildError> {
         let fields =
             source_node
                 .data_fields
                 .as_ref()
-                .ok_or_else(|| CompileError::ConnectionError {
+                .ok_or_else(|| AstBuildError::ConnectionError {
                     target_node_id: source_node.id.clone(),
                     target_handle_index: source_handle_idx,
                     message: "Source data node has no data_fields defined".to_string(),
@@ -149,7 +149,7 @@ impl<'a> AstBuilder<'a> {
         let field = fields
             .iter()
             .find(|f| f.id == source_handle_idx)
-            .ok_or_else(|| CompileError::ConnectionError {
+            .ok_or_else(|| AstBuildError::ConnectionError {
                 target_node_id: source_node.id.clone(),
                 target_handle_index: source_handle_idx,
                 message: format!(
@@ -175,12 +175,12 @@ impl<'a> AstBuilder<'a> {
         &self,
         node_id: &'b str,
         source_node_id: &'b str,
-    ) -> Result<&'a FlowNodeDefinition, CompileError> {
+    ) -> Result<&'a FlowNodeDefinition, AstBuildError> {
         self.flow
             .nodes
             .iter()
             .find(|n| n.id == node_id)
-            .ok_or_else(|| CompileError::NodeNotFound {
+            .ok_or_else(|| AstBuildError::NodeNotFound {
                 missing_node_id: node_id.to_string(),
                 source_node_id: source_node_id.to_string(),
             })

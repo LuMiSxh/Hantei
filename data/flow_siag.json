@@ -1,0 +1,699 @@
+{
+    "nodes": [
+        {
+            "id": "0001",
+            "type": "dynamicNode",
+            "position": { "x": -200, "y": 400 },
+            "data": {
+                "nodeData": {
+                    "name": "Start",
+                    "realNodeType": "dynamicNode",
+                    "cases": [
+                        { "caseId": 0, "caseName": "Leading width" },
+                        { "caseId": 1, "caseName": "Trailing width" },
+                        { "caseId": 5, "caseName": "Angle" },
+                        { "caseId": 7, "caseName": "Humidity peak" }
+                    ]
+                }
+            }
+        },
+        {
+            "id": "0002",
+            "type": "setQualityNode",
+            "position": { "x": 3000, "y": 600 },
+            "data": {
+                "nodeData": { "name": "Set Quality", "realNodeType": "setQualityNode" }
+            }
+        },
+        {
+            "id": "1001",
+            "type": "dynamicNode",
+            "position": { "x": 0, "y": 700 },
+            "data": {
+                "nodeData": {
+                    "name": "Hole",
+                    "realNodeType": "dynamicNode",
+                    "realInputType": "hole",
+                    "cases": [{ "caseId": 2, "caseName": "Diameter" }]
+                }
+            }
+        },
+        {
+            "id": "1002",
+            "type": "dynamicNode",
+            "position": { "x": 0, "y": 850 },
+            "data": {
+                "nodeData": {
+                    "name": "Tear",
+                    "realNodeType": "dynamicNode",
+                    "realInputType": "tear",
+                    "cases": [{ "caseId": 0, "caseName": "Length" }]
+                }
+            }
+        },
+        {
+            "id": "1003",
+            "type": "dynamicNode",
+            "position": { "x": 0, "y": 1000 },
+            "data": {
+                "nodeData": {
+                    "name": "Black branch",
+                    "realNodeType": "dynamicNode",
+                    "realInputType": "black_branch",
+                    "cases": [{ "caseId": 2, "caseName": "Diameter" }]
+                }
+            }
+        },
+        {
+            "id": "1004",
+            "type": "dynamicNode",
+            "position": { "x": 0, "y": 1150 },
+            "data": {
+                "nodeData": {
+                    "name": "Healthy branch",
+                    "realNodeType": "dynamicNode",
+                    "realInputType": "healthy_branch",
+                    "cases": [{ "caseId": 2, "caseName": "Diameter" }]
+                }
+            }
+        },
+        {
+            "id": "1005",
+            "type": "dynamicNode",
+            "position": { "x": 0, "y": 1300 },
+            "data": {
+                "nodeData": {
+                    "name": "White rot",
+                    "realNodeType": "dynamicNode",
+                    "realInputType": "white_rot",
+                    "cases": [{ "caseId": 2, "caseName": "Area" }]
+                }
+            }
+        },
+        {
+            "id": "1006",
+            "type": "dynamicNode",
+            "position": { "x": 0, "y": 1450 },
+            "data": {
+                "nodeData": {
+                    "name": "Brown rot",
+                    "realNodeType": "dynamicNode",
+                    "realInputType": "brown_rot",
+                    "cases": [{ "caseId": 2, "caseName": "Area" }]
+                }
+            }
+        },
+        {
+            "id": "1007",
+            "type": "dynamicNode",
+            "position": { "x": 0, "y": 1600 },
+            "data": {
+                "nodeData": {
+                    "name": "Bark",
+                    "realNodeType": "dynamicNode",
+                    "realInputType": "bark",
+                    "cases": [{ "caseId": 3, "caseName": "Area" }]
+                }
+            }
+        },
+        {
+            "id": "2001",
+            "type": "ifNode",
+            "position": { "x": 400, "y": 1450 },
+            "data": {
+                "nodeData": {
+                    "name": "Has Brown Rot",
+                    "realNodeType": "gtNode",
+                    "values": [null, 0]
+                }
+            }
+        },
+        {
+            "id": "2002",
+            "type": "ifNode",
+            "position": { "x": 400, "y": 700 },
+            "data": {
+                "nodeData": {
+                    "name": "Hole > 150mm",
+                    "realNodeType": "gtNode",
+                    "values": [null, 150]
+                }
+            }
+        },
+        {
+            "id": "2003",
+            "type": "ifNode",
+            "position": { "x": 400, "y": 550 },
+            "data": {
+                "nodeData": {
+                    "name": "Peak Humidity > 25",
+                    "realNodeType": "gtNode",
+                    "values": [null, 25]
+                }
+            }
+        },
+        {
+            "id": "2010",
+            "type": "ifNode",
+            "position": { "x": 400, "y": 1300 },
+            "data": {
+                "nodeData": {
+                    "name": "Has White Rot",
+                    "realNodeType": "gtNode",
+                    "values": [null, 0]
+                }
+            }
+        },
+        {
+            "id": "2011",
+            "type": "logicNode",
+            "position": { "x": 800, "y": 1300 },
+            "data": {
+                "nodeData": { "name": "Is NOT Rotted", "realNodeType": "notNode" }
+            }
+        },
+        {
+            "id": "2012",
+            "type": "ifNode",
+            "position": { "x": 400, "y": 850 },
+            "data": {
+                "nodeData": {
+                    "name": "Tear Length > 400",
+                    "realNodeType": "gtNode",
+                    "values": [null, 400]
+                }
+            }
+        },
+        {
+            "id": "2013",
+            "type": "logicNode",
+            "position": { "x": 800, "y": 850 },
+            "data": { "nodeData": { "name": "Is NOT Torn", "realNodeType": "notNode" } }
+        },
+        {
+            "id": "2014",
+            "type": "ifNode",
+            "position": { "x": 400, "y": 1000 },
+            "data": {
+                "nodeData": {
+                    "name": "Black Branch > 30",
+                    "realNodeType": "gtNode",
+                    "values": [null, 30]
+                }
+            }
+        },
+        {
+            "id": "2015",
+            "type": "logicNode",
+            "position": { "x": 800, "y": 1000 },
+            "data": {
+                "nodeData": {
+                    "name": "Has NO Large Black Branch",
+                    "realNodeType": "notNode"
+                }
+            }
+        },
+        {
+            "id": "2100",
+            "type": "ifNode",
+            "position": { "x": 400, "y": 0 },
+            "data": {
+                "nodeData": {
+                    "name": "Angle - 90",
+                    "realNodeType": "subNode",
+                    "values": [null, 90]
+                }
+            }
+        },
+        {
+            "id": "2101",
+            "type": "logicNode",
+            "position": { "x": 800, "y": 0 },
+            "data": {
+                "nodeData": {
+                    "name": "Absolute Angle Deviation",
+                    "realNodeType": "absNode"
+                }
+            }
+        },
+        {
+            "id": "2102",
+            "type": "ifNode",
+            "position": { "x": 1200, "y": 0 },
+            "data": {
+                "nodeData": {
+                    "name": "Deviation < 0.1",
+                    "realNodeType": "stNode",
+                    "values": [null, 0.1]
+                }
+            }
+        },
+        {
+            "id": "2103",
+            "type": "ifNode",
+            "position": { "x": 400, "y": 150 },
+            "data": {
+                "nodeData": { "name": "Sum of Widths", "realNodeType": "sumNode" }
+            }
+        },
+        {
+            "id": "2104",
+            "type": "ifNode",
+            "position": { "x": 800, "y": 150 },
+            "data": {
+                "nodeData": {
+                    "name": "Average Width",
+                    "realNodeType": "divideNode",
+                    "values": [null, 2]
+                }
+            }
+        },
+        {
+            "id": "2105",
+            "type": "ifNode",
+            "position": { "x": 1200, "y": 150 },
+            "data": {
+                "nodeData": {
+                    "name": "Avg Width > 1995",
+                    "realNodeType": "gtNode",
+                    "values": [null, 1995]
+                }
+            }
+        },
+        {
+            "id": "2201",
+            "type": "ifNode",
+            "position": { "x": 400, "y": 1600 },
+            "data": {
+                "nodeData": {
+                    "name": "Has Bark",
+                    "realNodeType": "gtNode",
+                    "values": [null, 0]
+                }
+            }
+        },
+        {
+            "id": "2202",
+            "type": "logicNode",
+            "position": { "x": 800, "y": 1600 },
+            "data": {
+                "nodeData": { "name": "Is Bark-Free", "realNodeType": "notNode" }
+            }
+        },
+        {
+            "id": "2203",
+            "type": "ifNode",
+            "position": { "x": 400, "y": 1150 },
+            "data": {
+                "nodeData": {
+                    "name": "Healthy Branch < 5",
+                    "realNodeType": "stNode",
+                    "values": [null, 5]
+                }
+            }
+        },
+        {
+            "id": "2204",
+            "type": "ifNode",
+            "position": { "x": 800, "y": 700 },
+            "data": {
+                "nodeData": {
+                    "name": "Hole < 3",
+                    "realNodeType": "stNode",
+                    "values": [null, 3]
+                }
+            }
+        },
+        {
+            "id": "3001",
+            "type": "logicNode",
+            "position": { "x": 2000, "y": 1400 },
+            "data": {
+                "nodeData": { "name": "REJECT Condition", "realNodeType": "orNode" }
+            }
+        },
+        {
+            "id": "3010",
+            "type": "logicNode",
+            "position": { "x": 1200, "y": 1025 },
+            "data": {
+                "nodeData": {
+                    "name": "IS STRUCTURALLY SOUND",
+                    "realNodeType": "andNode"
+                }
+            }
+        },
+        {
+            "id": "3020",
+            "type": "logicNode",
+            "position": { "x": 1200, "y": 800 },
+            "data": {
+                "nodeData": { "name": "A-Grade Defects OK", "realNodeType": "andNode" }
+            }
+        },
+        {
+            "id": "3021",
+            "type": "ifNode",
+            "position": { "x": 800, "y": 1150 },
+            "data": {
+                "nodeData": {
+                    "name": "Healthy Branch < 15",
+                    "realNodeType": "stNode",
+                    "values": [null, 15]
+                }
+            }
+        },
+        {
+            "id": "3030",
+            "type": "logicNode",
+            "position": { "x": 1600, "y": 150 },
+            "data": {
+                "nodeData": {
+                    "name": "IS GEOMETRICALLY PERFECT",
+                    "realNodeType": "andNode"
+                }
+            }
+        },
+        {
+            "id": "3050",
+            "type": "logicNode",
+            "position": { "x": 1600, "y": 450 },
+            "data": {
+                "nodeData": {
+                    "name": "IS AESTHETICALLY CLEAN",
+                    "realNodeType": "andNode"
+                }
+            }
+        },
+        {
+            "id": "4001",
+            "type": "logicNode",
+            "position": { "x": 2500, "y": 300 },
+            "data": {
+                "nodeData": { "name": "AA-GRADE (EXPORT)", "realNodeType": "andNode" }
+            }
+        },
+        {
+            "id": "4002",
+            "type": "logicNode",
+            "position": { "x": 2500, "y": 600 },
+            "data": {
+                "nodeData": {
+                    "name": "A-GRADE (DOMESTIC PRIME)",
+                    "realNodeType": "andNode"
+                }
+            }
+        },
+        {
+            "id": "4004",
+            "type": "logicNode",
+            "position": { "x": 2500, "y": 1200 },
+            "data": {
+                "nodeData": {
+                    "name": "C-GRADE (STRUCTURAL)",
+                    "realNodeType": "andNode"
+                }
+            }
+        }
+    ],
+    "edges": [
+        {
+            "source": "1006",
+            "target": "2001",
+            "sourceHandle": "number-number-1006-2",
+            "targetHandle": "number-number-2001-0"
+        },
+        {
+            "source": "1001",
+            "target": "2002",
+            "sourceHandle": "number-number-1001-2",
+            "targetHandle": "number-number-2002-0"
+        },
+        {
+            "source": "0001",
+            "target": "2003",
+            "sourceHandle": "number-number-0001-7",
+            "targetHandle": "number-number-2003-0"
+        },
+        {
+            "source": "2001",
+            "target": "3001",
+            "sourceHandle": "bool-bool-2001-2",
+            "targetHandle": "bool-bool-3001-0"
+        },
+        {
+            "source": "2002",
+            "target": "3001",
+            "sourceHandle": "bool-bool-2002-2",
+            "targetHandle": "bool-bool-3001-1"
+        },
+        {
+            "source": "2003",
+            "target": "3001",
+            "sourceHandle": "bool-bool-2003-2",
+            "targetHandle": "bool-bool-3001-2"
+        },
+        {
+            "source": "1005",
+            "target": "2010",
+            "sourceHandle": "number-number-1005-2",
+            "targetHandle": "number-number-2010-0"
+        },
+        {
+            "source": "2010",
+            "target": "2011",
+            "sourceHandle": "bool-bool-2010-2",
+            "targetHandle": "bool-bool-2011-0"
+        },
+        {
+            "source": "1002",
+            "target": "2012",
+            "sourceHandle": "number-number-1002-0",
+            "targetHandle": "number-number-2012-0"
+        },
+        {
+            "source": "2012",
+            "target": "2013",
+            "sourceHandle": "bool-bool-2012-2",
+            "targetHandle": "bool-bool-2013-0"
+        },
+        {
+            "source": "1003",
+            "target": "2014",
+            "sourceHandle": "number-number-1003-2",
+            "targetHandle": "number-number-2014-0"
+        },
+        {
+            "source": "2014",
+            "target": "2015",
+            "sourceHandle": "bool-bool-2014-2",
+            "targetHandle": "bool-bool-2015-0"
+        },
+        {
+            "source": "0001",
+            "target": "2100",
+            "sourceHandle": "number-number-0001-5",
+            "targetHandle": "number-number-2100-0"
+        },
+        {
+            "source": "2100",
+            "target": "2101",
+            "sourceHandle": "number-number-2100-2",
+            "targetHandle": "number-number-2101-0"
+        },
+        {
+            "source": "2101",
+            "target": "2102",
+            "sourceHandle": "number-number-2101-2",
+            "targetHandle": "number-number-2102-0"
+        },
+        {
+            "source": "0001",
+            "target": "2103",
+            "sourceHandle": "number-number-0001-0",
+            "targetHandle": "number-number-2103-0"
+        },
+        {
+            "source": "0001",
+            "target": "2103",
+            "sourceHandle": "number-number-0001-1",
+            "targetHandle": "number-number-2103-1"
+        },
+        {
+            "source": "2103",
+            "target": "2104",
+            "sourceHandle": "number-number-2103-2",
+            "targetHandle": "number-number-2104-0"
+        },
+        {
+            "source": "2104",
+            "target": "2105",
+            "sourceHandle": "number-number-2104-2",
+            "targetHandle": "number-number-2105-0"
+        },
+        {
+            "source": "1007",
+            "target": "2201",
+            "sourceHandle": "number-number-1007-3",
+            "targetHandle": "number-number-2201-0"
+        },
+        {
+            "source": "2201",
+            "target": "2202",
+            "sourceHandle": "bool-bool-2201-2",
+            "targetHandle": "bool-bool-2202-0"
+        },
+        {
+            "source": "1004",
+            "target": "2203",
+            "sourceHandle": "number-number-1004-2",
+            "targetHandle": "number-number-2203-0"
+        },
+        {
+            "source": "1001",
+            "target": "2204",
+            "sourceHandle": "number-number-1001-2",
+            "targetHandle": "number-number-2204-0"
+        },
+        {
+            "source": "2011",
+            "target": "3010",
+            "sourceHandle": "bool-bool-2011-2",
+            "targetHandle": "bool-bool-3010-0"
+        },
+        {
+            "source": "2013",
+            "target": "3010",
+            "sourceHandle": "bool-bool-2013-2",
+            "targetHandle": "bool-bool-3010-1"
+        },
+        {
+            "source": "2015",
+            "target": "3010",
+            "sourceHandle": "bool-bool-2015-2",
+            "targetHandle": "bool-bool-3010-2"
+        },
+        {
+            "source": "1004",
+            "target": "3021",
+            "sourceHandle": "number-number-1004-2",
+            "targetHandle": "number-number-3021-0"
+        },
+        {
+            "source": "1001",
+            "target": "3020",
+            "sourceHandle": "number-number-1001-2",
+            "targetHandle": "number-number-3020-0",
+            "id": "xy-edge__1001-3020-0"
+        },
+        {
+            "source": "3021",
+            "target": "3020",
+            "sourceHandle": "bool-bool-3021-2",
+            "targetHandle": "bool-bool-3020-1"
+        },
+        {
+            "source": "2102",
+            "target": "3030",
+            "sourceHandle": "bool-bool-2102-2",
+            "targetHandle": "bool-bool-3030-0"
+        },
+        {
+            "source": "2105",
+            "target": "3030",
+            "sourceHandle": "bool-bool-2105-2",
+            "targetHandle": "bool-bool-3030-1"
+        },
+        {
+            "source": "2202",
+            "target": "3050",
+            "sourceHandle": "bool-bool-2202-2",
+            "targetHandle": "bool-bool-3050-0"
+        },
+        {
+            "source": "2203",
+            "target": "3050",
+            "sourceHandle": "bool-bool-2203-2",
+            "targetHandle": "bool-bool-3050-1"
+        },
+        {
+            "source": "2204",
+            "target": "3050",
+            "sourceHandle": "bool-bool-2204-2",
+            "targetHandle": "bool-bool-3050-2"
+        },
+        {
+            "source": "3010",
+            "target": "4001",
+            "sourceHandle": "bool-bool-3010-2",
+            "targetHandle": "bool-bool-4001-0"
+        },
+        {
+            "source": "3030",
+            "target": "4001",
+            "sourceHandle": "bool-bool-3030-2",
+            "targetHandle": "bool-bool-4001-1"
+        },
+        {
+            "source": "3050",
+            "target": "4001",
+            "sourceHandle": "bool-bool-3050-2",
+            "targetHandle": "bool-bool-4001-2"
+        },
+        {
+            "source": "3010",
+            "target": "4002",
+            "sourceHandle": "bool-bool-3010-2",
+            "targetHandle": "bool-bool-4002-0"
+        },
+        {
+            "source": "3020",
+            "target": "4002",
+            "sourceHandle": "bool-bool-3020-2",
+            "targetHandle": "bool-bool-4002-1"
+        },
+        {
+            "source": "3010",
+            "target": "4004",
+            "sourceHandle": "bool-bool-3010-2",
+            "targetHandle": "bool-bool-4004-0"
+        },
+        {
+            "source": "2201",
+            "target": "4004",
+            "sourceHandle": "bool-bool-2201-2",
+            "targetHandle": "bool-bool-4004-1"
+        },
+        {
+            "source": "4001",
+            "target": "0002",
+            "sourceHandle": "bool-bool-4001-2",
+            "targetHandle": "sq-bool-0002-0"
+        },
+        {
+            "source": "4002",
+            "target": "0002",
+            "sourceHandle": "bool-bool-4002-2",
+            "targetHandle": "sq-bool-0002-1"
+        },
+        {
+            "source": "3010",
+            "target": "0002",
+            "id": "xy-edge__3010-0002-2_direct",
+            "sourceHandle": "bool-bool-3010-2",
+            "targetHandle": "sq-bool-0002-2"
+        },
+        {
+            "source": "4004",
+            "target": "0002",
+            "sourceHandle": "bool-bool-4004-2",
+            "targetHandle": "sq-bool-0002-3"
+        },
+        {
+            "source": "3001",
+            "target": "0002",
+            "sourceHandle": "bool-bool-3001-2",
+            "targetHandle": "sq-bool-0002-4"
+        }
+    ]
+}

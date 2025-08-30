@@ -1,9 +1,5 @@
 @echo off
 REM This script runs the main Hantei evaluator CLI with sample data.
-REM Add the --write-debug-files flag to generate AST text files.
+REM Pass in extra arguments to the Hantei CLI if needed.
 
-cargo run --release --bin hantei-cli --features hantei-cli -- ^
-    data/flow.json ^
-    data/qualities_becker.json ^
-    data/sample_data.json ^
-    %*
+cargo run --release --bin hantei-cli --features hantei-cli -- --human %*

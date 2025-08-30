@@ -1,0 +1,480 @@
+{
+    "edges": [
+        {
+            "id": "xy-edge__1001-2001-0",
+            "type": "customEdge",
+            "source": "1001",
+            "target": "2001",
+            "sourceHandle": "bool-bool-1001-2",
+            "targetHandle": "bool-bool-2001-0"
+        },
+        {
+            "id": "xy-edge__1002-2001-1",
+            "type": "customEdge",
+            "source": "1002",
+            "target": "2001",
+            "sourceHandle": "bool-bool-1002-2",
+            "targetHandle": "bool-bool-2001-1"
+        },
+        {
+            "id": "xy-edge__1003-2002-0",
+            "type": "customEdge",
+            "source": "1003",
+            "target": "2002",
+            "sourceHandle": "bool-bool-1003-2",
+            "targetHandle": "bool-bool-2002-0"
+        },
+        {
+            "id": "xy-edge__1004-2002-1",
+            "type": "customEdge",
+            "source": "1004",
+            "target": "2002",
+            "sourceHandle": "bool-bool-1004-2",
+            "targetHandle": "bool-bool-2002-1"
+        },
+        {
+            "id": "xy-edge__2001-3001-0",
+            "type": "customEdge",
+            "source": "2001",
+            "target": "3001",
+            "sourceHandle": "bool-bool-2001-2",
+            "targetHandle": "bool-bool-3001-0"
+        },
+        {
+            "id": "xy-edge__2002-3001-1",
+            "type": "customEdge",
+            "source": "2002",
+            "target": "3001",
+            "sourceHandle": "bool-bool-2002-2",
+            "targetHandle": "bool-bool-3001-1"
+        },
+        {
+            "id": "xy-edge__3001-0002-0",
+            "type": "customEdge",
+            "source": "3001",
+            "target": "0002",
+            "sourceHandle": "bool-bool-3001-2",
+            "targetHandle": "sq-bool-0002-0"
+        },
+        {
+            "id": "xy-edge__1005-2003-0",
+            "type": "customEdge",
+            "source": "1005",
+            "target": "2003",
+            "sourceHandle": "bool-bool-1005-2",
+            "targetHandle": "bool-bool-2003-0"
+        },
+        {
+            "id": "xy-edge__1006-2003-1",
+            "type": "customEdge",
+            "source": "1006",
+            "target": "2003",
+            "sourceHandle": "bool-bool-1006-2",
+            "targetHandle": "bool-bool-2003-1"
+        },
+        {
+            "id": "xy-edge__2003-3002-0",
+            "type": "customEdge",
+            "source": "2003",
+            "target": "3002",
+            "sourceHandle": "bool-bool-2003-2",
+            "targetHandle": "bool-bool-3002-0"
+        },
+        {
+            "id": "xy-edge__1007-3002-1",
+            "type": "customEdge",
+            "source": "1007",
+            "target": "3002",
+            "sourceHandle": "bool-bool-1007-2",
+            "targetHandle": "bool-bool-3002-1"
+        },
+        {
+            "id": "xy-edge__3002-0002-1",
+            "type": "customEdge",
+            "source": "3002",
+            "target": "0002",
+            "sourceHandle": "bool-bool-3002-2",
+            "targetHandle": "sq-bool-0002-1"
+        },
+        {
+            "id": "xy-edge__1008-3003-0",
+            "type": "customEdge",
+            "source": "1008",
+            "target": "3003",
+            "sourceHandle": "bool-bool-1008-2",
+            "targetHandle": "bool-bool-3003-0"
+        },
+        {
+            "id": "xy-edge__1009-3003-1",
+            "type": "customEdge",
+            "source": "1009",
+            "target": "3003",
+            "sourceHandle": "bool-bool-1009-2",
+            "targetHandle": "bool-bool-3003-1"
+        },
+        {
+            "id": "xy-edge__3003-0002-2",
+            "type": "customEdge",
+            "source": "3003",
+            "target": "0002",
+            "sourceHandle": "bool-bool-3003-2",
+            "targetHandle": "sq-bool-0002-2"
+        },
+        {
+            "id": "xy-edge__1010-0002-3",
+            "type": "customEdge",
+            "source": "1010",
+            "target": "0002",
+            "sourceHandle": "bool-bool-1010-2",
+            "targetHandle": "sq-bool-0002-3"
+        },
+        {
+            "id": "xy-edge__0017-1002",
+            "type": "customEdge",
+            "source": "0017",
+            "target": "1002",
+            "sourceHandle": "number-number-0017-0",
+            "targetHandle": "number-number-1002-0"
+        },
+        {
+            "id": "xy-edge__0017-1004",
+            "type": "customEdge",
+            "source": "0017",
+            "target": "1004",
+            "sourceHandle": "number-number-0017-6",
+            "targetHandle": "number-number-1004-0"
+        },
+        {
+            "id": "xy-edge__0017-1010",
+            "type": "customEdge",
+            "source": "0017",
+            "target": "1010",
+            "sourceHandle": "number-number-0017-7",
+            "targetHandle": "number-number-1010-0"
+        },
+        {
+            "id": "xy-edge__0020-1001",
+            "type": "customEdge",
+            "source": "0020",
+            "target": "1001",
+            "sourceHandle": "number-number-0020-2",
+            "targetHandle": "number-number-1001-0"
+        },
+        {
+            "id": "xy-edge__0020-1008",
+            "type": "customEdge",
+            "source": "0020",
+            "target": "1008",
+            "sourceHandle": "number-number-0020-2",
+            "targetHandle": "number-number-1008-0"
+        },
+        {
+            "id": "xy-edge__0036-1005",
+            "type": "customEdge",
+            "source": "0036",
+            "target": "1005",
+            "sourceHandle": "number-number-0036-0",
+            "targetHandle": "number-number-1005-0"
+        },
+        {
+            "id": "xy-edge__0036-1006",
+            "type": "customEdge",
+            "source": "0036",
+            "target": "1006",
+            "sourceHandle": "number-number-0036-1",
+            "targetHandle": "number-number-1006-0"
+        },
+        {
+            "id": "xy-edge__0053-1007",
+            "type": "customEdge",
+            "source": "0053",
+            "target": "1007",
+            "sourceHandle": "number-number-0053-1",
+            "targetHandle": "number-number-1007-0"
+        },
+        {
+            "id": "xy-edge__0058-1003",
+            "type": "customEdge",
+            "source": "0058",
+            "target": "1003",
+            "sourceHandle": "number-number-0058-2",
+            "targetHandle": "number-number-1003-0"
+        },
+        {
+            "id": "xy-edge__0071-1009",
+            "type": "customEdge",
+            "source": "0071",
+            "target": "1009",
+            "sourceHandle": "number-number-0071-2",
+            "targetHandle": "number-number-1009-0"
+        }
+    ],
+    "nodes": [
+        {
+            "id": "0002",
+            "data": {
+                "nodeData": { "name": "Set Quality", "realNodeType": "setQualityNode" }
+            },
+            "type": "setQualityNode",
+            "position": { "x": 4000, "y": 400 }
+        },
+        {
+            "id": "0017",
+            "data": {
+                "nodeData": {
+                    "name": "Start",
+                    "realNodeType": "dynamicNode",
+                    "cases": [
+                        { "caseId": 0, "caseName": "Leading width" },
+                        { "caseId": 6, "caseName": "Humidity" },
+                        { "caseId": 7, "caseName": "Humidity peak" }
+                    ]
+                }
+            },
+            "type": "dynamicNode",
+            "position": { "x": 100, "y": 200 }
+        },
+        {
+            "id": "0020",
+            "data": {
+                "nodeData": {
+                    "name": "Hole",
+                    "realNodeType": "dynamicNode",
+                    "realInputType": "hole",
+                    "cases": [{ "caseId": 2, "caseName": "Diameter" }]
+                }
+            },
+            "type": "dynamicNode",
+            "position": { "x": 100, "y": 400 }
+        },
+        {
+            "id": "0036",
+            "data": {
+                "nodeData": {
+                    "name": "Tear",
+                    "realNodeType": "dynamicNode",
+                    "realInputType": "tear",
+                    "cases": [
+                        { "caseId": 0, "caseName": "Length" },
+                        { "caseId": 1, "caseName": "Width" }
+                    ]
+                }
+            },
+            "type": "dynamicNode",
+            "position": { "x": 100, "y": 600 }
+        },
+        {
+            "id": "0053",
+            "data": {
+                "nodeData": {
+                    "name": "Bark",
+                    "realNodeType": "dynamicNode",
+                    "realInputType": "bark",
+                    "cases": [{ "caseId": 1, "caseName": "Width" }]
+                }
+            },
+            "type": "dynamicNode",
+            "position": { "x": 100, "y": 800 }
+        },
+        {
+            "id": "0058",
+            "data": {
+                "nodeData": {
+                    "name": "Black branch",
+                    "realNodeType": "dynamicNode",
+                    "realInputType": "black_branch",
+                    "cases": [{ "caseId": 2, "caseName": "Diameter" }]
+                }
+            },
+            "type": "dynamicNode",
+            "position": { "x": 100, "y": 1000 }
+        },
+        {
+            "id": "0071",
+            "data": {
+                "nodeData": {
+                    "name": "White rot",
+                    "realNodeType": "dynamicNode",
+                    "realInputType": "white_rot",
+                    "cases": [{ "caseId": 2, "caseName": "Area" }]
+                }
+            },
+            "type": "dynamicNode",
+            "position": { "x": 100, "y": 1200 }
+        },
+        {
+            "id": "1001",
+            "data": {
+                "nodeData": {
+                    "name": "Hole Diameter < 10",
+                    "realNodeType": "stNode",
+                    "values": [null, 10]
+                }
+            },
+            "type": "ifNode",
+            "position": { "x": 500, "y": 0 }
+        },
+        {
+            "id": "1002",
+            "data": {
+                "nodeData": {
+                    "name": "Leading Width > 2020",
+                    "realNodeType": "gtNode",
+                    "values": [null, 2020]
+                }
+            },
+            "type": "ifNode",
+            "position": { "x": 500, "y": 100 }
+        },
+        {
+            "id": "1003",
+            "data": {
+                "nodeData": {
+                    "name": "Branch Diameter < 15",
+                    "realNodeType": "stNode",
+                    "values": [null, 15]
+                }
+            },
+            "type": "ifNode",
+            "position": { "x": 500, "y": 200 }
+        },
+        {
+            "id": "1004",
+            "data": {
+                "nodeData": {
+                    "name": "Humidity < 6.0",
+                    "realNodeType": "stNode",
+                    "values": [null, 6.0]
+                }
+            },
+            "type": "ifNode",
+            "position": { "x": 500, "y": 300 }
+        },
+        {
+            "id": "1005",
+            "data": {
+                "nodeData": {
+                    "name": "Tear Length < 500",
+                    "realNodeType": "stNode",
+                    "values": [null, 500]
+                }
+            },
+            "type": "ifNode",
+            "position": { "x": 500, "y": 450 }
+        },
+        {
+            "id": "1006",
+            "data": {
+                "nodeData": {
+                    "name": "Tear Width < 15",
+                    "realNodeType": "stNode",
+                    "values": [null, 15]
+                }
+            },
+            "type": "ifNode",
+            "position": { "x": 500, "y": 550 }
+        },
+        {
+            "id": "1007",
+            "data": {
+                "nodeData": {
+                    "name": "Bark Width < 50",
+                    "realNodeType": "stNode",
+                    "values": [null, 50]
+                }
+            },
+            "type": "ifNode",
+            "position": { "x": 1000, "y": 650 }
+        },
+        {
+            "id": "1008",
+            "data": {
+                "nodeData": {
+                    "name": "Hole Diameter > 100",
+                    "realNodeType": "gtNode",
+                    "values": [null, 100]
+                }
+            },
+            "type": "ifNode",
+            "position": { "x": 500, "y": 800 }
+        },
+        {
+            "id": "1009",
+            "data": {
+                "nodeData": {
+                    "name": "Any White Rot",
+                    "realNodeType": "gtNode",
+                    "values": [null, 0]
+                }
+            },
+            "type": "ifNode",
+            "position": { "x": 500, "y": 900 }
+        },
+        {
+            "id": "1010",
+            "data": {
+                "nodeData": {
+                    "name": "High Humidity Peak",
+                    "realNodeType": "gtNode",
+                    "values": [null, 18.0]
+                }
+            },
+            "type": "ifNode",
+            "position": { "x": 500, "y": 1050 }
+        },
+        {
+            "id": "2001",
+            "data": {
+                "nodeData": {
+                    "name": "Small Hole AND New Veneer",
+                    "realNodeType": "andNode"
+                }
+            },
+            "type": "logicNode",
+            "position": { "x": 1000, "y": 50 }
+        },
+        {
+            "id": "2002",
+            "data": {
+                "nodeData": {
+                    "name": "Small Branch AND Low Humidity",
+                    "realNodeType": "andNode"
+                }
+            },
+            "type": "logicNode",
+            "position": { "x": 1000, "y": 250 }
+        },
+        {
+            "id": "2003",
+            "data": {
+                "nodeData": { "name": "Medium Tear", "realNodeType": "andNode" }
+            },
+            "type": "logicNode",
+            "position": { "x": 1000, "y": 500 }
+        },
+        {
+            "id": "3001",
+            "data": {
+                "nodeData": { "name": "Premium Defect", "realNodeType": "orNode" }
+            },
+            "type": "logicNode",
+            "position": { "x": 1500, "y": 150 }
+        },
+        {
+            "id": "3002",
+            "data": {
+                "nodeData": { "name": "Standard Defect", "realNodeType": "orNode" }
+            },
+            "type": "logicNode",
+            "position": { "x": 1500, "y": 575 }
+        },
+        {
+            "id": "3003",
+            "data": {
+                "nodeData": { "name": "Low-Grade Defect", "realNodeType": "orNode" }
+            },
+            "type": "logicNode",
+            "position": { "x": 1000, "y": 850 }
+        }
+    ]
+}

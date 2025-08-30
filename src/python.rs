@@ -1,18 +1,17 @@
-use std::collections::HashMap;
-
+use crate::backend::BackendChoice;
 use crate::compiler::Compiler;
 use crate::error::RecipeConversionError;
-use crate::evaluator::{EvaluationResult, Evaluator};
+use crate::evaluator::Evaluator;
+use crate::interpreter::EvaluationResult as RustEvaluationResult;
 use crate::recipe::{
     DataFieldDefinition, FlowDefinition, FlowEdgeDefinition, FlowNodeDefinition, IntoFlow, Quality,
 };
 use ahash::AHashMap;
 use pyo3::prelude::*;
 use pyo3::types::PyDict;
+use std::collections::HashMap;
 
-// --- JSON Deserialization Structs (Input Format Specific) ---
-// These structs are private to the Python module and are used to parse the
-// user-provided JSON strings before converting them to Hantei's internal format.
+// --- JSON Deserialization Structs ---
 mod json_models {
     use serde::Deserialize;
 
@@ -72,7 +71,6 @@ mod json_models {
 }
 
 // --- Converter Implementation ---
-// Implements the conversion from the raw JSON model to Hantei's canonical FlowDefinition.
 impl IntoFlow for json_models::RawRecipe {
     fn into_flow(self) -> Result<FlowDefinition, RecipeConversionError> {
         let nodes = self
@@ -111,28 +109,31 @@ impl IntoFlow for json_models::RawRecipe {
     }
 }
 
-impl<'py> IntoPyObject<'py> for EvaluationResult {
-    type Target = PyDict;
-    type Output = Bound<'py, Self::Target>;
-    type Error = std::convert::Infallible;
+#[pyclass(name = "EvaluationResult")]
+#[derive(Debug, Clone)]
+struct PyEvaluationResult {
+    #[pyo3(get)]
+    quality_name: Option<String>,
+    #[pyo3(get)]
+    quality_priority: Option<i32>,
+    #[pyo3(get)]
+    reason: String,
+}
 
-    fn into_pyobject(self, py: Python<'py>) -> Result<Self::Output, Self::Error> {
-        let dict = PyDict::new(py);
+#[pymethods]
+impl PyEvaluationResult {
+    fn __repr__(&self) -> String {
+        format!("{:?}", self)
+    }
+}
 
-        // Handle Option fields - convert to Python None if None, otherwise convert the value
-        match self.quality_name {
-            Some(name) => dict.set_item("quality_name", name).unwrap(),
-            None => dict.set_item("quality_name", py.None()).unwrap(),
+impl From<RustEvaluationResult> for PyEvaluationResult {
+    fn from(res: RustEvaluationResult) -> Self {
+        PyEvaluationResult {
+            quality_name: res.quality_name,
+            quality_priority: res.quality_priority,
+            reason: res.reason,
         }
-
-        match self.quality_priority {
-            Some(priority) => dict.set_item("quality_priority", priority).unwrap(),
-            None => dict.set_item("quality_priority", py.None()).unwrap(),
-        }
-
-        dict.set_item("reason", self.reason).unwrap();
-
-        Ok(dict)
     }
 }
 
@@ -144,44 +145,14 @@ struct HanteiPy {
 
 #[pymethods]
 impl HanteiPy {
-    /// Initializes and compiles the Hantei evaluator.
-    ///
-    /// This method parses the provided JSON strings, builds an Abstract
-    /// Syntax Tree (AST) for each quality path, and applies optimizations.
-    /// The resulting compiled engine is stored in the instance.
-    ///
-    /// Args:
-    ///     recipe_json (str): A string containing the JSON definition of the
-    ///         recipe flow, including nodes and edges.
-    ///     qualities_json (str): A string containing the JSON array of
-    ///         quality definitions, including names and priorities.
-    ///
-    /// Returns:
-    ///     Hantei: An initialized instance of the Hantei evaluator.
-    ///
-    /// Raises:
-    ///     ValueError: If there is an error during JSON parsing or recipe
-    ///         compilation (e.g., malformed JSON, invalid node types,
-    ///         missing nodes).
     #[new]
-    fn new(recipe_json: &str, qualities_json: &str) -> PyResult<Self> {
-        // 1. Parse the raw JSON strings into our temporary models.
-        let raw_recipe: json_models::RawRecipe =
-            serde_json::from_str(recipe_json).map_err(|e| {
-                PyErr::new::<pyo3::exceptions::PyValueError, _>(format!(
-                    "Recipe JSON parsing error: {}",
-                    e
-                ))
-            })?;
+    #[pyo3(signature = (recipe_json, qualities_json, backend="bytecode"))]
+    fn new(recipe_json: &str, qualities_json: &str, backend: &str) -> PyResult<Self> {
+        let raw_recipe: json_models::RawRecipe = serde_json::from_str(recipe_json)
+            .map_err(|e| PyErr::new::<pyo3::exceptions::PyValueError, _>(e.to_string()))?;
         let raw_qualities: Vec<json_models::RawQuality> = serde_json::from_str(qualities_json)
-            .map_err(|e| {
-                PyErr::new::<pyo3::exceptions::PyValueError, _>(format!(
-                    "Qualities JSON parsing error: {}",
-                    e
-                ))
-            })?;
+            .map_err(|e| PyErr::new::<pyo3::exceptions::PyValueError, _>(e.to_string()))?;
 
-        // 2. Convert the raw models into Hantei's canonical, internal data structures.
         let flow = raw_recipe
             .into_flow()
             .map_err(|e| PyErr::new::<pyo3::exceptions::PyValueError, _>(e.to_string()))?;
@@ -193,81 +164,65 @@ impl HanteiPy {
             })
             .collect();
 
-        // 3. Use the builder to create and run the compiler with the canonical data.
         let compiler = Compiler::builder(flow, qualities).build();
         let compiled_paths = compiler
             .compile()
             .map_err(|e| PyErr::new::<pyo3::exceptions::PyValueError, _>(e.to_string()))?;
 
-        // 4. Create the evaluator with the optimized ASTs.
-        let evaluator = Evaluator::new(compiled_paths);
+        // --- FIX 4: Use the new Evaluator API ---
+        let choice = match backend {
+            "interpreter" => BackendChoice::Interpreter,
+            "bytecode" => BackendChoice::Bytecode,
+            _ => {
+                return Err(PyErr::new::<pyo3::exceptions::PyValueError, _>(
+                    "Invalid backend. Choose from 'interpreter' or 'bytecode'.",
+                ));
+            }
+        };
+
+        let evaluator = Evaluator::new(choice, compiled_paths)
+            .map_err(|e| PyErr::new::<pyo3::exceptions::PyValueError, _>(e.to_string()))?;
+
         Ok(HanteiPy { evaluator })
     }
 
     /// Evaluates the compiled recipe against the provided data.
-    ///
-    /// This method executes the pre-compiled logic against a set of static
-    /// and dynamic data. It efficiently handles cross-product evaluation
-    /// for dynamic events and returns the highest-priority quality that
-    /// triggers.
-    ///
-    /// Args:
-    ///     static_data (dict): A dictionary of static measurements, where keys
-    ///         are measurement names (str) and values are numbers (float/int).
-    ///     dynamic_data (dict): A dictionary of dynamic events. Keys are event
-    ///         type names (str), and values are lists of dictionaries, where
-    ///         each inner dictionary represents an event instance.
-    ///
-    /// Returns:
-    ///     dict: A dictionary containing the evaluation result with three keys:
-    ///         - "quality_name" (str | None): The name of the triggered quality.
-    ///         - "quality_priority" (int | None): The priority of the triggered quality.
-    ///         - "reason" (str): A human-readable trace of the logic that
-    ///           led to the result.
-    ///
-    /// Raises:
-    ///     RuntimeError: If an error occurs during evaluation, such as a
-    ///         type mismatch in the expression logic or a required input
-    ///         value not being found in the provided data.
     fn evaluate(
         &self,
         static_data_py: &Bound<'_, PyDict>,
         dynamic_data_py: &Bound<'_, PyDict>,
-    ) -> PyResult<EvaluationResult> {
-        // 1. Extract into standard HashMaps.
+    ) -> PyResult<PyEvaluationResult> {
         let static_data_std: HashMap<String, f64> = static_data_py.extract()?;
         let dynamic_data_std: HashMap<String, Vec<HashMap<String, f64>>> =
             dynamic_data_py.extract()?;
 
-        // 2. Convert to AHashMaps. This is a very fast operation.
         let static_data: AHashMap<String, f64> = static_data_std.into_iter().collect();
         let dynamic_data: AHashMap<String, Vec<AHashMap<String, f64>>> = dynamic_data_std
             .into_iter()
             .map(|(key, vec_of_maps)| {
-                let new_vec = vec_of_maps
-                    .into_iter()
-                    .map(|std_map| std_map.into_iter().collect()) // Convert inner maps
-                    .collect();
-                (key, new_vec)
+                (
+                    key,
+                    vec_of_maps
+                        .into_iter()
+                        .map(|std_map| std_map.into_iter().collect())
+                        .collect(),
+                )
             })
-            .collect(); // Convert outer map
+            .collect();
 
-        // 3. Call the evaluator with the high-performance maps.
         let result = self
             .evaluator
             .eval(&static_data, &dynamic_data)
             .map_err(|e| PyErr::new::<pyo3::exceptions::PyRuntimeError, _>(e.to_string()))?;
-        Ok(result)
+
+        // Convert the internal Rust result into the Python class and return
+        Ok(result.into())
     }
 }
 
-/// A high-performance recipe compilation and evaluation engine.
-///
-/// This module provides Python bindings to the Hantei Rust library, allowing for
-/// fast, ahead-of-time compilation of node-based decision trees and their
-/// subsequent evaluation against runtime data.
 #[pymodule]
 fn hantei(_py: Python, m: &Bound<'_, PyModule>) -> PyResult<()> {
     m.add_class::<HanteiPy>()?;
+    m.add_class::<PyEvaluationResult>()?;
     Ok(())
 }

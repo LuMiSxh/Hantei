@@ -1,9 +1,9 @@
-use crate::ast::Value;
+use crate::{ast::Value, bytecode::opcode::OpCode};
 use thiserror::Error;
 
-/// Errors that can occur during the recipe compilation phase.
+/// Errors that can occur during the recipe compilation phase (parsing into an AST).
 #[derive(Error, Debug, Clone)]
-pub enum CompileError {
+pub enum AstBuildError {
     #[error("Failed to parse recipe JSON: {0}")]
     JsonParseError(String),
 
@@ -31,8 +31,24 @@ pub enum CompileError {
     QualityTriggerNodeNotFound(String),
 }
 
-/// Errors that can occur during the AST evaluation phase.
-#[derive(Error, Debug, Clone)]
+/// Errors that can occur when a backend compiles an AST into an executable format.
+#[derive(Error, Debug, Clone, PartialEq)]
+pub enum BackendError {
+    #[error("Unsupported AST node for this backend: {0}")]
+    UnsupportedAstNode(String),
+
+    #[error("Backend resource limit exceeded: {0}")]
+    ResourceLimitExceeded(String),
+
+    #[error("Invalid logic encountered during backend compilation: {0}")]
+    InvalidLogic(String),
+
+    #[error("An unexpected backend error occurred: {0}")]
+    Generic(String),
+}
+
+/// Errors that can occur during the AST evaluation phase (Interpreter).
+#[derive(Error, Debug, Clone, PartialEq)]
 pub enum EvaluationError {
     #[error(
         "Type mismatch during operation '{operation}': expected {expected}, but found value '{found}'"
@@ -45,11 +61,33 @@ pub enum EvaluationError {
 
     #[error("Input source '{0}' not found in the provided data context")]
     InputNotFound(String),
+
+    #[error("A backend evaluation error occurred: {0}")]
+    BackendError(String),
+}
+
+/// Errors that can occur during the Bytecode VM execution.
+#[derive(Error, Debug, Clone, PartialEq)]
+pub enum VmError {
+    #[error("Stack underflow: expected a value on the stack, but it was empty")]
+    StackUnderflow,
+
+    #[error("Type mismatch in VM: expected {expected}, but found value '{found}'")]
+    TypeMismatch { expected: String, found: Value },
+
+    #[error("Invalid instruction pointer address: {0}")]
+    InvalidIp(usize),
+
+    #[error("Unhandled OpCode encountered: {0:?}")]
+    UnhandledOpCode(OpCode),
+
+    #[error("Input source '{0}' not found in the provided data context")]
+    InputNotFound(String),
 }
 
 /// Errors that can occur when converting a custom user format into a Hantei `FlowDefinition`.
-#[derive(Error, Debug, Clone)]
+#[derive(Error, Debug, Clone, PartialEq)]
 pub enum RecipeConversionError {
-    #[error("Invalid custom data: {0}")]
+    #[error("Invalid custom data format: {0}")]
     ValidationError(String),
 }

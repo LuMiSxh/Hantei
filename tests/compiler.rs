@@ -52,7 +52,7 @@ fn test_compiler_fails_on_unregistered_type() {
     assert!(result.is_err());
 
     match result.err().unwrap() {
-        CompileError::InvalidNodeType { node_id, type_name } => {
+        AstBuildError::InvalidNodeType { node_id, type_name } => {
             assert_eq!(node_id, "0002");
             assert_eq!(type_name, "UnknownOperation");
         }

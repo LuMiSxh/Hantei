@@ -2,6 +2,7 @@
 mod common;
 use ahash::AHashMap;
 use common::*;
+use hantei::backend::BackendChoice;
 use hantei::prelude::*;
 
 #[test]
@@ -15,7 +16,7 @@ fn test_full_workflow_simple() {
     let compiled_paths = compiler.compile().expect("Compilation failed");
 
     // 3. Create the evaluator
-    let evaluator = Evaluator::new(compiled_paths);
+    let evaluator = Evaluator::new(BackendChoice::Interpreter, compiled_paths).unwrap();
 
     // 4. Provide data and evaluate
     let mut static_data = AHashMap::new();
@@ -42,7 +43,7 @@ fn test_full_workflow_complex_dynamic() {
     let compiled_paths = compiler.compile().expect("Compilation failed");
 
     // 3. Evaluate
-    let evaluator = Evaluator::new(compiled_paths);
+    let evaluator = Evaluator::new(BackendChoice::Interpreter, compiled_paths).unwrap();
     let static_data = create_sample_static_data(); // Temp = 32.5 (> 30)
     let dynamic_data = create_sample_dynamic_data(); // Hole Diameter = 8.7 (< 10)
 
