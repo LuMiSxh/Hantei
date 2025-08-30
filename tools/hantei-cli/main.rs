@@ -128,7 +128,7 @@ struct Cli {
 
     /// Run a benchmark comparing both backends for N iterations. e.g., --benchmark 100
     #[arg(
-        short,
+        short = 'm',
         long,
         help = "Run a benchmark for N iterations. e.g., --benchmark 100"
     )]

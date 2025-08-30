@@ -1,46 +1,46 @@
 use crate::ast::Value;
 
-/// An instruction for the stack-based virtual machine.
+pub type Register = u8;
+pub type Address = u16; // Up to 65536 instructions per chunk
+pub type SubroutineId = u64;
+
+/// An instruction for the register-based virtual machine.
 #[derive(Debug, Clone, PartialEq)]
 pub enum OpCode {
-    // Stack Operations
-    Push(Value),
-    Pop,
-
     // Data Loading
-    LoadStatic(String),
-    LoadDynamic(String, String),
+    LoadLiteral(Register, Value),
+    LoadStatic(Register, String),
+    LoadDynamic(Register, String, String),
+    Move(Register, Register), // Move value from one register to another
 
-    // Arithmetic & Unary Operators
-    Add,
-    Subtract,
-    Multiply,
-    Divide,
-    Abs,
-    Not,
+    // Arithmetic
+    Add(Register, Register, Register),      // dest, src1, src2
+    Subtract(Register, Register, Register), // dest, src1, src2
+    Multiply(Register, Register, Register), // dest, src1, src2
+    Divide(Register, Register, Register),   // dest, src1, src2
+    Xor(Register, Register, Register),      // dest, src1, src2 - Logical XOR for booleans
 
-    // Comparison & Equality Operators
-    Equal,
-    NotEqual,
-    GreaterThan,
-    LessThan,
-    GreaterThanOrEqual,
-    LessThanOrEqual,
+    // Unary
+    Abs(Register, Register), // dest, src
+    Not(Register, Register), // dest, src
 
-    // Logical Operators
-    And,
-    Or,
-    Xor,
+    // Comparison & Equality (result is always a Bool in dest)
+    Equal(Register, Register, Register),
+    NotEqual(Register, Register, Register),
+    GreaterThan(Register, Register, Register),
+    LessThan(Register, Register, Register),
+    GreaterThanOrEqual(Register, Register, Register),
+    LessThanOrEqual(Register, Register, Register),
 
     // Control Flow
-    Jump(usize),
-    JumpIfFalse(usize),
-    JumpIfTrue(usize),
+    Jump(Address),
+    JumpIfFalse(Register, Address), // Jumps if the value in the register is false
+    JumpIfTrue(Register, Address),  // Jumps if the value in the register is true
 
-    /// Call a subroutine located at a specific ID.
-    Call(u64),
-    /// Return from the current subroutine to the last call site.
+    // Subroutines
+    Call(SubroutineId),
     Return,
-    /// Stop execution of the VM completely.
+
+    // VM Control
     Halt,
 }

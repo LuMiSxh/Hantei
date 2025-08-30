@@ -5,7 +5,8 @@ pub mod vm;
 
 use crate::ast::{Expression, Value};
 use crate::backend::{EvaluationBackend, ExecutableRecipe};
-use crate::error::{BackendError, EvaluationError, VmError};
+use crate::bytecode::opcode::OpCode;
+use crate::error::{BackendError, EvaluationError};
 use crate::interpreter::EvaluationResult;
 use ahash::AHashMap;
 use compiler::BytecodeProgram;
@@ -13,7 +14,7 @@ use rayon::prelude::*;
 use std::collections::HashSet;
 use vm::Vm;
 
-/// A backend that compiles ASTs to bytecode and runs them on a VM.
+/// A backend that compiles ASTs to register-based bytecode and runs them on a VM.
 pub struct BytecodeBackend;
 
 impl EvaluationBackend for BytecodeBackend {
@@ -22,7 +23,7 @@ impl EvaluationBackend for BytecodeBackend {
         paths: Vec<(i32, String, Expression, AHashMap<u64, Expression>)>,
     ) -> Result<Box<dyn ExecutableRecipe>, BackendError> {
         let compiled_programs = paths
-            .into_iter()
+            .into_par_iter()
             .map(|(p, n, ast, definitions)| {
                 compiler::compile_to_program(&ast, &definitions).map(|program| (p, n, program))
             })
@@ -46,45 +47,29 @@ impl ExecutableRecipe for BytecodeExecutable {
             self.compiled_programs
                 .par_iter()
                 .find_map_any(|(priority, name, program)| {
-                    let mut required_events = HashSet::new();
-                    // Scan main program for dynamic loads
-                    for op in &program.main {
-                        if let opcode::OpCode::LoadDynamic(event, _) = op {
-                            required_events.insert(event.clone());
-                        }
-                    }
-                    // Scan all subroutines as well
-                    for subroutine in program.subroutines.values() {
-                        for op in subroutine {
-                            if let opcode::OpCode::LoadDynamic(event, _) = op {
-                                required_events.insert(event.clone());
+                    // The evaluation logic is now much simpler. We just run the VM for each combination.
+                    let dynamic_combinations = generate_dynamic_contexts(program, dynamic_data);
+
+                    for context in &dynamic_combinations {
+                        let mut vm = Vm::new(program, static_data, context);
+                        match vm.run() {
+                            Ok(Value::Bool(true)) => {
+                                return Some(Ok(EvaluationResult {
+                                    quality_name: Some(name.clone()),
+                                    quality_priority: Some(*priority),
+                                    reason: format!(
+                                        "Bytecode evaluation for '{}' returned true",
+                                        name
+                                    ),
+                                }));
+                            }
+                            Ok(_) => continue, // Continue to next combination
+                            Err(e) => {
+                                return Some(Err(EvaluationError::BackendError(e.to_string())));
                             }
                         }
                     }
-
-                    let vm_result = if required_events.is_empty() {
-                        let dynamic_context = AHashMap::new();
-                        let mut vm = Vm::new(program, static_data, &dynamic_context);
-                        vm.run().map(Some)
-                    } else {
-                        let dynamic_eval = DynamicVmEvaluator::new(
-                            program,
-                            &required_events,
-                            static_data,
-                            dynamic_data,
-                        );
-                        dynamic_eval.evaluate()
-                    };
-
-                    match vm_result {
-                        Ok(Some(Value::Bool(true))) => Some(Ok(EvaluationResult {
-                            quality_name: Some(name.clone()),
-                            quality_priority: Some(*priority),
-                            reason: format!("Bytecode evaluation for '{}' returned true", name),
-                        })),
-                        Err(e) => Some(Err(EvaluationError::BackendError(e.to_string()))),
-                        _ => None,
-                    }
+                    None // No combination triggered this quality
                 });
 
         match maybe_result {
@@ -99,68 +84,49 @@ impl ExecutableRecipe for BytecodeExecutable {
     }
 }
 
-// --- Dynamic Evaluator for the VM ---
-
-struct DynamicVmEvaluator<'a> {
-    program: &'a BytecodeProgram,
-    event_types: Vec<String>,
-    static_data: &'a AHashMap<String, f64>,
+// Generates all combinations of dynamic contexts required by the program.
+fn generate_dynamic_contexts<'a>(
+    program: &BytecodeProgram,
     dynamic_data: &'a AHashMap<String, Vec<AHashMap<String, f64>>>,
-}
-
-impl<'a> DynamicVmEvaluator<'a> {
-    fn new(
-        program: &'a BytecodeProgram,
-        required_events: &HashSet<String>,
-        static_data: &'a AHashMap<String, f64>,
-        dynamic_data: &'a AHashMap<String, Vec<AHashMap<String, f64>>>,
-    ) -> Self {
-        let mut event_types: Vec<String> = required_events.iter().cloned().collect();
-        event_types.sort_by_key(|event_type| dynamic_data.get(event_type).map_or(0, |v| v.len()));
-        Self {
-            program,
-            event_types,
-            static_data,
-            dynamic_data,
+) -> Vec<AHashMap<String, &'a AHashMap<String, f64>>> {
+    let mut required_events = HashSet::new();
+    // Scan main and subroutines for dynamic load instructions
+    let all_opcodes = program
+        .main
+        .iter()
+        .chain(program.subroutines.values().flatten());
+    for op in all_opcodes {
+        if let OpCode::LoadDynamic(_, event, _) = op {
+            required_events.insert(event.as_str());
         }
     }
 
-    fn evaluate(&self) -> Result<Option<Value>, VmError> {
-        let mut context = AHashMap::new();
-        self.evaluate_recursive(&self.event_types, &mut context)
+    if required_events.is_empty() {
+        return vec![AHashMap::new()]; // Return one context for a single run
     }
 
-    fn evaluate_recursive(
-        &self,
-        remaining_events: &[String],
-        context: &mut AHashMap<String, &'a AHashMap<String, f64>>,
-    ) -> Result<Option<Value>, VmError> {
-        if remaining_events.is_empty() {
-            let mut vm = Vm::new(self.program, self.static_data, context);
-            let result = vm.run()?;
-            if matches!(result, Value::Bool(true)) {
-                return Ok(Some(result));
-            }
-            return Ok(None);
-        }
+    let mut event_types: Vec<_> = required_events.into_iter().collect();
+    event_types.sort_by_key(|event_type| dynamic_data.get(*event_type).map_or(0, |v| v.len()));
 
-        let current_event_type = &remaining_events[0];
-        let next_event_types = &remaining_events[1..];
-
-        if let Some(instances) = self.dynamic_data.get(current_event_type) {
-            if instances.is_empty() {
-                return Ok(None);
+    let mut combinations = vec![AHashMap::new()];
+    for event_type in event_types {
+        let instances = match dynamic_data.get(event_type) {
+            Some(inst) if !inst.is_empty() => inst,
+            _ => {
+                // If a required event has no instances, no combination is possible.
+                return vec![];
             }
+        };
+
+        let mut next_combinations = Vec::new();
+        for combo in &combinations {
             for instance in instances {
-                context.insert(current_event_type.clone(), instance);
-                if let Some(result) = self.evaluate_recursive(next_event_types, context)? {
-                    return Ok(Some(result));
-                }
+                let mut new_combo = combo.clone();
+                new_combo.insert(event_type.to_string(), instance);
+                next_combinations.push(new_combo);
             }
-        } else {
-            return Ok(None);
         }
-
-        Ok(None)
+        combinations = next_combinations;
     }
+    combinations
 }

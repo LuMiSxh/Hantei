@@ -1,24 +1,21 @@
 use crate::ast::{Expression, InputSource};
-use crate::bytecode::opcode::OpCode;
+use crate::bytecode::opcode::{Address, OpCode, Register};
 use crate::error::BackendError;
 use ahash::AHashMap;
 
-/// Represents a fully compiled bytecode program, including subroutines.
 #[derive(Debug, Default)]
 pub struct BytecodeProgram {
     pub main: Vec<OpCode>,
     pub subroutines: AHashMap<u64, Vec<OpCode>>,
 }
 
-/// A stateful compiler that translates an AST and its definitions into a `BytecodeProgram`.
 pub struct BytecodeCompiler<'a> {
     definitions: &'a AHashMap<u64, Expression>,
     program: BytecodeProgram,
-    // Tracks which subroutine IDs have already been compiled to prevent redundant work.
     compiled_subroutines: AHashMap<u64, ()>,
+    next_register: Register,
 }
 
-/// Main entry point for compiling an AST.
 pub fn compile_to_program(
     expr: &Expression,
     definitions: &AHashMap<u64, Expression>,
@@ -27,133 +24,176 @@ pub fn compile_to_program(
         definitions,
         program: BytecodeProgram::default(),
         compiled_subroutines: AHashMap::new(),
+        next_register: 0,
     };
     compiler.compile_main(expr)?;
     Ok(compiler.program)
 }
 
 impl<'a> BytecodeCompiler<'a> {
-    /// Compiles the main entry point of the program.
+    fn reset_allocator(&mut self) {
+        self.next_register = 0;
+    }
+    fn alloc_reg(&mut self) -> Result<Register, BackendError> {
+        let reg = self.next_register;
+        self.next_register = self.next_register.checked_add(1).ok_or_else(|| {
+            BackendError::ResourceLimitExceeded("Register limit reached".to_string())
+        })?;
+        Ok(reg)
+    }
+
     fn compile_main(&mut self, expr: &Expression) -> Result<(), BackendError> {
+        self.reset_allocator();
         let mut main_bc = Vec::new();
-        self.compile_recursive(expr, &mut main_bc)?;
+        let final_reg = self.compile_recursive(expr, &mut main_bc)?;
+        if final_reg != 0 {
+            main_bc.push(OpCode::Move(0, final_reg));
+        }
         main_bc.push(OpCode::Halt);
         self.program.main = main_bc;
         Ok(())
     }
 
-    /// Compiles a subroutine for a given ID.
     fn compile_subroutine(&mut self, id: u64) -> Result<(), BackendError> {
-        // If we have already compiled this subroutine, do nothing.
         if self.compiled_subroutines.contains_key(&id) {
             return Ok(());
         }
-
         let expr = self.definitions.get(&id).ok_or_else(|| {
             BackendError::InvalidLogic(format!("CSE Reference ID #{} not found", id))
         })?;
-
-        // Temporarily insert a marker to handle recursive subroutines if they ever occur.
         self.compiled_subroutines.insert(id, ());
-
         let mut subroutine_bc = Vec::new();
-        self.compile_recursive(expr, &mut subroutine_bc)?;
+        self.reset_allocator();
+        let final_reg = self.compile_recursive(expr, &mut subroutine_bc)?;
+        if final_reg != 0 {
+            subroutine_bc.push(OpCode::Move(0, final_reg));
+        }
         subroutine_bc.push(OpCode::Return);
-
-        // Store the final compiled subroutine.
         self.program.subroutines.insert(id, subroutine_bc);
         Ok(())
     }
 
-    /// The core recursive compilation logic.
     fn compile_recursive(
         &mut self,
         expr: &Expression,
         bytecode: &mut Vec<OpCode>,
-    ) -> Result<(), BackendError> {
+    ) -> Result<Register, BackendError> {
         match expr {
-            // --- Leaf Nodes & Subroutine Calls ---
-            Expression::Literal(val) => bytecode.push(OpCode::Push(val.clone())),
-
-            Expression::Input(source) => match source {
-                InputSource::Static { name } => bytecode.push(OpCode::LoadStatic(name.clone())),
-                InputSource::Dynamic { event, field } => {
-                    bytecode.push(OpCode::LoadDynamic(event.clone(), field.clone()))
-                }
-            },
-
-            Expression::Reference(id) => {
-                // Ensure the subroutine for this ID is compiled.
-                self.compile_subroutine(*id)?;
-                // Emit a single instruction to call it.
-                bytecode.push(OpCode::Call(*id));
+            Expression::Literal(val) => {
+                let dest = self.alloc_reg()?;
+                bytecode.push(OpCode::LoadLiteral(dest, val.clone()));
+                Ok(dest)
             }
-
-            // --- Unary Operators ---
+            Expression::Input(source) => {
+                let dest = self.alloc_reg()?;
+                let op = match source {
+                    InputSource::Static { name } => OpCode::LoadStatic(dest, name.clone()),
+                    InputSource::Dynamic { event, field } => {
+                        OpCode::LoadDynamic(dest, event.clone(), field.clone())
+                    }
+                };
+                bytecode.push(op);
+                Ok(dest)
+            }
+            Expression::Reference(id) => {
+                self.compile_subroutine(*id)?;
+                bytecode.push(OpCode::Call(*id));
+                let dest = self.alloc_reg()?;
+                bytecode.push(OpCode::Move(dest, 0));
+                Ok(dest)
+            }
             Expression::Abs(val) => {
-                self.compile_recursive(val, bytecode)?;
-                bytecode.push(OpCode::Abs);
+                let src = self.compile_recursive(val, bytecode)?;
+                let dest = self.alloc_reg()?;
+                bytecode.push(OpCode::Abs(dest, src));
+                Ok(dest)
             }
             Expression::Not(val) => {
-                self.compile_recursive(val, bytecode)?;
-                bytecode.push(OpCode::Not);
+                let src = self.compile_recursive(val, bytecode)?;
+                let dest = self.alloc_reg()?;
+                bytecode.push(OpCode::Not(dest, src));
+                Ok(dest)
             }
-
-            // --- Binary Operators (handled by helper) ---
-            Expression::Sum(l, r) => self.compile_binary(l, r, OpCode::Add, bytecode)?,
-            Expression::Subtract(l, r) => self.compile_binary(l, r, OpCode::Subtract, bytecode)?,
-            Expression::Multiply(l, r) => self.compile_binary(l, r, OpCode::Multiply, bytecode)?,
-            Expression::Divide(l, r) => self.compile_binary(l, r, OpCode::Divide, bytecode)?,
-            Expression::Equal(l, r) => self.compile_binary(l, r, OpCode::Equal, bytecode)?,
-            Expression::NotEqual(l, r) => self.compile_binary(l, r, OpCode::NotEqual, bytecode)?,
+            Expression::Sum(l, r) => self.compile_binary(l, r, OpCode::Add, bytecode),
+            Expression::Subtract(l, r) => self.compile_binary(l, r, OpCode::Subtract, bytecode),
+            Expression::Multiply(l, r) => self.compile_binary(l, r, OpCode::Multiply, bytecode),
+            Expression::Divide(l, r) => self.compile_binary(l, r, OpCode::Divide, bytecode),
+            Expression::Equal(l, r) => self.compile_binary(l, r, OpCode::Equal, bytecode),
+            Expression::NotEqual(l, r) => self.compile_binary(l, r, OpCode::NotEqual, bytecode),
             Expression::GreaterThan(l, r) => {
-                self.compile_binary(l, r, OpCode::GreaterThan, bytecode)?
+                self.compile_binary(l, r, OpCode::GreaterThan, bytecode)
             }
-            Expression::SmallerThan(l, r) => {
-                self.compile_binary(l, r, OpCode::LessThan, bytecode)?
-            }
+            Expression::SmallerThan(l, r) => self.compile_binary(l, r, OpCode::LessThan, bytecode),
             Expression::GreaterThanOrEqual(l, r) => {
-                self.compile_binary(l, r, OpCode::GreaterThanOrEqual, bytecode)?
+                self.compile_binary(l, r, OpCode::GreaterThanOrEqual, bytecode)
             }
             Expression::SmallerThanOrEqual(l, r) => {
-                self.compile_binary(l, r, OpCode::LessThanOrEqual, bytecode)?
+                self.compile_binary(l, r, OpCode::LessThanOrEqual, bytecode)
             }
-            Expression::Xor(l, r) => self.compile_binary(l, r, OpCode::Xor, bytecode)?,
-
-            // --- Logical Operators with Short-Circuiting ---
-            Expression::And(l, r) => {
-                self.compile_recursive(l, bytecode)?;
-                let jump_idx = bytecode.len();
-                bytecode.push(OpCode::JumpIfFalse(0)); // Placeholder
-                bytecode.push(OpCode::Pop); // Pop the `true` from the left side
-                self.compile_recursive(r, bytecode)?;
-                let jump_target = bytecode.len();
-                bytecode[jump_idx] = OpCode::JumpIfFalse(jump_target);
-            }
-            Expression::Or(l, r) => {
-                self.compile_recursive(l, bytecode)?;
-                let jump_idx = bytecode.len();
-                bytecode.push(OpCode::JumpIfTrue(0)); // Placeholder
-                bytecode.push(OpCode::Pop); // Pop the `false` from the left side
-                self.compile_recursive(r, bytecode)?;
-                let jump_target = bytecode.len();
-                bytecode[jump_idx] = OpCode::JumpIfTrue(jump_target);
-            }
+            Expression::Xor(l, r) => self.compile_binary(l, r, OpCode::Xor, bytecode),
+            Expression::And(l, r) => self.compile_short_circuit(l, r, false, bytecode),
+            Expression::Or(l, r) => self.compile_short_circuit(l, r, true, bytecode),
         }
-        Ok(())
     }
 
-    /// Helper function to compile standard binary expressions.
-    fn compile_binary(
+    fn compile_binary<F>(
         &mut self,
         l: &Expression,
         r: &Expression,
-        op: OpCode,
+        op_builder: F,
         bytecode: &mut Vec<OpCode>,
-    ) -> Result<(), BackendError> {
-        self.compile_recursive(l, bytecode)?;
-        self.compile_recursive(r, bytecode)?;
-        bytecode.push(op);
-        Ok(())
+    ) -> Result<Register, BackendError>
+    where
+        F: Fn(Register, Register, Register) -> OpCode,
+    {
+        let reg_l = self.compile_recursive(l, bytecode)?;
+        let reg_r = self.compile_recursive(r, bytecode)?;
+        let dest = self.alloc_reg()?;
+        bytecode.push(op_builder(dest, reg_l, reg_r));
+        Ok(dest)
+    }
+
+    fn compile_short_circuit(
+        &mut self,
+        l: &Expression,
+        r: &Expression,
+        is_or: bool,
+        bytecode: &mut Vec<OpCode>,
+    ) -> Result<Register, BackendError> {
+        let result_reg = self.alloc_reg()?;
+        let reg_l = self.compile_recursive(l, bytecode)?;
+
+        // This is the jump that will skip the right-hand-side evaluation.
+        let jump_idx = bytecode.len();
+        bytecode.push(OpCode::Jump(0)); // Placeholder
+
+        // --- Path 1: Full evaluation path (jump is NOT taken) ---
+        // We evaluate the right side, and its result becomes the final result.
+        let reg_r = self.compile_recursive(r, bytecode)?;
+        bytecode.push(OpCode::Move(result_reg, reg_r));
+        let jump_to_end_idx = bytecode.len();
+        bytecode.push(OpCode::Jump(0)); // Jump over the short-circuit path.
+
+        // --- Path 2: Short-circuit path ---
+        // The jump from the beginning lands here.
+        let short_circuit_addr = bytecode.len() as Address;
+        // The result is simply the value from the left-hand side.
+        bytecode.push(OpCode::Move(result_reg, reg_l));
+
+        // --- End of expression ---
+        let end_addr = bytecode.len() as Address;
+
+        // --- Patching the jumps ---
+        bytecode[jump_to_end_idx] = OpCode::Jump(end_addr);
+
+        if is_or {
+            // For OR, we short-circuit if the left side is TRUE.
+            bytecode[jump_idx] = OpCode::JumpIfTrue(reg_l, short_circuit_addr);
+        } else {
+            // For AND, we short-circuit if the left side is FALSE.
+            bytecode[jump_idx] = OpCode::JumpIfFalse(reg_l, short_circuit_addr);
+        }
+
+        Ok(result_reg)
     }
 }

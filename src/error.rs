@@ -86,6 +86,9 @@ pub enum VmError {
 
     #[error("Input source '{0}' not found in the provided data context")]
     InputNotFound(String),
+
+    #[error("Invalid register access: R{0}")]
+    InvalidRegister(u8),
 }
 
 /// Errors that can occur when converting a custom user format into a Hantei `FlowDefinition`.
