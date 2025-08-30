@@ -1,9 +1,10 @@
 use crate::ast::{Expression, Value};
 use crate::error::AstBuildError;
 use crate::recipe::{FlowDefinition, Quality};
-use std::collections::HashMap;
+use ahash::AHashMap;
 #[cfg(all(feature = "hantei-cli", debug_assertions))]
 use {
+    crate::ast::DisplayExpression,
     crate::bytecode::{compiler as bytecode_compiler, visualizer as bytecode_visualizer},
     std::fs,
 };
@@ -16,41 +17,22 @@ use builder::AstBuilder;
 use optimizer::AstOptimizer;
 use parsing::*;
 
-/// Compiles a `FlowDefinition` into optimized, executable Abstract Syntax Trees (ASTs).
-///
-/// This struct is the main entry point for the compilation phase. It takes a canonical
-/// `FlowDefinition` and a list of `Quality` outcomes and transforms them into a set of
-/// highly optimized `Expression` trees, one for each quality path.
-///
-/// It is recommended to create a `Compiler` using the [`Compiler::builder`] method to allow
-/// for future customization.
 pub struct Compiler {
     flow: FlowDefinition,
     qualities: Vec<Quality>,
-    registry: HashMap<String, Box<dyn NodeParser>>,
-    // Cache to avoid re-computing ASTs for the same nodes
-    ast_cache: HashMap<String, Expression>,
+    registry: AHashMap<String, Box<dyn NodeParser>>,
+    ast_cache: AHashMap<String, Expression>,
 }
 
-/// A builder for creating a `Compiler` with custom configurations.
-///
-/// This builder provides a fluent API for setting up the compiler. It allows for advanced
-/// features like mapping custom node type names or registering entirely new node parsers.
 pub struct CompilerBuilder {
     flow: FlowDefinition,
     qualities: Vec<Quality>,
-    registry: HashMap<String, Box<dyn NodeParser>>,
+    registry: AHashMap<String, Box<dyn NodeParser>>,
 }
 
 impl CompilerBuilder {
-    /// Creates a new builder with the default set of built-in node parsers.
-    ///
-    /// # Arguments
-    /// * `flow`: The canonical `FlowDefinition` representing the logic to be compiled.
-    /// * `qualities`: A `Vec<Quality>` defining the possible outcomes.
     pub fn new(flow: FlowDefinition, qualities: Vec<Quality>) -> Self {
-        let mut registry: HashMap<String, Box<dyn NodeParser>> = HashMap::new();
-        // Register all built-in node parsers
+        let mut registry: AHashMap<String, Box<dyn NodeParser>> = AHashMap::new();
         register_default_parsers(&mut registry);
         Self {
             flow,
@@ -58,67 +40,34 @@ impl CompilerBuilder {
             registry,
         }
     }
-
-    /// Maps a custom, user-defined node type name to one of Hantei's built-in parsers.
-    ///
-    /// This is the primary mechanism for supporting recipe formats that use different
-    /// names for standard operations.
-    ///
-    /// # Example
-    /// ```rust,no_run
-    /// # use hantei::prelude::*;
-    /// # let flow = FlowDefinition::default();
-    /// # let qualities = vec![];
-    /// // If your recipe JSON uses "CompareGreaterThan" instead of "gtNode":
-    /// let compiler = Compiler::builder(flow, qualities)
-    ///     .with_type_mapping("CompareGreaterThan", "gtNode")
-    ///     .build();
-    /// ```
     pub fn with_type_mapping(mut self, user_type_name: &str, hantei_type_name: &str) -> Self {
         if let Some(parser) = create_parser_by_name(hantei_type_name) {
             self.registry.insert(user_type_name.to_string(), parser);
         }
         self
     }
-
-    /// Registers a new, custom `NodeParser` implementation.
-    ///
-    /// This allows for extending Hantei with entirely new operations without modifying
-    /// the core compiler. The provided parser must implement the [`NodeParser`] trait.
     pub fn with_custom_parser(mut self, parser: Box<dyn NodeParser>) -> Self {
         self.registry.insert(parser.node_type().to_string(), parser);
         self
     }
-
-    /// Consumes the builder and constructs the final `Compiler` instance.
     pub fn build(self) -> Compiler {
         Compiler {
             flow: self.flow,
             qualities: self.qualities,
             registry: self.registry,
-            ast_cache: HashMap::new(),
+            ast_cache: AHashMap::new(),
         }
     }
 }
 
 impl Compiler {
-    /// Creates a `CompilerBuilder` to configure and create a compiler.
-    /// This is the recommended way to instantiate a `Compiler`.
     pub fn builder(flow: FlowDefinition, qualities: Vec<Quality>) -> CompilerBuilder {
         CompilerBuilder::new(flow, qualities)
     }
 
-    /// Compiles the flow definition into a `Vec` of `(priority, name, Expression)`.
-    ///
-    /// This method consumes the compiler and executes the full compilation pipeline:
-    /// 1. Builds a naive AST for each quality path.
-    /// 2. Applies optimization passes (e.g., constant folding) to each AST.
-    /// 3. Returns the final, optimized ASTs, sorted by quality priority.
-    ///
-    /// # Returns
-    ///
-    /// A `Result` containing either the vector of compiled paths or a `AstBuildError`.
-    pub fn compile(mut self) -> Result<Vec<(i32, String, Expression)>, AstBuildError> {
+    pub fn compile(
+        mut self,
+    ) -> Result<Vec<(i32, String, Expression, AHashMap<u64, Expression>)>, AstBuildError> {
         let quality_node_id = self
             .flow
             .nodes
@@ -135,52 +84,65 @@ impl Compiler {
         let naive_ast_map = ast_builder.build_asts_for_node(&quality_node_id)?;
 
         let mut quality_asts = Vec::new();
-        let optimizer = AstOptimizer::new();
+        let mut optimizer = AstOptimizer::new();
 
         for (index, quality) in self.qualities.iter().enumerate() {
             if let Some(naive_ast) = naive_ast_map.get(&(index as u32)) {
                 if let Expression::Literal(Value::Null) = naive_ast {
-                    continue; // Skip empty/unconnected quality slots
+                    continue;
                 }
 
                 let optimized_ast = optimizer.optimize(naive_ast.clone());
 
+                // The definitions map will be built up across all qualities
+                let definitions = optimizer.definitions.clone();
+
                 #[cfg(all(feature = "hantei-cli", debug_assertions))]
                 {
                     let sanitized_name = self.sanitize_filename(&quality.name);
+                    let naive_display = DisplayExpression {
+                        expr: naive_ast,
+                        definitions: &AHashMap::new(),
+                    };
                     self.write_debug_file(
                         &format!("tmp/quality_{}_naive_ast.txt", &sanitized_name),
-                        &naive_ast.to_string(),
-                    )?;
-                    self.write_debug_file(
-                        &format!("tmp/quality_{}_optimized_ast.txt", &sanitized_name),
-                        &optimized_ast.to_string(),
+                        &naive_display.to_string(),
                     )?;
 
-                    // --- NEW: Generate and write bytecode visualization ---
-                    match bytecode_compiler::compile_ast(&optimized_ast) {
-                        Ok(bytecode) => {
+                    let optimized_display = DisplayExpression {
+                        expr: &optimized_ast,
+                        definitions: &definitions,
+                    };
+                    self.write_debug_file(
+                        &format!("tmp/quality_{}_optimized_ast.txt", &sanitized_name),
+                        &optimized_display.to_string(),
+                    )?;
+
+                    match bytecode_compiler::compile_to_program(&optimized_ast, &definitions) {
+                        Ok(program) => {
                             let viz =
-                                bytecode_visualizer::visualize_bytecode(&bytecode, &quality.name);
+                                bytecode_visualizer::visualize_program(&program, &quality.name);
                             self.write_debug_file(
                                 &format!("tmp/quality_{}_bytecode.txt", &sanitized_name),
                                 &viz,
                             )?;
                         }
-                        Err(e) => {
-                            eprintln!(
-                                "Warning: Could not compile bytecode for debug file for quality '{}': {}",
-                                quality.name, e
-                            );
-                        }
+                        Err(e) => eprintln!(
+                            "Warning: Could not compile bytecode for debug file for quality '{}': {}",
+                            quality.name, e
+                        ),
                     }
-                    // --- END NEW ---
                 }
-                quality_asts.push((quality.priority, quality.name.clone(), optimized_ast));
+                quality_asts.push((
+                    quality.priority,
+                    quality.name.clone(),
+                    optimized_ast,
+                    definitions,
+                ));
             }
         }
 
-        quality_asts.sort_by_key(|(p, _, _)| *p);
+        quality_asts.sort_by_key(|(p, _, _, _)| *p);
         Ok(quality_asts)
     }
 

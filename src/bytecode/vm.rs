@@ -1,4 +1,5 @@
 use crate::ast::Value;
+use crate::bytecode::compiler::BytecodeProgram;
 use crate::bytecode::opcode::OpCode;
 use crate::error::VmError;
 use ahash::AHashMap;
@@ -29,25 +30,31 @@ macro_rules! comparison_op {
     };
 }
 
-/// A stack-based Virtual Machine for executing Hantei bytecode.
-pub struct Vm<'a> {
-    bytecode: &'a [OpCode],
+/// A stack-based Virtual Machine with support for subroutines.
+pub(super) struct Vm<'a> {
+    program: &'a BytecodeProgram,
     ip: usize,
+    // The currently executing chunk of bytecode (either main or a subroutine).
+    bytecode: &'a [OpCode],
     stack: Vec<Value>,
+    // A stack of instruction pointers to return to after a Call.
+    call_stack: Vec<usize>,
     static_data: &'a AHashMap<String, f64>,
     dynamic_context: &'a AHashMap<String, &'a AHashMap<String, f64>>,
 }
 
 impl<'a> Vm<'a> {
-    pub fn new(
-        bytecode: &'a [OpCode],
+    pub(super) fn new(
+        program: &'a BytecodeProgram,
         static_data: &'a AHashMap<String, f64>,
         dynamic_context: &'a AHashMap<String, &'a AHashMap<String, f64>>,
     ) -> Self {
         Self {
-            bytecode,
+            program,
             ip: 0,
+            bytecode: &program.main, // Start execution in the main program
             stack: Vec::with_capacity(16),
+            call_stack: Vec::with_capacity(8),
             static_data,
             dynamic_context,
         }
@@ -63,11 +70,28 @@ impl<'a> Vm<'a> {
             self.ip += 1;
 
             match instruction {
+                OpCode::Halt => return self.pop(),
+
+                // --- Subroutine Instructions ---
+                OpCode::Call(id) => {
+                    self.call_stack.push(self.ip); // Store return address
+                    self.bytecode = self
+                        .program
+                        .subroutines
+                        .get(id)
+                        .ok_or_else(|| VmError::UnknownSubroutine(*id))?;
+                    self.ip = 0; // Jump to start of subroutine
+                }
+                OpCode::Return => {
+                    self.ip = self.call_stack.pop().ok_or(VmError::StackUnderflow)?; // Get return address
+                    self.bytecode = &self.program.main; // Assume calls are only from main for now
+                }
+
+                // --- Stack Operations ---
                 OpCode::Push(val) => self.push(val.clone()),
                 OpCode::Pop => {
                     self.pop()?;
                 }
-                OpCode::Return => return self.pop(),
 
                 // --- Data Loading ---
                 OpCode::LoadStatic(name) => {
@@ -124,6 +148,12 @@ impl<'a> Vm<'a> {
                 OpCode::JumpIfFalse(addr) => {
                     let val = self.stack.last().ok_or(VmError::StackUnderflow)?;
                     if let Value::Bool(false) = val {
+                        self.ip = *addr;
+                    }
+                }
+                OpCode::JumpIfTrue(addr) => {
+                    let val = self.stack.last().ok_or(VmError::StackUnderflow)?;
+                    if let Value::Bool(true) = val {
                         self.ip = *addr;
                     }
                 }

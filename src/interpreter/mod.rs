@@ -4,40 +4,45 @@ use crate::error::{BackendError, EvaluationError};
 use crate::trace::TraceFormatter;
 use ahash::AHashMap;
 use rayon::prelude::*;
-use std::collections::HashSet;
+use std::collections::{HashMap, HashSet};
 
 mod dynamic;
 mod engine;
 
 use dynamic::DynamicEvaluator;
-use engine::AstEngine;
 
-/// The result of an evaluation run.
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct EvaluationResult {
-    /// The name of the highest-priority quality that was triggered.
-    /// `None` if no quality path evaluated to `true`.
     pub quality_name: Option<String>,
-    /// The priority of the triggered quality. `None` if no quality was triggered.
     pub quality_priority: Option<i32>,
-    /// A human-readable explanation of the logic that led to the result.
     pub reason: String,
 }
 
-/// A backend that directly interprets the AST at runtime.
 pub struct InterpreterBackend;
 
 impl EvaluationBackend for InterpreterBackend {
     fn compile(
         &self,
-        paths: Vec<(i32, String, Expression)>,
+        paths: Vec<(i32, String, Expression, AHashMap<u64, Expression>)>,
     ) -> Result<Box<dyn ExecutableRecipe>, BackendError> {
-        // The "compilation" for the interpreter is a no-op; it just stores the paths.
-        Ok(Box::new(AstExecutable { paths }))
+        // The "linking" phase: transform the AST graph into a simple tree for each path.
+        let linked_paths = paths
+            .into_iter()
+            .map(|(p, n, ast, defs)| {
+                // We use a temporary HashMap for memoization *during this link pass only* to avoid re-linking the same sub-tree.
+                let mut visited = HashMap::new();
+                let linked_ast = link_ast(&ast, &defs, &mut visited)?;
+                Ok((p, n, linked_ast))
+            })
+            .collect::<Result<_, BackendError>>()?;
+
+        Ok(Box::new(AstExecutable {
+            paths: linked_paths,
+        }))
     }
 }
 
-/// The `ExecutableRecipe` for the interpreter backend. It holds the ASTs to be walked.
+/// The executable now holds fully self-contained, "linked" ASTs with no References.
 struct AstExecutable {
     paths: Vec<(i32, String, Expression)>,
 }
@@ -50,11 +55,12 @@ impl ExecutableRecipe for AstExecutable {
     ) -> Result<EvaluationResult, EvaluationError> {
         let maybe_result = self.paths.par_iter().find_map_any(|(priority, name, ast)| {
             let mut required_events = HashSet::new();
+            // We can now use the simpler get_required_events because the AST is just a tree.
             ast.get_required_events(&mut required_events);
 
             let eval_result = if required_events.is_empty() {
                 let empty_context = AHashMap::new();
-                let engine = AstEngine::new(ast, static_data, &empty_context);
+                let engine = engine::AstEngine::new(ast, static_data, &empty_context);
                 engine.evaluate().map(Some)
             } else {
                 let dynamic_eval =
@@ -84,5 +90,95 @@ impl ExecutableRecipe for AstExecutable {
                 reason: "No quality triggered".to_string(),
             }),
         }
+    }
+}
+
+/// Recursively walks an expression, inlining any `Reference` nodes to produce a flat tree.
+fn link_ast(
+    expr: &Expression,
+    definitions: &AHashMap<u64, Expression>,
+    visited: &mut HashMap<u64, Expression>, // Memoization for this link pass
+) -> Result<Expression, BackendError> {
+    match expr {
+        Expression::Reference(id) => {
+            if let Some(cached) = visited.get(id) {
+                return Ok(cached.clone());
+            }
+            let def = definitions.get(id).ok_or_else(|| {
+                BackendError::InvalidLogic(format!(
+                    "CSE Reference ID #{} not found during linking",
+                    id
+                ))
+            })?;
+            let linked_def = link_ast(def, definitions, visited)?;
+            visited.insert(*id, linked_def.clone());
+            Ok(linked_def)
+        }
+        // --- Nodes with Children ---
+        Expression::Sum(l, r) => Ok(Expression::Sum(
+            Box::new(link_ast(l, definitions, visited)?),
+            Box::new(link_ast(r, definitions, visited)?),
+        )),
+        Expression::Subtract(l, r) => Ok(Expression::Subtract(
+            Box::new(link_ast(l, definitions, visited)?),
+            Box::new(link_ast(r, definitions, visited)?),
+        )),
+        Expression::Multiply(l, r) => Ok(Expression::Multiply(
+            Box::new(link_ast(l, definitions, visited)?),
+            Box::new(link_ast(r, definitions, visited)?),
+        )),
+        Expression::Divide(l, r) => Ok(Expression::Divide(
+            Box::new(link_ast(l, definitions, visited)?),
+            Box::new(link_ast(r, definitions, visited)?),
+        )),
+        Expression::Abs(v) => Ok(Expression::Abs(Box::new(link_ast(
+            v,
+            definitions,
+            visited,
+        )?))),
+        Expression::Not(v) => Ok(Expression::Not(Box::new(link_ast(
+            v,
+            definitions,
+            visited,
+        )?))),
+        Expression::And(l, r) => Ok(Expression::And(
+            Box::new(link_ast(l, definitions, visited)?),
+            Box::new(link_ast(r, definitions, visited)?),
+        )),
+        Expression::Or(l, r) => Ok(Expression::Or(
+            Box::new(link_ast(l, definitions, visited)?),
+            Box::new(link_ast(r, definitions, visited)?),
+        )),
+        Expression::Xor(l, r) => Ok(Expression::Xor(
+            Box::new(link_ast(l, definitions, visited)?),
+            Box::new(link_ast(r, definitions, visited)?),
+        )),
+        Expression::Equal(l, r) => Ok(Expression::Equal(
+            Box::new(link_ast(l, definitions, visited)?),
+            Box::new(link_ast(r, definitions, visited)?),
+        )),
+        Expression::NotEqual(l, r) => Ok(Expression::NotEqual(
+            Box::new(link_ast(l, definitions, visited)?),
+            Box::new(link_ast(r, definitions, visited)?),
+        )),
+        Expression::GreaterThan(l, r) => Ok(Expression::GreaterThan(
+            Box::new(link_ast(l, definitions, visited)?),
+            Box::new(link_ast(r, definitions, visited)?),
+        )),
+        Expression::GreaterThanOrEqual(l, r) => Ok(Expression::GreaterThanOrEqual(
+            Box::new(link_ast(l, definitions, visited)?),
+            Box::new(link_ast(r, definitions, visited)?),
+        )),
+        Expression::SmallerThan(l, r) => Ok(Expression::SmallerThan(
+            Box::new(link_ast(l, definitions, visited)?),
+            Box::new(link_ast(r, definitions, visited)?),
+        )),
+        Expression::SmallerThanOrEqual(l, r) => Ok(Expression::SmallerThanOrEqual(
+            Box::new(link_ast(l, definitions, visited)?),
+            Box::new(link_ast(r, definitions, visited)?),
+        )),
+
+        // --- Leaf Nodes (no children to link) ---
+        Expression::Literal(_) | Expression::Input(_) => Ok(expr.clone()),
     }
 }

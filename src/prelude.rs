@@ -26,6 +26,7 @@
 // Core compilation and evaluation
 pub use crate::compiler::{Compiler, CompilerBuilder};
 pub use crate::evaluator::Evaluator;
+pub use crate::interpreter::EvaluationResult;
 
 // AST and expression types
 pub use crate::ast::{EvaluationTrace, Expression, InputSource, Value};
@@ -47,5 +48,4 @@ pub use crate::error::{
 pub use crate::trace::TraceFormatter;
 
 // Standard library re-exports
-pub use std::collections::HashMap;
 pub use std::path::Path;

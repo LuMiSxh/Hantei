@@ -35,7 +35,12 @@ pub enum OpCode {
     // Control Flow
     Jump(usize),
     JumpIfFalse(usize),
+    JumpIfTrue(usize),
 
-    // End of execution
+    /// Call a subroutine located at a specific ID.
+    Call(u64),
+    /// Return from the current subroutine to the last call site.
     Return,
+    /// Stop execution of the VM completely.
+    Halt,
 }

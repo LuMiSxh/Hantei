@@ -81,6 +81,9 @@ pub enum VmError {
     #[error("Unhandled OpCode encountered: {0:?}")]
     UnhandledOpCode(OpCode),
 
+    #[error("Invalid subroutine ID: {0}")]
+    UnknownSubroutine(u64),
+
     #[error("Input source '{0}' not found in the provided data context")]
     InputNotFound(String),
 }

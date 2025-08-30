@@ -39,6 +39,14 @@ impl<'a> AstEngine<'a> {
 
     fn evaluate_recursive(&self, expr: &Expression) -> Result<EvaluationTrace, EvaluationError> {
         match expr {
+            // This arm should now be unreachable if the linking step was successful.
+            // It acts as a safeguard against bugs in the compiler.
+            Expression::Reference(id) => {
+                return Err(EvaluationError::BackendError(format!(
+                    "Encountered an unlinked Reference node (#{}) during interpreter execution. This is a compiler bug.",
+                    id
+                )));
+            }
             // --- Arithmetic Operations ---
             Expression::Sum(l, r) => eval_op!(self, l, r, "+", |a, b| a + b, number),
             Expression::Subtract(l, r) => eval_op!(self, l, r, "-", |a, b| a - b, number),

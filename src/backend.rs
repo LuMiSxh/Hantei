@@ -15,10 +15,9 @@ pub trait ExecutableRecipe: Send + Sync {
 
 /// A trait for an evaluation backend that transforms ASTs into an `ExecutableRecipe`.
 pub trait EvaluationBackend {
-    /// Compiles the high-level AST paths into a backend-specific executable.
     fn compile(
         &self,
-        paths: Vec<(i32, String, Expression)>,
+        paths: Vec<(i32, String, Expression, AHashMap<u64, Expression>)>,
     ) -> Result<Box<dyn ExecutableRecipe>, BackendError>;
 }
 

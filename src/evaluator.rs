@@ -16,7 +16,7 @@ impl Evaluator {
     /// Creates a new evaluator by compiling the AST paths with the chosen backend.
     pub fn new(
         choice: BackendChoice,
-        paths: Vec<(i32, String, Expression)>,
+        paths: Vec<(i32, String, Expression, AHashMap<u64, Expression>)>,
     ) -> Result<Self, BackendError> {
         let backend: Box<dyn EvaluationBackend> = match choice {
             BackendChoice::Interpreter => Box::new(crate::interpreter::InterpreterBackend),

@@ -1,7 +1,8 @@
+use ahash::AHashMap;
+
 use crate::ast::Expression;
 use crate::error::AstBuildError;
 use crate::recipe::FlowNodeDefinition;
-use std::collections::HashMap;
 
 /// Defines the contract for parsing a specific `operation_type` into an `Expression`.
 pub trait NodeParser: Send + Sync {
@@ -181,7 +182,7 @@ define_variadic_parser!(NotNodeParser, "notNode", Expression::Not, Unary);
 define_variadic_parser!(AbsNodeParser, "absNode", Expression::Abs, Unary);
 
 /// Adds all defined node parsers to the registry HashMap.
-pub(super) fn register_default_parsers(registry: &mut HashMap<String, Box<dyn NodeParser>>) {
+pub(super) fn register_default_parsers(registry: &mut AHashMap<String, Box<dyn NodeParser>>) {
     registry.insert("andNode".to_string(), Box::new(AndNodeParser));
     registry.insert("orNode".to_string(), Box::new(OrNodeParser));
     registry.insert("xorNode".to_string(), Box::new(XorNodeParser));

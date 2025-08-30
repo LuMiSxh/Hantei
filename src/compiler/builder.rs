@@ -1,24 +1,25 @@
+use ahash::AHashMap;
+
 use crate::ast::{Expression, InputSource, Value};
 use crate::compiler::parsing::NodeParser;
 use crate::error::AstBuildError;
 use crate::recipe::{FlowDefinition, FlowNodeDefinition};
-use std::collections::HashMap;
 
 /// Responsible for building the initial, unoptimized AST from a `FlowDefinition`.
 pub(super) struct AstBuilder<'a> {
     flow: &'a FlowDefinition,
-    registry: &'a HashMap<String, Box<dyn NodeParser>>,
-    ast_cache: &'a mut HashMap<String, Expression>,
-    connections: HashMap<String, HashMap<u32, Vec<(String, u32)>>>,
+    registry: &'a AHashMap<String, Box<dyn NodeParser>>,
+    ast_cache: &'a mut AHashMap<String, Expression>,
+    connections: AHashMap<String, AHashMap<u32, Vec<(String, u32)>>>,
 }
 
 impl<'a> AstBuilder<'a> {
     pub(super) fn new(
         flow: &'a FlowDefinition,
-        registry: &'a HashMap<String, Box<dyn NodeParser>>,
-        ast_cache: &'a mut HashMap<String, Expression>,
+        registry: &'a AHashMap<String, Box<dyn NodeParser>>,
+        ast_cache: &'a mut AHashMap<String, Expression>,
     ) -> Self {
-        let mut connections: HashMap<String, HashMap<u32, Vec<(String, u32)>>> = HashMap::new();
+        let mut connections: AHashMap<String, AHashMap<u32, Vec<(String, u32)>>> = AHashMap::new();
         for edge in &flow.edges {
             let target_handle_idx = Self::parse_handle_index(&edge.target_handle);
             let source_handle_idx = Self::parse_handle_index(&edge.source_handle);
@@ -43,7 +44,7 @@ impl<'a> AstBuilder<'a> {
     pub(super) fn build_asts_for_node(
         &mut self,
         node_id: &str,
-    ) -> Result<HashMap<u32, Expression>, AstBuildError> {
+    ) -> Result<AHashMap<u32, Expression>, AstBuildError> {
         let node = self.find_node(node_id, "N/A")?;
         let mut expressions = self.gather_connected_inputs(node_id)?;
 
@@ -97,8 +98,8 @@ impl<'a> AstBuilder<'a> {
     fn gather_connected_inputs(
         &mut self,
         node_id: &str,
-    ) -> Result<HashMap<u32, Expression>, AstBuildError> {
-        let mut expressions: HashMap<u32, Expression> = HashMap::new();
+    ) -> Result<AHashMap<u32, Expression>, AstBuildError> {
+        let mut expressions: AHashMap<u32, Expression> = AHashMap::new();
 
         // **FIX:** Clone the connection data to iterate over, releasing the borrow on `self`.
         let connections_to_process: Vec<(u32, Vec<(String, u32)>)> = self
