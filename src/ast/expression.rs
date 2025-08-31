@@ -1,6 +1,4 @@
 use super::{InputSource, Value};
-#[cfg(feature = "debug-tools")]
-pub use display_impl::*;
 use serde::{Deserialize, Serialize};
 use std::hash::Hash;
 
@@ -27,8 +25,12 @@ pub enum Expression {
 }
 
 #[cfg(feature = "debug-tools")]
+pub use display_impl::*;
+
+#[cfg(feature = "debug-tools")]
 mod display_impl {
-    use super::InputId;
+    use super::*;
+    use crate::bytecode::opcode::InputId;
     use ahash::AHashMap;
     use std::fmt;
 

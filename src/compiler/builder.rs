@@ -160,30 +160,30 @@ impl<'a> AstBuilder<'a> {
             })?;
 
         let source = if let Some(event_type) = &source_node.input_type {
-            // This path is for nodes that are NOT the "Start" node, e.g., a dedicated "Hole" node.
-            // It correctly assumes all outputs are fields of that dynamic event.
+            // This is a dedicated dynamic node (e.g., a "Hole Details" node).
+            // All its outputs are dynamic properties of that event type.
             InputSource::DynamicName {
                 event: event_type.clone(),
                 field: field.name.clone(),
             }
         } else {
-            // This path is for the "Start" node, which has `input_type: None`.
-            // The `real_case_type` tells us if it's a dynamic event stream.
-            if let Some(real_case_type) = &field.data_type {
-                // This is a dynamic event stream like "bark" or "hole".
-                // The `real_case_type` is the event name, and the field we need
-                // must be derived from the logic that follows. This part of the builder
-                // is for creating direct value inputs. A direct connection from an object
-                // source to a logic node implies a default property lookup. Let's assume
-                // the `field.name` itself is the property to look for on that dynamic event.
-                InputSource::DynamicName {
-                    event: real_case_type.clone(),
-                    field: field.name.clone(),
+            // This is the special "Start" node. We must inspect the specific output's type.
+            match field.data_type.as_deref() {
+                Some("number") | Some("bool") | None => {
+                    // An output of type "number", "bool", or no type is a STATIC property.
+                    InputSource::StaticName {
+                        name: field.name.clone(),
+                    }
                 }
-            } else {
-                // This is a primitive type like "number". It's a static property.
-                InputSource::StaticName {
-                    name: field.name.clone(),
+                Some(event_name) => {
+                    // Any other type (e.g., "bark", "hole") represents a DYNAMIC event stream.
+                    // The `event_name` is the `realCaseType`.
+                    InputSource::DynamicName {
+                        event: event_name.to_string(),
+                        // The field name here is tricky. For object streams, the specific property
+                        // is selected by a downstream node. So we use the event name itself as a placeholder.
+                        field: event_name.to_string(),
+                    }
                 }
             }
         };

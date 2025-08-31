@@ -228,14 +228,13 @@ impl Compiler {
                     let naive_display = DisplayExpression {
                         expr: naive_ast,
                         definitions: &AHashMap::new(),
-                        static_map: &AHashMap::new(),
-                        dynamic_map: &AHashMap::new(),
+                        static_map: &static_rev_map,
+                        dynamic_map: &dynamic_rev_map,
                     };
                     self.write_debug_file(
                         &format!("tmp/quality_{}_naive_ast.txt", &sanitized_name),
                         &naive_display.to_string(),
                     )?;
-
                     let optimized_display = DisplayExpression {
                         expr: &optimized_ast,
                         definitions: &definitions,
@@ -254,8 +253,12 @@ impl Compiler {
                         &self.dynamic_map,
                     ) {
                         Ok(program) => {
-                            let viz =
-                                bytecode_visualizer::visualize_program(&program, &quality.name);
+                            let viz = bytecode_visualizer::visualize_program(
+                                &program,
+                                &quality.name,
+                                &static_rev_map,
+                                &dynamic_rev_map,
+                            );
                             self.write_debug_file(
                                 &format!("tmp/quality_{}_bytecode.txt", &sanitized_name),
                                 &viz,
