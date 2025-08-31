@@ -34,6 +34,14 @@ pub enum OpCode {
     GreaterThanOrEqual(Register, Register, Register),
     LessThanOrEqual(Register, Register, Register),
 
+    // Fusion of Comparison & Control Flow
+    JumpIfEq(Register, Register, Address), // dest, src1, src2, addr
+    JumpIfNeq(Register, Register, Address), // dest, src1, src2, addr
+    JumpIfGt(Register, Register, Address), // dest, src1, src2, addr
+    JumpIfGte(Register, Register, Address), // dest, src1, src2, addr
+    JumpIfLt(Register, Register, Address), // dest, src1, src2, addr
+    JumpIfLte(Register, Register, Address), // dest, src1, src2, addr
+
     // Control Flow
     Jump(Address),
     JumpIfFalse(Register, Address), // Jumps if the value in the register is false

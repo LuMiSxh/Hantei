@@ -12,6 +12,13 @@ pub enum Value {
     Null,
 }
 
+// Default value is Null
+impl Default for Value {
+    fn default() -> Self {
+        Value::Null
+    }
+}
+
 // Manual implementation to handle f64
 impl Eq for Value {}
 
