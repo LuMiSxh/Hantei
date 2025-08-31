@@ -1,7 +1,7 @@
 use ahash::AHashMap;
 use clap::Parser;
 use hantei::data::SampleData;
-use rand::prelude::*;
+use rand::{Rng, rngs::ThreadRng, thread_rng};
 use std::fs;
 
 /// A CLI tool to generate sample data for the Hantei evaluator
