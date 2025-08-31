@@ -11,7 +11,7 @@ use crate::interpreter::EvaluationResult;
 use crate::recipe::{CompiledPathBytecode, CompiledRecipe};
 use ahash::AHashMap;
 use compiler::BytecodeProgram;
-use rayon::prelude::*;
+use itertools::Itertools;
 use std::collections::HashSet;
 use vm::Vm;
 
@@ -25,14 +25,14 @@ impl EvaluationBackend for BytecodeBackend {
         let bytecode_programs = artifacts
             .into_iter()
             .map(|a| {
-                // The AST is passed to the compiler...
+                // We have to get rid of the ast here because we no longer need it.
                 let program = compiler::compile_to_program(
                     &a.ast,
                     &a.definitions,
                     &a.static_map,
                     &a.dynamic_map,
                 )?;
-                // ...but not stored in the final artifact for bytecode.
+
                 Ok(CompiledPathBytecode {
                     priority: a.priority,
                     name: a.name,
@@ -72,17 +72,33 @@ impl ExecutableRecipe for BytecodeExecutable {
     ) -> Result<EvaluationResult, EvaluationError> {
         let prepared_static_data = prepare_all_static_data(&self.compiled_artifacts, static_data)?;
 
-        let maybe_result = self.compiled_artifacts.par_iter().enumerate().find_map_any(
+        let maybe_result = self.compiled_artifacts.iter().enumerate().find_map(
             |(prog_idx, (priority, name, program))| {
-                let dynamic_combinations = generate_dynamic_contexts(program, dynamic_data);
+                let (event_names, event_instances) = prepare_dynamic_events(program, dynamic_data);
 
-                if dynamic_combinations.is_empty() && !program.dynamic_map.is_empty() {
-                    return None;
+                if event_instances.iter().any(|v| v.is_empty()) {
+                    return None; // If any required event type has no instances, we can't match.
                 }
 
+                // If there are no dynamic events required, we still need one empty context to run against.
+                let combinations_iterator: Box<dyn Iterator<Item = Vec<&AHashMap<String, f64>>>> =
+                    if event_instances.is_empty() {
+                        Box::new(std::iter::once(Vec::new()))
+                    } else {
+                        Box::new(event_instances.into_iter().multi_cartesian_product())
+                    };
+
                 let static_vec = &prepared_static_data[prog_idx];
-                for context_map in &dynamic_combinations {
-                    let dynamic_vec = prepare_dynamic_context(program, context_map);
+
+                for combination in combinations_iterator {
+                    // Build the context map for this single combination
+                    let context_map: AHashMap<&str, _> = event_names
+                        .iter()
+                        .map(|s| s.as_str())
+                        .zip(combination.into_iter())
+                        .collect();
+
+                    let dynamic_vec = prepare_dynamic_context(program, &context_map);
                     let mut vm = Vm::new(program, static_vec, &dynamic_vec);
                     match vm.run() {
                         Ok(Value::Bool(true)) => {
@@ -134,7 +150,7 @@ fn prepare_all_static_data(
 
 fn prepare_dynamic_context(
     program: &BytecodeProgram,
-    context: &AHashMap<String, &AHashMap<String, f64>>,
+    context: &AHashMap<&str, &AHashMap<String, f64>>,
 ) -> Vec<Value> {
     let mut dynamic_vec = vec![Value::Null; program.dynamic_map.len()];
     for (key, &id) in &program.dynamic_map {
@@ -148,38 +164,30 @@ fn prepare_dynamic_context(
     dynamic_vec
 }
 
-fn generate_dynamic_contexts<'a>(
+fn prepare_dynamic_events<'a>(
     program: &BytecodeProgram,
     dynamic_data: &'a AHashMap<String, Vec<AHashMap<String, f64>>>,
-) -> Vec<AHashMap<String, &'a AHashMap<String, f64>>> {
+) -> (Vec<String>, Vec<Vec<&'a AHashMap<String, f64>>>) {
     let mut required_events = HashSet::new();
     for key in program.dynamic_map.keys() {
         required_events.insert(key.split_once('.').unwrap().0);
     }
     if required_events.is_empty() {
-        return vec![AHashMap::new()];
+        return (Vec::new(), Vec::new());
     }
 
-    let mut event_types: Vec<_> = required_events.into_iter().collect();
-    event_types.sort_by_key(|event_type| dynamic_data.get(*event_type).map_or(0, |v| v.len()));
+    let event_names: Vec<String> = required_events.into_iter().map(|s| s.to_string()).collect();
+    let mut event_instances = Vec::with_capacity(event_names.len());
 
-    let mut combinations = vec![AHashMap::new()];
-    for event_type in event_types {
-        let instances = match dynamic_data.get(event_type) {
-            Some(inst) if !inst.is_empty() => inst,
-            _ => {
-                return vec![];
+    for event_name in &event_names {
+        match dynamic_data.get(event_name) {
+            Some(instances) => {
+                event_instances.push(instances.iter().collect());
             }
-        };
-        let mut next_combinations = Vec::new();
-        for combo in &combinations {
-            for instance in instances {
-                let mut new_combo = combo.clone();
-                new_combo.insert(event_type.to_string(), instance);
-                next_combinations.push(new_combo);
+            None => {
+                event_instances.push(Vec::new());
             }
         }
-        combinations = next_combinations;
     }
-    combinations
+    (event_names, event_instances)
 }

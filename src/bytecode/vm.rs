@@ -83,12 +83,6 @@ impl<'a> Vm<'a> {
         unsafe { self.registers.get_unchecked(reg as usize) }
     }
 
-    /// Unsafe, unchecked, and always-inlined mutable register access.
-    #[inline(always)]
-    unsafe fn get_reg_unchecked_mut(&mut self, reg: Register) -> &mut Value {
-        unsafe { self.registers.get_unchecked_mut(reg as usize) }
-    }
-
     /// Unsafe, unchecked, and always-inlined register setting.
     #[inline(always)]
     unsafe fn set_reg_unchecked(&mut self, reg: Register, val: Value) {

@@ -5,7 +5,7 @@ use crate::error::{BackendError, EvaluationError};
 use crate::recipe::{CompiledPathInterpreter, CompiledRecipe};
 use crate::trace::TraceFormatter;
 use ahash::AHashMap;
-use rayon::prelude::*;
+use itertools::Itertools;
 use std::collections::{HashMap, HashSet};
 
 mod engine;
@@ -101,8 +101,8 @@ impl ExecutableRecipe for AstExecutable {
     ) -> Result<EvaluationResult, EvaluationError> {
         let maybe_result =
             self.paths
-                .par_iter()
-                .find_map_any(|(priority, name, ast, static_map, dynamic_map)| {
+                .iter()
+                .find_map(|(priority, name, ast, static_map, dynamic_map)| {
                     let static_vec = match prepare_static_data(static_map, static_data) {
                         Ok(v) => v,
                         Err(e) => return Some(Err(e)),
@@ -136,13 +136,30 @@ impl ExecutableRecipe for AstExecutable {
                         }
                     }
 
-                    let dynamic_combinations = generate_dynamic_contexts(dynamic_map, dynamic_data);
-                    if dynamic_combinations.is_empty() && !dynamic_map.is_empty() {
+                    let (event_names, event_instances) =
+                        prepare_dynamic_events(dynamic_map, dynamic_data);
+
+                    if event_instances.iter().any(|v| v.is_empty()) {
                         return None;
                     }
 
-                    for context_map in &dynamic_combinations {
-                        let dynamic_vec = prepare_dynamic_context(dynamic_map, context_map);
+                    let combinations_iterator: Box<
+                        dyn Iterator<Item = Vec<&AHashMap<String, f64>>>,
+                    > = if event_instances.is_empty() {
+                        Box::new(std::iter::once(Vec::new()))
+                    } else {
+                        Box::new(event_instances.into_iter().multi_cartesian_product())
+                    };
+
+                    for combination in combinations_iterator {
+                        let context_map: AHashMap<&str, &AHashMap<String, f64>> = event_names
+                            .iter()
+                            .map(|s| s.as_str())
+                            .zip(combination.into_iter())
+                            .collect();
+
+                        // Now we pass a reference to the map we just built.
+                        let dynamic_vec = prepare_dynamic_context(dynamic_map, &context_map);
                         let engine = engine::AstEngine::new(
                             ast,
                             &static_vec,
@@ -198,7 +215,7 @@ fn prepare_static_data(
 
 fn prepare_dynamic_context(
     map: &AHashMap<String, InputId>,
-    context: &AHashMap<String, &AHashMap<String, f64>>,
+    context: &AHashMap<&str, &AHashMap<String, f64>>,
 ) -> Vec<Value> {
     let mut vec = vec![Value::Null; map.len()];
     for (key, &id) in map {
@@ -215,40 +232,32 @@ fn prepare_dynamic_context(
     vec
 }
 
-fn generate_dynamic_contexts<'a>(
+fn prepare_dynamic_events<'a>(
     dynamic_map: &AHashMap<String, InputId>,
     dynamic_data: &'a AHashMap<String, Vec<AHashMap<String, f64>>>,
-) -> Vec<AHashMap<String, &'a AHashMap<String, f64>>> {
+) -> (Vec<String>, Vec<Vec<&'a AHashMap<String, f64>>>) {
     let required_events: HashSet<&str> = dynamic_map
         .keys()
         .map(|k| k.split_once('.').unwrap().0)
         .collect();
     if required_events.is_empty() {
-        return vec![AHashMap::new()];
+        return (Vec::new(), Vec::new());
     }
 
-    let mut event_types: Vec<_> = required_events.into_iter().collect();
-    event_types.sort_by_key(|event_type| dynamic_data.get(*event_type).map_or(0, |v| v.len()));
+    let event_names: Vec<String> = required_events.into_iter().map(|s| s.to_string()).collect();
+    let mut event_instances = Vec::with_capacity(event_names.len());
 
-    let mut combinations = vec![AHashMap::new()];
-    for event_type in event_types {
-        let instances = match dynamic_data.get(event_type) {
-            Some(inst) if !inst.is_empty() => inst,
-            _ => {
-                return vec![];
+    for event_name in &event_names {
+        match dynamic_data.get(event_name) {
+            Some(instances) => {
+                event_instances.push(instances.iter().collect());
             }
-        };
-        let mut next_combinations = Vec::new();
-        for combo in &combinations {
-            for instance in instances {
-                let mut new_combo = combo.clone();
-                new_combo.insert(event_type.to_string(), instance);
-                next_combinations.push(new_combo);
+            None => {
+                event_instances.push(Vec::new());
             }
         }
-        combinations = next_combinations;
     }
-    combinations
+    (event_names, event_instances)
 }
 
 fn link_ast(
