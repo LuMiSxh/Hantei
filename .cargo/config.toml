@@ -24,7 +24,6 @@ strip = true
 [profile.profiling]
 # Inherit all the settings from the release profile...
 inherits = "release"
-# ...but with one crucial difference: DO NOT strip the debug symbols.
+# But do not strip debug symbols, as they are essential for profiling and debugging.
 strip = false
-# And ensure debug symbols are definitely included.
 debug = true

@@ -8,25 +8,30 @@ pub type SubroutineId = u64;
 
 /// An instruction for the register-based virtual machine.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[repr(u8)]
 pub enum OpCode {
-    // Data Loading
+    // Data Loading (0-3)
+    // src, dest
     LoadLiteral(Register, Value),
     LoadStatic(Register, InputId),
     LoadDynamic(Register, InputId),
-    Move(Register, Register), // Move value from one register to another
+    Move(Register, Register),
 
-    // Arithmetic
-    Add(Register, Register, Register),      // dest, src1, src2
-    Subtract(Register, Register, Register), // dest, src1, src2
-    Multiply(Register, Register, Register), // dest, src1, src2
-    Divide(Register, Register, Register),   // dest, src1, src2
-    Xor(Register, Register, Register),      // dest, src1, src2 - Logical XOR for booleans
+    // Arithmetic (4-8)
+    // dest, src1, src2
+    Add(Register, Register, Register),
+    Subtract(Register, Register, Register),
+    Multiply(Register, Register, Register),
+    Divide(Register, Register, Register),
+    Xor(Register, Register, Register),
 
-    // Unary
-    Abs(Register, Register), // dest, src
-    Not(Register, Register), // dest, src
+    // Unary (9-10)
+    // dest, src
+    Abs(Register, Register),
+    Not(Register, Register),
 
-    // Comparison & Equality (result is always a Bool in dest)
+    // Comparison & Equality (11-16)
+    // dest, src1, src2
     Equal(Register, Register, Register),
     NotEqual(Register, Register, Register),
     GreaterThan(Register, Register, Register),
@@ -34,23 +39,26 @@ pub enum OpCode {
     GreaterThanOrEqual(Register, Register, Register),
     LessThanOrEqual(Register, Register, Register),
 
-    // Fusion of Comparison & Control Flow
-    JumpIfEq(Register, Register, Address), // dest, src1, src2, addr
-    JumpIfNeq(Register, Register, Address), // dest, src1, src2, addr
-    JumpIfGt(Register, Register, Address), // dest, src1, src2, addr
-    JumpIfGte(Register, Register, Address), // dest, src1, src2, addr
-    JumpIfLt(Register, Register, Address), // dest, src1, src2, addr
-    JumpIfLte(Register, Register, Address), // dest, src1, src2, addr
+    // Fusion of Comparison & Control Flow (17-22)
+    // src1, src2, address
+    JumpIfEq(Register, Register, Address),
+    JumpIfNeq(Register, Register, Address),
+    JumpIfGt(Register, Register, Address),
+    JumpIfGte(Register, Register, Address),
+    JumpIfLt(Register, Register, Address),
+    JumpIfLte(Register, Register, Address),
 
-    // Control Flow
+    // Control Flow (23-25)
+    // address
     Jump(Address),
-    JumpIfFalse(Register, Address), // Jumps if the value in the register is false
-    JumpIfTrue(Register, Address),  // Jumps if the value in the register is true
+    // src, address
+    JumpIfFalse(Register, Address),
+    JumpIfTrue(Register, Address),
 
-    // Subroutines
+    // Subroutines (26-27)
     Call(SubroutineId),
     Return,
 
-    // VM Control
+    // VM Control (28)
     Halt,
 }

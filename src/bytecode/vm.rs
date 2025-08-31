@@ -10,7 +10,6 @@ const NUM_REGISTERS: usize = 64;
 
 macro_rules! binary_op {
     ($self:ident, $dest:ident, $src1:ident, $src2:ident, $op:tt) => {{
-        // SAFETY: Register access is unchecked for performance. Our compiler guarantees validity.
         let v1 = unsafe { $self.get_reg_unchecked($src1) };
         let v2 = unsafe { $self.get_reg_unchecked($src2) };
         match (v1, v2) {
@@ -98,6 +97,7 @@ impl<'a> Vm<'a> {
         }
     }
 
+    #[inline(always)]
     pub fn run(&mut self) -> Result<Value, VmError> {
         loop {
             let instruction = unsafe { self.bytecode.get_unchecked(self.ip) };
@@ -122,44 +122,45 @@ impl<'a> Vm<'a> {
                         .ok_or(VmError::InputIdOutOfBounds(id))?;
                     unsafe { self.set_reg_unchecked(dest, val.clone()) };
                 }
-                OpCode::Move(dest, src) => unsafe {
-                    let val = std::mem::take(self.get_reg_unchecked_mut(src));
-                    self.set_reg_unchecked(dest, val);
-                },
+                OpCode::Move(dest, src) => {
+                    let val = unsafe { self.get_reg_unchecked(src) }.clone();
+                    unsafe { self.set_reg_unchecked(dest, val) };
+                }
                 OpCode::Add(dest, src1, src2) => binary_op!(self, dest, src1, src2, +)?,
                 OpCode::Subtract(dest, src1, src2) => binary_op!(self, dest, src1, src2, -)?,
                 OpCode::Multiply(dest, src1, src2) => binary_op!(self, dest, src1, src2, *)?,
                 OpCode::Divide(dest, src1, src2) => binary_op!(self, dest, src1, src2, /)?,
                 OpCode::Xor(dest, src1, src2) => logical_op!(self, dest, src1, src2, ^)?,
-                OpCode::Abs(dest, src) => unsafe {
-                    if let Value::Number(n) = self.get_reg_unchecked(src) {
-                        self.set_reg_unchecked(dest, Value::Number(n.abs()));
+                OpCode::Abs(dest, src) => {
+                    if let Value::Number(n) = unsafe { self.get_reg_unchecked(src) } {
+                        unsafe { self.set_reg_unchecked(dest, Value::Number(n.abs())) };
                     } else {
                         return Err(VmError::TypeMismatch {
                             expected: "Number".to_string(),
-                            found: self.get_reg_unchecked(src).clone(),
+                            found: unsafe { self.get_reg_unchecked(src) }.clone(),
                         });
                     }
-                },
-                OpCode::Not(dest, src) => unsafe {
-                    if let Value::Bool(b) = self.get_reg_unchecked(src) {
-                        self.set_reg_unchecked(dest, Value::Bool(!b));
+                }
+                OpCode::Not(dest, src) => {
+                    if let Value::Bool(b) = unsafe { self.get_reg_unchecked(src) } {
+                        unsafe { self.set_reg_unchecked(dest, Value::Bool(!*b)) };
                     } else {
                         return Err(VmError::TypeMismatch {
                             expected: "Bool".to_string(),
-                            found: self.get_reg_unchecked(src).clone(),
+                            found: unsafe { self.get_reg_unchecked(src) }.clone(),
                         });
                     }
-                },
-                OpCode::Equal(dest, src1, src2) => unsafe {
-                    let are_equal = self.get_reg_unchecked(src1) == self.get_reg_unchecked(src2);
-                    self.set_reg_unchecked(dest, Value::Bool(are_equal));
-                },
-                OpCode::NotEqual(dest, src1, src2) => unsafe {
+                }
+                OpCode::Equal(dest, src1, src2) => {
+                    let are_equal =
+                        unsafe { self.get_reg_unchecked(src1) == self.get_reg_unchecked(src2) };
+                    unsafe { self.set_reg_unchecked(dest, Value::Bool(are_equal)) };
+                }
+                OpCode::NotEqual(dest, src1, src2) => {
                     let are_not_equal =
-                        self.get_reg_unchecked(src1) != self.get_reg_unchecked(src2);
-                    self.set_reg_unchecked(dest, Value::Bool(are_not_equal));
-                },
+                        unsafe { self.get_reg_unchecked(src1) != self.get_reg_unchecked(src2) };
+                    unsafe { self.set_reg_unchecked(dest, Value::Bool(are_not_equal)) };
+                }
                 OpCode::GreaterThan(dest, src1, src2) => comparison_op!(self, dest, src1, src2, >)?,
                 OpCode::LessThan(dest, src1, src2) => comparison_op!(self, dest, src1, src2, <)?,
                 OpCode::GreaterThanOrEqual(dest, src1, src2) => {
@@ -168,63 +169,63 @@ impl<'a> Vm<'a> {
                 OpCode::LessThanOrEqual(dest, src1, src2) => {
                     comparison_op!(self, dest, src1, src2, <=)?
                 }
-                OpCode::JumpIfEq(r1, r2, addr) => unsafe {
-                    if self.get_reg_unchecked(r1) == self.get_reg_unchecked(r2) {
+                OpCode::JumpIfEq(r1, r2, addr) => {
+                    if unsafe { self.get_reg_unchecked(r1) == self.get_reg_unchecked(r2) } {
                         self.ip = addr as usize;
                     }
-                },
-                OpCode::JumpIfNeq(r1, r2, addr) => unsafe {
-                    if self.get_reg_unchecked(r1) != self.get_reg_unchecked(r2) {
+                }
+                OpCode::JumpIfNeq(r1, r2, addr) => {
+                    if unsafe { self.get_reg_unchecked(r1) != self.get_reg_unchecked(r2) } {
                         self.ip = addr as usize;
                     }
-                },
-                OpCode::JumpIfGt(r1, r2, addr) => unsafe {
+                }
+                OpCode::JumpIfGt(r1, r2, addr) => {
                     if let (Value::Number(v1), Value::Number(v2)) =
-                        (self.get_reg_unchecked(r1), self.get_reg_unchecked(r2))
+                        unsafe { (self.get_reg_unchecked(r1), self.get_reg_unchecked(r2)) }
                     {
                         if v1 > v2 {
                             self.ip = addr as usize;
                         }
                     }
-                },
-                OpCode::JumpIfGte(r1, r2, addr) => unsafe {
+                }
+                OpCode::JumpIfGte(r1, r2, addr) => {
                     if let (Value::Number(v1), Value::Number(v2)) =
-                        (self.get_reg_unchecked(r1), self.get_reg_unchecked(r2))
+                        unsafe { (self.get_reg_unchecked(r1), self.get_reg_unchecked(r2)) }
                     {
                         if v1 >= v2 {
                             self.ip = addr as usize;
                         }
                     }
-                },
-                OpCode::JumpIfLt(r1, r2, addr) => unsafe {
+                }
+                OpCode::JumpIfLt(r1, r2, addr) => {
                     if let (Value::Number(v1), Value::Number(v2)) =
-                        (self.get_reg_unchecked(r1), self.get_reg_unchecked(r2))
+                        unsafe { (self.get_reg_unchecked(r1), self.get_reg_unchecked(r2)) }
                     {
                         if v1 < v2 {
                             self.ip = addr as usize;
                         }
                     }
-                },
-                OpCode::JumpIfLte(r1, r2, addr) => unsafe {
+                }
+                OpCode::JumpIfLte(r1, r2, addr) => {
                     if let (Value::Number(v1), Value::Number(v2)) =
-                        (self.get_reg_unchecked(r1), self.get_reg_unchecked(r2))
+                        unsafe { (self.get_reg_unchecked(r1), self.get_reg_unchecked(r2)) }
                     {
                         if v1 <= v2 {
                             self.ip = addr as usize;
                         }
                     }
-                },
+                }
                 OpCode::Jump(addr) => self.ip = addr as usize,
-                OpCode::JumpIfFalse(reg, addr) => unsafe {
-                    if let Value::Bool(false) = self.get_reg_unchecked(reg) {
+                OpCode::JumpIfFalse(reg, addr) => {
+                    if let Value::Bool(false) = unsafe { self.get_reg_unchecked(reg) } {
                         self.ip = addr as usize;
                     }
-                },
-                OpCode::JumpIfTrue(reg, addr) => unsafe {
-                    if let Value::Bool(true) = self.get_reg_unchecked(reg) {
+                }
+                OpCode::JumpIfTrue(reg, addr) => {
+                    if let Value::Bool(true) = unsafe { self.get_reg_unchecked(reg) } {
                         self.ip = addr as usize;
                     }
-                },
+                }
                 OpCode::Call(id) => {
                     self.call_stack.push((self.ip, self.bytecode));
                     self.bytecode = self
