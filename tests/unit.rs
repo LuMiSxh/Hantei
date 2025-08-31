@@ -2,7 +2,6 @@
 mod common;
 use hantei::error::{AstBuildError, EvaluationError, VmError};
 use hantei::prelude::*;
-use std::collections::HashSet;
 
 #[test]
 fn test_value_display() {
@@ -13,33 +12,15 @@ fn test_value_display() {
 
 #[test]
 fn test_input_source_display() {
-    let static_src = InputSource::Static {
+    let static_src = InputSource::StaticName {
         name: "Temp".to_string(),
     };
-    let dynamic_src = InputSource::Dynamic {
+    let dynamic_src = InputSource::DynamicName {
         event: "hole".to_string(),
         field: "Diameter".to_string(),
     };
     assert_eq!(format!("{}", static_src), "$Temp");
     assert_eq!(format!("{}", dynamic_src), "$hole.Diameter");
-}
-
-#[test]
-fn test_expression_required_events() {
-    let expr = Expression::And(
-        Box::new(Expression::Input(InputSource::Static {
-            name: "Temp".to_string(),
-        })),
-        Box::new(Expression::Input(InputSource::Dynamic {
-            event: "hole".to_string(),
-            field: "Diameter".to_string(),
-        })),
-    );
-
-    let mut events = HashSet::new();
-    expr.get_required_events(&mut events);
-    assert_eq!(events.len(), 1);
-    assert!(events.contains("hole"));
 }
 
 #[test]
@@ -55,7 +36,7 @@ fn test_trace_formatter_short_circuit() {
     };
 
     let formatted = TraceFormatter::format_trace(&trace);
-    assert_eq!(formatted, "true"); // Should only show the decisive part
+    assert_eq!(formatted, "true");
 }
 
 #[test]

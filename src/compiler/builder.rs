@@ -101,7 +101,7 @@ impl<'a> AstBuilder<'a> {
     ) -> Result<AHashMap<u32, Expression>, AstBuildError> {
         let mut expressions: AHashMap<u32, Expression> = AHashMap::new();
 
-        // **FIX:** Clone the connection data to iterate over, releasing the borrow on `self`.
+        // Clone the connection data to iterate over, releasing the borrow on `self`.
         let connections_to_process: Vec<(u32, Vec<(String, u32)>)> = self
             .connections
             .get(node_id)
@@ -133,7 +133,7 @@ impl<'a> AstBuilder<'a> {
 
     /// Creates an `Expression::Input` from a "dynamicNode".
     fn build_input_source_expr(
-        &self,
+        &mut self,
         source_node: &FlowNodeDefinition,
         source_handle_idx: u32,
     ) -> Result<Expression, AstBuildError> {
@@ -160,13 +160,31 @@ impl<'a> AstBuilder<'a> {
             })?;
 
         let source = if let Some(event_type) = &source_node.input_type {
-            InputSource::Dynamic {
+            // This path is for nodes that are NOT the "Start" node, e.g., a dedicated "Hole" node.
+            // It correctly assumes all outputs are fields of that dynamic event.
+            InputSource::DynamicName {
                 event: event_type.clone(),
                 field: field.name.clone(),
             }
         } else {
-            InputSource::Static {
-                name: field.name.clone(),
+            // This path is for the "Start" node, which has `input_type: None`.
+            // The `real_case_type` tells us if it's a dynamic event stream.
+            if let Some(real_case_type) = &field.data_type {
+                // This is a dynamic event stream like "bark" or "hole".
+                // The `real_case_type` is the event name, and the field we need
+                // must be derived from the logic that follows. This part of the builder
+                // is for creating direct value inputs. A direct connection from an object
+                // source to a logic node implies a default property lookup. Let's assume
+                // the `field.name` itself is the property to look for on that dynamic event.
+                InputSource::DynamicName {
+                    event: real_case_type.clone(),
+                    field: field.name.clone(),
+                }
+            } else {
+                // This is a primitive type like "number". It's a static property.
+                InputSource::StaticName {
+                    name: field.name.clone(),
+                }
             }
         };
         Ok(Expression::Input(source))

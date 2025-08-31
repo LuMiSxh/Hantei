@@ -1,7 +1,15 @@
 use super::{compiler::BytecodeProgram, opcode::OpCode};
+use crate::ast::InputId;
+use ahash::AHashMap;
 use std::fmt::Write;
 
-pub fn visualize_program(program: &BytecodeProgram, name: &str) -> String {
+/// Formats a complete `BytecodeProgram` into a human-readable string for debugging.
+pub fn visualize_program(
+    program: &BytecodeProgram,
+    name: &str,
+    static_rev_map: &AHashMap<InputId, String>,
+    dynamic_rev_map: &AHashMap<InputId, String>,
+) -> String {
     let mut output = String::new();
     writeln!(
         &mut output,
@@ -12,7 +20,7 @@ pub fn visualize_program(program: &BytecodeProgram, name: &str) -> String {
 
     if !program.main.is_empty() {
         writeln!(&mut output, "\n--- MAIN ---").unwrap();
-        format_bytecode_chunk(&mut output, &program.main);
+        format_bytecode_chunk(&mut output, &program.main, static_rev_map, dynamic_rev_map);
     }
 
     if !program.subroutines.is_empty() {
@@ -22,7 +30,7 @@ pub fn visualize_program(program: &BytecodeProgram, name: &str) -> String {
 
         for (id, bytecode) in sorted_subroutines {
             writeln!(&mut output, "\n--- SUBROUTINE #{} ---", id).unwrap();
-            format_bytecode_chunk(&mut output, bytecode);
+            format_bytecode_chunk(&mut output, bytecode, static_rev_map, dynamic_rev_map);
         }
     }
 
@@ -34,13 +42,26 @@ pub fn visualize_program(program: &BytecodeProgram, name: &str) -> String {
     output
 }
 
-fn format_bytecode_chunk(output: &mut String, bytecode: &[OpCode]) {
+/// Helper function to format a single `Vec<OpCode>`.
+fn format_bytecode_chunk(
+    output: &mut String,
+    bytecode: &[OpCode],
+    static_rev_map: &AHashMap<InputId, String>,
+    dynamic_rev_map: &AHashMap<InputId, String>,
+) {
     for (i, op) in bytecode.iter().enumerate() {
         let line = format!("{:04}: ", i);
         let op_str = match op {
+            OpCode::LoadStatic(r, id) => {
+                let name = static_rev_map.get(id).map(|s| s.as_str()).unwrap_or("?");
+                format!("{:<20} R{}, ${} [S{}]", "LoadStatic", r, name, id)
+            }
+            OpCode::LoadDynamic(r, id) => {
+                let name = dynamic_rev_map.get(id).map(|s| s.as_str()).unwrap_or("?");
+                format!("{:<20} R{}, ${} [D{}]", "LoadDynamic", r, name, id)
+            }
+            // --- Standard formatting for other opcodes ---
             OpCode::LoadLiteral(r, v) => format!("{:<20} R{}, {}", "LoadLiteral", r, v),
-            OpCode::LoadStatic(r, n) => format!("{:<20} R{}, ${}", "LoadStatic", r, n),
-            OpCode::LoadDynamic(r, e, f) => format!("{:<20} R{}, ${}.{}", "LoadDynamic", r, e, f),
             OpCode::Move(d, s) => format!("{:<20} R{}, R{}", "Move", d, s),
             OpCode::Add(d, s1, s2) => format!("{:<20} R{}, R{}, R{}", "Add", d, s1, s2),
             OpCode::Subtract(d, s1, s2) => format!("{:<20} R{}, R{}, R{}", "Subtract", d, s1, s2),

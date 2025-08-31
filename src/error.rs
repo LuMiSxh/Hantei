@@ -89,6 +89,9 @@ pub enum VmError {
 
     #[error("Invalid register access: R{0}")]
     InvalidRegister(u8),
+
+    #[error("Input ID '{0}' is out of bounds for the provided data vector")]
+    InputIdOutOfBounds(u16),
 }
 
 /// Errors that can occur when converting a custom user format into a Hantei `FlowDefinition`.

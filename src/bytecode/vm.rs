@@ -2,8 +2,10 @@ use crate::ast::Value;
 use crate::bytecode::compiler::BytecodeProgram;
 use crate::bytecode::opcode::{OpCode, Register};
 use crate::error::VmError;
-use ahash::AHashMap;
 
+/// Number of registers in the VM.
+/// This is a fixed size for simplicity, but could be made dynamic if needed.
+/// Must be <= 256 to fit in a single byte for register encoding.
 const NUM_REGISTERS: usize = 256;
 
 macro_rules! binary_op {
@@ -54,15 +56,15 @@ pub struct Vm<'a> {
     bytecode: &'a [OpCode],
     registers: [Value; NUM_REGISTERS],
     call_stack: Vec<(usize, &'a [OpCode])>,
-    static_data: &'a AHashMap<String, f64>,
-    dynamic_context: &'a AHashMap<String, &'a AHashMap<String, f64>>,
+    static_data: &'a [Value],
+    dynamic_context: &'a [Value],
 }
 
 impl<'a> Vm<'a> {
     pub fn new(
         program: &'a BytecodeProgram,
-        static_data: &'a AHashMap<String, f64>,
-        dynamic_context: &'a AHashMap<String, &'a AHashMap<String, f64>>,
+        static_data: &'a [Value],
+        dynamic_context: &'a [Value],
     ) -> Self {
         Self {
             program,
@@ -98,22 +100,19 @@ impl<'a> Vm<'a> {
             match *instruction {
                 OpCode::Halt => return Ok(self.get_reg(0)?.clone()),
                 OpCode::LoadLiteral(dest, ref val) => self.set_reg(dest, val.clone()),
-                OpCode::LoadStatic(dest, ref name) => {
+                OpCode::LoadStatic(dest, id) => {
                     let val = self
                         .static_data
-                        .get(name)
-                        .map(|v| Value::Number(*v))
-                        .ok_or_else(|| VmError::InputNotFound(name.clone()))?;
-                    self.set_reg(dest, val);
+                        .get(id as usize)
+                        .ok_or(VmError::InputIdOutOfBounds(id))?;
+                    self.set_reg(dest, val.clone());
                 }
-                OpCode::LoadDynamic(dest, ref event, ref field) => {
+                OpCode::LoadDynamic(dest, id) => {
                     let val = self
                         .dynamic_context
-                        .get(event)
-                        .and_then(|data| data.get(field))
-                        .map(|v| Value::Number(*v))
-                        .unwrap_or(Value::Null);
-                    self.set_reg(dest, val);
+                        .get(id as usize)
+                        .ok_or(VmError::InputIdOutOfBounds(id))?;
+                    self.set_reg(dest, val.clone());
                 }
                 OpCode::Move(dest, src) => self.set_reg(dest, self.get_reg(src)?.clone()),
                 OpCode::Add(dest, src1, src2) => binary_op!(self, dest, src1, src2, +)?,

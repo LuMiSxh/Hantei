@@ -1,12 +1,15 @@
 use crate::ast::{Expression, InputSource};
-use crate::bytecode::opcode::{Address, OpCode, Register};
+use crate::bytecode::opcode::{Address, InputId, OpCode, Register};
 use crate::error::BackendError;
 use ahash::AHashMap;
+use serde::{Deserialize, Serialize};
 
-#[derive(Debug, Default)]
+#[derive(Debug, Default, Serialize, Deserialize)]
 pub struct BytecodeProgram {
     pub main: Vec<OpCode>,
     pub subroutines: AHashMap<u64, Vec<OpCode>>,
+    pub static_map: AHashMap<String, InputId>,
+    pub dynamic_map: AHashMap<String, InputId>,
 }
 
 pub struct BytecodeCompiler<'a> {
@@ -19,10 +22,16 @@ pub struct BytecodeCompiler<'a> {
 pub fn compile_to_program(
     expr: &Expression,
     definitions: &AHashMap<u64, Expression>,
+    static_map: &AHashMap<String, InputId>,
+    dynamic_map: &AHashMap<String, InputId>,
 ) -> Result<BytecodeProgram, BackendError> {
     let mut compiler = BytecodeCompiler {
         definitions,
-        program: BytecodeProgram::default(),
+        program: BytecodeProgram {
+            static_map: static_map.clone(),
+            dynamic_map: dynamic_map.clone(),
+            ..Default::default()
+        },
         compiled_subroutines: AHashMap::new(),
         next_register: 0,
     };
@@ -34,6 +43,7 @@ impl<'a> BytecodeCompiler<'a> {
     fn reset_allocator(&mut self) {
         self.next_register = 0;
     }
+
     fn alloc_reg(&mut self) -> Result<Register, BackendError> {
         let reg = self.next_register;
         self.next_register = self.next_register.checked_add(1).ok_or_else(|| {
@@ -87,9 +97,21 @@ impl<'a> BytecodeCompiler<'a> {
             Expression::Input(source) => {
                 let dest = self.alloc_reg()?;
                 let op = match source {
-                    InputSource::Static { name } => OpCode::LoadStatic(dest, name.clone()),
-                    InputSource::Dynamic { event, field } => {
-                        OpCode::LoadDynamic(dest, event.clone(), field.clone())
+                    // Runtime variants - these should be the only ones present after interning
+                    InputSource::Static { id } => OpCode::LoadStatic(dest, *id),
+                    InputSource::Dynamic { id } => OpCode::LoadDynamic(dest, *id),
+                    // Compilation-time variants - these should not reach bytecode compilation
+                    InputSource::StaticName { name } => {
+                        return Err(BackendError::InvalidLogic(format!(
+                            "Encountered uninterned static input '{}' during bytecode compilation",
+                            name
+                        )));
+                    }
+                    InputSource::DynamicName { event, field } => {
+                        return Err(BackendError::InvalidLogic(format!(
+                            "Encountered uninterned dynamic input '{}.{}' during bytecode compilation",
+                            event, field
+                        )));
                     }
                 };
                 bytecode.push(op);
@@ -163,34 +185,23 @@ impl<'a> BytecodeCompiler<'a> {
         let result_reg = self.alloc_reg()?;
         let reg_l = self.compile_recursive(l, bytecode)?;
 
-        // This is the jump that will skip the right-hand-side evaluation.
         let jump_idx = bytecode.len();
         bytecode.push(OpCode::Jump(0)); // Placeholder
 
-        // --- Path 1: Full evaluation path (jump is NOT taken) ---
-        // We evaluate the right side, and its result becomes the final result.
         let reg_r = self.compile_recursive(r, bytecode)?;
         bytecode.push(OpCode::Move(result_reg, reg_r));
         let jump_to_end_idx = bytecode.len();
-        bytecode.push(OpCode::Jump(0)); // Jump over the short-circuit path.
+        bytecode.push(OpCode::Jump(0));
 
-        // --- Path 2: Short-circuit path ---
-        // The jump from the beginning lands here.
         let short_circuit_addr = bytecode.len() as Address;
-        // The result is simply the value from the left-hand side.
         bytecode.push(OpCode::Move(result_reg, reg_l));
 
-        // --- End of expression ---
         let end_addr = bytecode.len() as Address;
 
-        // --- Patching the jumps ---
         bytecode[jump_to_end_idx] = OpCode::Jump(end_addr);
-
         if is_or {
-            // For OR, we short-circuit if the left side is TRUE.
             bytecode[jump_idx] = OpCode::JumpIfTrue(reg_l, short_circuit_addr);
         } else {
-            // For AND, we short-circuit if the left side is FALSE.
             bytecode[jump_idx] = OpCode::JumpIfFalse(reg_l, short_circuit_addr);
         }
 

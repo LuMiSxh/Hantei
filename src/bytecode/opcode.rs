@@ -1,16 +1,18 @@
+pub use crate::ast::InputId;
 use crate::ast::Value;
+use serde::{Deserialize, Serialize};
 
 pub type Register = u8;
 pub type Address = u16; // Up to 65536 instructions per chunk
 pub type SubroutineId = u64;
 
 /// An instruction for the register-based virtual machine.
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub enum OpCode {
     // Data Loading
     LoadLiteral(Register, Value),
-    LoadStatic(Register, String),
-    LoadDynamic(Register, String, String),
+    LoadStatic(Register, InputId),
+    LoadDynamic(Register, InputId),
     Move(Register, Register), // Move value from one register to another
 
     // Arithmetic

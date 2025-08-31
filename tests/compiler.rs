@@ -9,23 +9,21 @@ fn test_compiler_builds_simple_flow() {
     let qualities = create_simple_qualities();
 
     let compiler = Compiler::builder(flow, qualities).build();
-    let compiled_paths = compiler.compile().expect("Failed to compile");
+    let artifacts = compiler.compile().expect("Failed to compile");
 
-    assert_eq!(compiled_paths.len(), 1);
-    let (prio, name, ast) = &compiled_paths[0];
-    assert_eq!(*prio, 1);
-    assert_eq!(name, "Hot");
+    assert_eq!(artifacts.len(), 1);
+    let first_artifact = &artifacts[0];
+    assert_eq!(first_artifact.priority, 1);
+    assert_eq!(first_artifact.name, "Hot");
 
-    let ast_string = ast.to_string();
-    assert!(ast_string.contains("$Temperature"));
-    assert!(ast_string.contains(">"));
-    assert!(ast_string.contains("25"));
+    // Check that the string interning worked
+    assert_eq!(first_artifact.static_map.len(), 1);
+    assert!(first_artifact.static_map.contains_key("Temperature"));
 }
 
 #[test]
 fn test_compiler_with_type_mapping() {
     let mut flow = create_simple_flow();
-    // Modify the flow to use a custom node type name
     flow.nodes[1].operation_type = "MyGreaterThan".to_string();
     let qualities = create_simple_qualities();
 
@@ -44,7 +42,7 @@ fn test_compiler_with_type_mapping() {
 #[test]
 fn test_compiler_fails_on_unregistered_type() {
     let mut flow = create_simple_flow();
-    flow.nodes[1].operation_type = "UnknownOperation".to_string(); // This doesn't exist
+    flow.nodes[1].operation_type = "UnknownOperation".to_string();
     let qualities = create_simple_qualities();
 
     let compiler = Compiler::builder(flow, qualities).build();

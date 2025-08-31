@@ -1,8 +1,11 @@
+use serde::{Deserialize, Serialize};
 use std::fmt;
 use std::hash::{Hash, Hasher};
 
+pub type InputId = u16;
+
 /// Runtime value types used during evaluation.
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub enum Value {
     Number(f64),
     Bool(bool),
@@ -19,7 +22,7 @@ impl Hash for Value {
         match self {
             Value::Number(n) => n.to_bits().hash(state),
             Value::Bool(b) => b.hash(state),
-            Value::Null => {} // Null has no data to hash
+            Value::Null => {}
         }
     }
 }
@@ -41,17 +44,25 @@ impl fmt::Display for Value {
 }
 
 /// Defines the source of data for a leaf node in the AST.
-#[derive(Debug, Clone, PartialEq, Eq, Hash)]
+/// Supports both compilation-time string names and runtime IDs.
+#[derive(Debug, Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
 pub enum InputSource {
-    Static { name: String },
-    Dynamic { event: String, field: String },
+    // Runtime variants (used after string interning)
+    Static { id: InputId },
+    Dynamic { id: InputId },
+
+    // Compilation-time variants (used during initial AST building)
+    StaticName { name: String },
+    DynamicName { event: String, field: String },
 }
 
 impl fmt::Display for InputSource {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match self {
-            InputSource::Static { name } => write!(f, "${}", name),
-            InputSource::Dynamic { event, field } => write!(f, "${}.{}", event, field),
+            InputSource::Static { id } => write!(f, "$Static[{}]", id),
+            InputSource::Dynamic { id } => write!(f, "$Dynamic[{}]", id),
+            InputSource::StaticName { name } => write!(f, "${}", name),
+            InputSource::DynamicName { event, field } => write!(f, "${}.{}", event, field),
         }
     }
 }

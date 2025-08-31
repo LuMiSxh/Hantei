@@ -1,6 +1,7 @@
+use crate::compiler::CompilationArtifacts;
 use crate::error::{BackendError, EvaluationError};
 use crate::interpreter::EvaluationResult;
-use crate::prelude::*;
+use crate::recipe::CompiledRecipe;
 use ahash::AHashMap;
 
 /// A compiled, runnable recipe that can be evaluated against data.
@@ -14,11 +15,14 @@ pub trait ExecutableRecipe: Send + Sync {
 }
 
 /// A trait for an evaluation backend that transforms ASTs into an `ExecutableRecipe`.
+/// This could be an interpreter, a bytecode compiler, or any other execution strategy.
 pub trait EvaluationBackend {
-    fn compile(
-        &self,
-        paths: Vec<(i32, String, Expression, AHashMap<u64, Expression>)>,
-    ) -> Result<Box<dyn ExecutableRecipe>, BackendError>;
+    /// Compiles fresh artifacts into a serializable recipe object.
+    fn compile(&self, artifacts: Vec<CompilationArtifacts>)
+    -> Result<CompiledRecipe, BackendError>;
+
+    /// Loads a pre-compiled recipe and prepares it for execution.
+    fn load(&self, recipe: CompiledRecipe) -> Result<Box<dyn ExecutableRecipe>, BackendError>;
 }
 
 /// The available backends for evaluation.

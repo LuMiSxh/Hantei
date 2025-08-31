@@ -1,24 +1,30 @@
-use crate::ast::{EvaluationTrace, Expression, InputSource, Value};
+use crate::ast::{EvaluationTrace, Expression, InputId, InputSource, Value};
 use crate::error::EvaluationError;
 use ahash::AHashMap;
 
 /// The core recursive engine for evaluating a single, fully-contextualized AST.
 pub(super) struct AstEngine<'a> {
     expression: &'a Expression,
-    static_data: &'a AHashMap<String, f64>,
-    dynamic_context: &'a AHashMap<String, &'a AHashMap<String, f64>>,
+    static_data: &'a [Value],
+    dynamic_context: &'a [Value],
+    static_rev_map: &'a AHashMap<InputId, String>,
+    dynamic_rev_map: &'a AHashMap<InputId, String>,
 }
 
 impl<'a> AstEngine<'a> {
     pub(super) fn new(
         expression: &'a Expression,
-        static_data: &'a AHashMap<String, f64>,
-        dynamic_context: &'a AHashMap<String, &'a AHashMap<String, f64>>,
+        static_data: &'a [Value],
+        dynamic_context: &'a [Value],
+        static_rev_map: &'a AHashMap<InputId, String>,
+        dynamic_rev_map: &'a AHashMap<InputId, String>,
     ) -> Self {
         Self {
             expression,
             static_data,
             dynamic_context,
+            static_rev_map,
+            dynamic_rev_map,
         }
     }
 
@@ -163,23 +169,41 @@ impl<'a> AstEngine<'a> {
             }),
             Expression::Input(source) => {
                 let (source_str, value) = match source {
-                    InputSource::Static { name } => (
-                        format!("${}", name),
-                        self.static_data
-                            .get(name)
-                            .map(|v| Value::Number(*v))
-                            .ok_or_else(|| EvaluationError::InputNotFound(name.clone()))?,
-                    ),
-                    InputSource::Dynamic { event, field } => (
-                        format!("${}.{}", event, field),
-                        self.dynamic_context
-                            .get(event)
-                            .and_then(|data| data.get(field))
-                            .map(|v| Value::Number(*v))
-                            .ok_or_else(|| {
-                                EvaluationError::InputNotFound(format!("{}.{}", event, field))
-                            })?,
-                    ),
+                    InputSource::Static { id } => {
+                        let field_name = self
+                            .static_rev_map
+                            .get(id)
+                            .map(|s| s.as_str())
+                            .unwrap_or("?Unknown?");
+                        let val = self.static_data.get(*id as usize).ok_or_else(|| {
+                            EvaluationError::InputNotFound(field_name.to_string())
+                        })?;
+                        (format!("${}", field_name), val.clone())
+                    }
+                    InputSource::Dynamic { id } => {
+                        let field_name = self
+                            .dynamic_rev_map
+                            .get(id)
+                            .map(|s| s.as_str())
+                            .unwrap_or("?Unknown?");
+                        let val = self.dynamic_context.get(*id as usize).ok_or_else(|| {
+                            EvaluationError::InputNotFound(field_name.to_string())
+                        })?;
+                        (format!("${}", field_name), val.clone())
+                    }
+                    // These should have been converted to ID-based variants during compilation
+                    InputSource::StaticName { name } => {
+                        return Err(EvaluationError::BackendError(format!(
+                            "Encountered uninterned static input '{}' during evaluation",
+                            name
+                        )));
+                    }
+                    InputSource::DynamicName { event, field } => {
+                        return Err(EvaluationError::BackendError(format!(
+                            "Encountered uninterned dynamic input '{}.{}' during evaluation",
+                            event, field
+                        )));
+                    }
                 };
                 Ok(EvaluationTrace::Leaf {
                     source: source_str,

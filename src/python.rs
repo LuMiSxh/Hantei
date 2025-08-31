@@ -164,12 +164,13 @@ impl HanteiPy {
             })
             .collect();
 
+        // 1. Compile the recipe into artifacts.
         let compiler = Compiler::builder(flow, qualities).build();
-        let compiled_paths = compiler
+        let artifacts = compiler
             .compile()
             .map_err(|e| PyErr::new::<pyo3::exceptions::PyValueError, _>(e.to_string()))?;
 
-        // --- FIX 4: Use the new Evaluator API ---
+        // 2. Create the evaluator from the artifacts using the chosen backend.
         let choice = match backend {
             "interpreter" => BackendChoice::Interpreter,
             "bytecode" => BackendChoice::Bytecode,
@@ -180,7 +181,7 @@ impl HanteiPy {
             }
         };
 
-        let evaluator = Evaluator::new(choice, compiled_paths)
+        let evaluator = Evaluator::new(choice, artifacts)
             .map_err(|e| PyErr::new::<pyo3::exceptions::PyValueError, _>(e.to_string()))?;
 
         Ok(HanteiPy { evaluator })
